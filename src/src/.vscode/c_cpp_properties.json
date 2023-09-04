@@ -1,0 +1,28 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/hitech/catkin_ws/devel_isolated/virtual_costmap_layer/include/**",
+        "/home/hitech/catkin_ws/devel_isolated/turtlebot3_navigation/include/**",
+        "/home/hitech/catkin_ws/devel_isolated/turtlebot3_example/include/**",
+        "/home/hitech/catkin_ws/devel_isolated/custom_msgs/include/**",
+        "/home/hitech/catkin_ws/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/hitech/catkin_ws/src/new_mission/include/**",
+        "/home/hitech/catkin_ws/src/turtlebot3-master/turtlebot3_slam/include/**",
+        "/home/hitech/catkin_ws/src/virtual_costmap_layer/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

@@ -1,0 +1,303 @@
+&/name_mission>HS0010//id_mission>1/*{(name:creat_a|time_out:-1|mode:variable|data:~command_action=new~~name_variable=a~~focus_value=0~)}
+{while#condition_step{(name:a_com_-1|time_out:-1|mode:variable|data:~command_action=equal_not~~name_variable=a~~focus_value=10~)}do_step{(name:a_equal+1|time_out:-1|mode:variable|data:~command_action=equal_+~~name_variable=a~~focus_value=1~)}}
+
+
+
+
+rostopic pub /ABC/mission_normal std_msgs/String "data: '
+&/name_mission>IB05_out4//id_mission>1/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio_module|data:~name_seri=IB06_916b~~out_set=4~~not_set_out=1~)/
+*
+{(name:reset|time_out:-1|mode:gpio_module|data:~name_seri=IB06_916b~~out_reset=4~~not_set_out=0~)}
+{(name:creat_a|time_out:-1|mode:variable|data:~command_action=new~~name_variable=a~~focus_value=0~)}
+{while#
+condition_step
+   {(name:a_com_-1|time_out:-1|mode:variable|data:~command_action=equal_not~~name_variable=a~~focus_value=10~)}
+do_step
+   {(name:a_equal+1|time_out:-1|mode:variable|data:~command_action=equal_+~~name_variable=a~~focus_value=1~)}}
+{(name:S1|time_out:-1|mode:sleep|data:~time_sleep=1~)}
+{if_else#
+condition_step
+    {(name:out6_check_on|time_out:0|mode:gpio_module|data:~name_seri=IB06_916b~~out_set=6~~not_set_out=1~)}
+if_step
+    {
+        (name:out6_off|time_out:-1|mode:gpio_module|data:~name_seri=IB06_916b~~out_reset=6~~not_set_out=0~)
+        (name:out4_off|time_out:-1|mode:gpio_module|data:~name_seri=IB06_916b~~out_reset=4~~not_set_out=0~)
+    }
+else_step
+    {
+        (name:out4_off|time_out:-1|mode:gpio_module|data:~name_seri=IB06_916b~~out_reset=4~~not_set_out=0~)
+        (name:out5_on|time_out:-1|mode:gpio_module|data:~name_seri=IB06_916b~~out_set=5~~not_set_out=0~)
+    }
+}
+@
+&/name_mission>IB05_out5//id_mission>2/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio_module|data:~name_seri=IB06_916b~~out_set=5~~not_set_out=1~)/
+*
+{(name:reset|time_out:-1|mode:gpio_module|data:~name_seri=IB06_916b~~out_reset=5~~not_set_out=0~)}
+
+{(name:creat_a|time_out:-1|mode:variable|data:~command_action=new~~name_variable=a~~focus_value=0~)}
+
+{while#
+condition_step
+   {(name:a_com_-1|time_out:-1|mode:variable|data:~command_action=equal_not~~name_variable=a~~focus_value=10~)}
+do_step
+   {(name:a_equal+1|time_out:-1|mode:variable|data:~command_action=equal_+~~name_variable=a~~focus_value=1~)}}
+{(name:S1|time_out:-1|mode:sleep|data:~time_sleep=1~)}
+
+{if_else#
+condition_step
+    {(name:out6_check_on|time_out:0|mode:gpio_module|data:~name_seri=IB06_916b~~out_set=6~~not_set_out=1~)}
+if_step
+    {
+        (name:out6_on|time_out:-1|mode:gpio_module|data:~name_seri=IB06_916b~~out_reset=6~~not_set_out=0~)
+        (name:out5_off|time_out:-1|mode:gpio_module|data:~name_seri=IB06_916b~~out_reset=5~~not_set_out=0~)
+    }
+else_step
+    {
+        (name:out5_off|time_out:-1|mode:gpio_module|data:~name_seri=IB06_916b~~out_reset=5~~not_set_out=0~)
+        (name:out4_on|time_out:-1|mode:gpio_module|data:~name_seri=IB06_916b~~out_set=4~~not_set_out=0~)
+    }
+}
+
+
+
+
+{if_else#
+    condition_step{
+        
+    }
+    if_step{
+        {while#
+            condition_step{
+
+            }
+            do_step{
+                
+            }
+
+        }
+    }
+    else_step{
+
+    }
+    
+}
+
+
+
+@
+'"
+
+
+&/name_mission>mission1//id_mission>1/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_pullup=0~)/
+*
+{if_else#
+    condition_step
+        {
+            (name:check_out0|time_out:0|mode:gpio|data:~out_set=0~~not_set_out=1~)
+        }
+    if_step
+        {
+            (name:reset_out_0|time_out:-1|mode:gpio|data:~out_reset=0~~not_set_out=0~)
+            
+        }
+    else_step
+        {
+            (name:set_out_0|time_out:-1|mode:gpio|data:~out_set=0~~not_set_out=0~)
+        }
+}
+@
+&/name_mission>mission2//id_mission>2/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_pullup=1~)/
+*
+{if_else#
+    condition_step
+        {
+            (name:check_out1|time_out:0|mode:gpio|data:~out_set=1~~not_set_out=1~)
+        }
+    if_step
+        {
+            (name:reset_out_1|time_out:-1|mode:gpio|data:~out_reset=1~~not_set_out=0~)
+            
+        }
+    else_step
+        {
+            (name:set_out_1|time_out:-1|mode:gpio|data:~out_set=1~~not_set_out=0~)
+        }
+}
+@
+
+&/name_mission>mission2//id_mission>2/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_pullup=3~)/
+*
+{if_else#
+    condition_step
+        {
+            (name:check_out0|time_out:0|mode:gpio|data:~out_reset=0~~not_set_out=1~)
+        }
+    if_step
+        {
+            (name:set_out_0|time_out:-1|mode:gpio|data:~out_set=0~~not_set_out=0~)
+            
+        }
+    else_step
+        {
+            {if_else#
+                condition_step
+                    {
+                        (name:check_out1|time_out:0|mode:gpio|data:~out_reset=1~~not_set_out=1~)
+                    }
+                if_step
+                    {
+                        (name:set_out_1|time_out:-1|mode:gpio|data:~out_set=1~~not_set_out=0~)
+                        
+                    }
+                else_step
+                    {
+                        {if_else#
+                            condition_step
+                                {
+                                    (name:check_out2|time_out:0|mode:gpio|data:~out_reset=2~~not_set_out=1~)
+                                }
+                            if_step
+                                {
+                                    (name:set_out_2|time_out:-1|mode:gpio|data:~out_set=2~~not_set_out=0~)
+                                    
+                                }
+                            else_step
+                                {
+                                    {if_else#
+                                        condition_step
+                                            {
+                                                (name:check_out3|time_out:0|mode:gpio|data:~out_reset=3~~not_set_out=1~)
+                                            }
+                                        if_step
+                                            {
+                                                (name:set_out_3|time_out:-1|mode:gpio|data:~out_set=3~~not_set_out=0~)
+                                                
+                                            }
+                                        else_step
+                                            {
+                                                (name:reset_all|time_out:-1|mode:gpio|data:~out_reset=0,1,2,3~~not_set_out=0~)
+                                            }
+                                    }
+                                }
+                        }
+                    }
+            }
+        }
+}
+@
+
+
+
+&/name_mission>mission2//id_mission>2/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_pullup=3~)/
+*
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
+@
+
+
+&/name_mission>mission2//id_mission>2/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_pullup=3~)/
+*
+{
+(name:check_out1|time_out:0|mode:gpio|data:~out_reset=1~~not_set_out=0~)
+(name:sleep|time_out:-1|mode:sleep|data:~time_sleep=1.0~)   
+(name:check_out1|time_out:0|mode:gpio|data:~out_reset=1~~not_set_out=0~)
+(name:sleep|time_out:-1|mode:sleep|data:~time_sleep=1.0~)   
+(name:check_out1|time_out:0|mode:gpio|data:~out_reset=1~~not_set_out=0~)
+(name:sleep|time_out:-1|mode:sleep|data:~time_sleep=1.0~)   
+(name:check_out1|time_out:0|mode:gpio|data:~out_reset=1~~not_set_out=0~)
+(name:sleep|time_out:-1|mode:sleep|data:~time_sleep=1.0~)   
+(name:check_out1|time_out:0|mode:gpio|data:~out_reset=1~~not_set_out=0~)
+(name:sleep|time_out:-1|mode:sleep|data:~time_sleep=1.0~)   
+(name:check_out1|time_out:0|mode:gpio|data:~out_reset=1~~not_set_out=0~)
+(name:sleep|time_out:-1|mode:sleep|data:~time_sleep=1.0~)   
+(name:check_out1|time_out:0|mode:gpio|data:~out_reset=1~~not_set_out=0~)
+(name:sleep|time_out:-1|mode:sleep|data:~time_sleep=1.0~)   
+(name:check_out1|time_out:0|mode:gpio|data:~out_reset=1~~not_set_out=0~)
+(name:sleep|time_out:-1|mode:sleep|data:~time_sleep=1.0~)   
+(name:check_out1|time_out:0|mode:gpio|data:~out_reset=1~~not_set_out=0~)
+(name:sleep|time_out:-1|mode:sleep|data:~time_sleep=1.0~)   
+(name:check_out1|time_out:0|mode:gpio|data:~out_reset=1~~not_set_out=0~)
+(name:sleep|time_out:-1|mode:sleep|data:~time_sleep=1.0~)   
+}
+@
+
+&/name_mission>mission//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_pullup=3~)/
+*
+{
+    {
+        (name:set_all|time_out:-1|mode:gpio|data:~out_set=0,1,2,3~~not_set_out=0~)
+        (name:creat_a|time_out:-1|mode:variable|data:~command_action=new~~name_variable=a~~focus_value=0~)
+    }
+    {while#
+        condition_step
+        {
+            (name:a_equal_as_0|time_out:-1|mode:variable|data:~command_action=equal_as~~name_variable=a~~focus_value=0~)
+        }
+        do_step
+        {
+            {if_else#
+                condition_step
+                    {
+                        {logic_or#
+                            logic_A{
+                                (name:check_in0|time_out:0|mode:gpio|data:~in_on=0~)
+                            }
+                            logic_B{
+                                {logic_and#
+                                    logic_A{
+                                        (name:check_in2|time_out:0|mode:gpio|data:~in_on=2~)
+                                    }
+                                    logic_B{
+                                        (name:check_in1|time_out:0|mode:gpio|data:~in_on=1~)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                if_step
+                    {
+                        (name:break|time_out:-1|mode:break|data:~~)
+                        
+                    }
+                else_step
+                    {
+                        
+                    }
+            }
+        }
+    }
+    {
+        (name:reset_all|time_out:-1|mode:gpio|data:~out_reset=0,1,2,3~~not_set_out=0~)
+    }
+}
+@
+
+&/name_mission>mission//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_pullup=3~)/
+*
+{
+    (name:set_all|time_out:-1|mode:gpio|data:~out_set=0,1,2,3~~not_set_out=0~)
+    (name:check_out1|time_out:-1|mode:gpio_module|data:~name_seri=WATCH_1~~out_set=0~~not_set_out=0~)
+    (name:reset_all|time_out:-1|mode:gpio|data:~out_reset=0,1,2,3~~not_set_out=0~)
+}
+@

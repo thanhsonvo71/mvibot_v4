@@ -1,0 +1,12 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/hitech/catkin_ws/devel_isolated/virtual_costmap_layer/lib/python3/dist-packages",
+        "/home/hitech/catkin_ws/devel_isolated/turtlebot3_teleop/lib/python3/dist-packages",
+        "/home/hitech/catkin_ws/devel_isolated/turtlebot3_navigation/lib/python3/dist-packages",
+        "/home/hitech/catkin_ws/devel_isolated/turtlebot3_example/lib/python3/dist-packages",
+        "/home/hitech/catkin_ws/devel_isolated/mvibot/lib/python3/dist-packages",
+        "/home/hitech/catkin_ws/devel_isolated/custom_msgs/lib/python3/dist-packages",
+        "/home/hitech/catkin_ws/devel/lib/python3/dist-packages",
+        "/opt/ros/noetic/lib/python3/dist-packages"
+    ]
+}

@@ -1,0 +1,188 @@
+#!/bin/bash
+echo start
+echo run ros....
+echo start
+source /opt/ros/noetic/setup.bash
+source /home/mvibot/catkin_ws/devel/setup.bash
+#
+name_seri="$(</home/mvibot/catkin_ws/src/mvibot/config/name_seri)"
+ip_master="$(</home/mvibot/catkin_ws/src/mvibot/config/ip_master)"
+ip_node="$(</home/mvibot/catkin_ws/src/mvibot/config/ip_node)"
+mode="$(</home/mvibot/catkin_ws/src/mvibot/config/mode)"
+#
+serial_camera1="$(</home/mvibot/catkin_ws/src/mvibot/config/serial_camera1)"
+serial_camera2="$(</home/mvibot/catkin_ws/src/mvibot/config/serial_camera2)"
+#
+robot_type_connect="$(</home/mvibot/catkin_ws/src/mvibot/config/robot_type_connect)"
+# wifi card control
+wifi_port="$(</home/mvibot/catkin_ws/src/mvibot/config/wifi_port)"
+wifi_type="$(</home/mvibot/catkin_ws/src/mvibot/config/wifi_type)"
+wifi_ssid="$(</home/mvibot/catkin_ws/src/mvibot/config/wifi_ssid)"
+wifi_password="$(</home/mvibot/catkin_ws/src/mvibot/config/wifi_password)"
+port_use_ros=""
+#
+ipv4_gateway="$(</home/mvibot/catkin_ws/src/mvibot/config/ipv4_gateway)"
+ipv4_dns="$(</home/mvibot/catkin_ws/src/mvibot/config/ipv4_dns)"
+#check robot type connect
+if [[ "$robot_type_connect" = "hots_pot" ]]
+then
+   echo ros hotspot mode
+   ip_master="10.42.0.1"
+   ip_node="10.42.0.1"
+   echo "export const ip ='10.42.0.1'" > /home/mvibot/interface_mvibot_v2/public/ip.js
+   port_use_ros=$wifi_port
+else
+   echo not mode ros hotspost so kip....
+fi
+ip_node=127.0.0.1
+ip_master=127.0.0.1
+export ROS_MASTER_URI="http://$ip_master:11311"
+export ROS_HOSTNAME=$ip_node
+ip_master="$(</home/mvibot/catkin_ws/src/mvibot/config/ip_master)"
+ip_node="$(</home/mvibot/catkin_ws/src/mvibot/config/ip_node)"
+#
+if [[ "$robot_type_connect" = "hots_pot" ]]
+then
+	 echo hotspot mode 
+   sudo nmcli connection delete mvibot_hotspot 
+   sudo nmcli connection add type wifi ifname $wifi_port con-name mvibot_hotspot  ssid "$name_seri-hostpot"
+   sudo nmcli connection modify mvibot_hotspot  802-11-wireless.mode ap 802-11-wireless.band bg ipv4.method shared
+   sudo nmcli connection modify mvibot_hotspot wifi-sec.key-mgmt wpa-psk
+   sudo nmcli connection modify mvibot_hotspot wifi-sec.psk "$name_seri@"
+   sudo nmcli connection up mvibot_hotspot
+else
+	 echo wireless mode
+   sudo nmcli connection delete mvibot_cardwifi
+   sudo nmcli connection add ifname $wifi_port con-name mvibot_cardwifi type wifi ssid $wifi_ssid 
+   if [[ "$wifi_password" = "" ]]
+   then
+        echo wifi with security so not need modify security
+   else
+        sudo nmcli connection modify mvibot_cardwifi 802-11-wireless-security.key-mgmt WPA-PSK 802-11-wireless-security.psk $wifi_password
+   fi
+   if [[ "$robot_type_connect" = "wifi" ]]
+   then
+        echo robot use card wifi to run ros ...
+        port_use_ros=$wifi_port
+        sudo nmcli connection modify mvibot_cardwifi autoconnect yes
+        sudo nmcli connection modify mvibot_cardwifi ipv4.method manual ipv4.addresses $ip_node/24
+        sudo nmcli connection modify mvibot_cardwifi ipv4.gateway $ipv4_gateway ipv4.dns "$ipv4_dns"
+        sudo nmcli connection up mvibot_cardwifi
+   else
+        echo robot  not use card wifi to run ros ... so connect wifi normal
+        sudo nmcli connection up mvibot_cardwifi
+   fi
+fi
+# lan control
+lan_port="$(</home/mvibot/catkin_ws/src/mvibot/config/lan_port)"
+sudo nmcli connection delete mvibot_network
+sudo nmcli connection add ifname $lan_port con-name mvibot_network type ethernet 
+if [[ "$robot_type_connect" = "lan" ]]
+then
+    echo robot use lan port to run ros ...
+    port_use_ros=$lan_port
+    sudo nmcli connection modify  mvibot_network ipv4.method manual ipv4.addresses $ip_node/24
+    sudo nmcli connection modify  mvibot_network ipv4.gateway $ipv4_gateway ipv4.dns "$ipv4_dns"
+    sudo nmcli connection up mvibot_network
+else
+    echo robot  not use lan port to run ros ... so connect ethernet normal
+    sudo nmcli connection up mvibot_network
+fi
+# check ip robot 
+ip_now=""
+echo "check robot connect to" $ip_node $ip_now ...
+while [[ "$ip_now" != "$ip_node" ]]
+do
+	echo connecting....
+  sleep 1
+  ip_now="$(ip -4 addr show $port_use_ros | grep -oP '(?<=inet\s)\d+(\.\d+){3}')"
+	if [[ "$ip_now" = "$ip_node" ]]; then
+    echo "connected"
+		break
+	else
+    echo "reconnect..."
+		sleep 1
+		if [[ "$robot_type_connect" = "wifi" ]]
+    then
+        sudo nmcli connection up mvibot_cardwifi
+    elif [[ "$robot_type_connect" = "lan" ]]
+    then
+        sudo nmcli connection up mvibot_network
+    elif [[ "$robot_type_connect" = "hots_pot" ]]
+    then
+        sudo nmcli connection up mvibot_hotspot
+    fi
+	fi
+done
+# check if this robot is master
+echo  $ip_node
+echo  $ip_master
+######################################
+ip_node=127.0.0.1
+ip_master=127.0.0.1
+if [[ "$ip_master" = "$ip_node" ]]
+then
+  echo "This robot is master"
+  # run web interface
+  #cd /home/mvibot/interface_mvibot_v2/ && php artisan serve --host $ip_node:8000 &
+  # run ros
+  roscore &
+  # run ros web socket
+  #roslaunch mvibot websock.launch  --wait  &
+  #rosrun mvibot mvibot_serverv2 & 
+  if [[ "$mode" = "navigation" ]]
+  then  
+	  echo "mode is navigation so run map select...."
+	  #map_name="$(</home/mvibot/catkin_ws/src/mvibot/config/map)"
+	  #map_path="/home/mvibot/interface_mvibot_v2/maps/$map_name.yaml"
+	  #roslaunch mvibot mvibot_mapserver.launch map_file:="$map_path" --wait & 
+	  #rosrun mvibot mvibot_serverv2 & 
+  else
+	  echo "mode is mapping so skip "
+  fi
+  roslaunch mvibot mvibot_firmware.launch mode:="$mode" serial_camera1:="$serial_camera1" serial_camera2:="$serial_camera2" name_seri:="$name_seri" --wait &
+else
+  echo "This robot is node"
+  # run ros
+  roslaunch mvibot mvibot_firmware.launch mode:="$mode" serial_camera1:="$serial_camera1" serial_camera2:="$serial_camera2" name_seri:="$name_seri" --wait &
+fi
+#
+a=0
+ip_master="$(</home/mvibot/catkin_ws/src/mvibot/config/ip_master)"
+ip_node="$(</home/mvibot/catkin_ws/src/mvibot/config/ip_node)"
+while :
+do
+  echo "An Infinite loop"
+  echo now=$ip_now 
+  echo node=$ip_node
+  # We can press Ctrl + C to exit the script
+  sleep 1
+  ip_now="$(ip -4 addr show $port_use_ros | grep -oP '(?<=inet\s)\d+(\.\d+){3}')"
+  if [[ "$ip_now" = "$ip_node" ]]
+  then  
+          echo "Connected"
+          a=0
+  else
+    a=$((a+1))
+    echo "time... $a"
+    if [[ "$a" -ge 10 ]]
+    then
+    	    a=0
+	    echo "reconnect..."
+	    if [[ "$robot_type_connect" = "wifi" ]]
+	    then
+		echo 1
+		sudo nmcli connection up mvibot_cardwifi
+	    elif [[ "$robot_type_connect" = "lan" ]]
+	    then
+		echo 1
+		sudo nmcli connection up mvibot_network
+	    elif [[ "$robot_type_connect" = "hots_pot" ]]
+	    then
+		echo 1
+		sudo nmcli connection up mvibot_hotspot
+	    fi
+    fi
+  fi
+done
+exit 0
