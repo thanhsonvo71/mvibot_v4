@@ -1,0 +1,52 @@
+<launch>
+    <arg name="mvibot_seri" default=""/>
+    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan1"  respawn="true">
+      <remap from="cloud_in" to="/$(arg mvibot_seri)/camera1/camera/depth/color/points"/>
+      <remap from="scan" to="/$(arg mvibot_seri)/camera1/scan" />
+      <rosparam subst_value="True">
+        target_frame: $(arg mvibot_seri)/base_link
+        transform_tolerance: 0.01
+        min_height: 0.05
+        max_height: 2.0
+        
+        angle_min: -3.1400001049
+        angle_max: 3.1400001049
+        angle_increment: 0.0174532923847
+        scan_time: 0.3333
+        range_min: 0.0
+        range_max: 3.0
+        use_inf: true
+        
+        #concurrency_level affects number of pc queued for processing and the number of threadsused
+        # 0: Detect number of cores
+        # 1: Single threaded
+        # 2: inf : Parallelism level
+        concurrency_level: 1
+      </rosparam>
+    </node>
+      <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan2"  respawn="true">
+      <remap from="cloud_in" to="/$(arg mvibot_seri)/camera2/camera/depth/color/points"/>
+      <remap from="scan" to="/$(arg mvibot_seri)/camera2/scan" />
+      <rosparam subst_value="True">
+        target_frame: $(arg mvibot_seri)/base_link
+        transform_tolerance: 0.01
+        min_height: 0.05
+        max_height: 2.0
+
+        angle_min: -3.1400001049
+        angle_max: 3.1400001049
+        angle_increment: 0.0174532923847
+        scan_time: 0.3333
+        range_min: 0.0
+        range_max: 3.0
+        use_inf: true
+
+        #concurrency_level affects number of pc queued for processing and the number of threadsused
+        # 0: Detect number of cores
+        # 1: Single threaded
+        # 2: inf : Parallelism level
+        concurrency_level: 1
+
+      </rosparam>
+    </node>
+</launch>

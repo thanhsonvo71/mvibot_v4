@@ -1,0 +1,28 @@
+<launch>
+    <arg name="mvibot_seri" default=""/>  
+    <arg name="serial_no1"             default="143322071201"/>
+    
+    <arg name="json_file_path"         default=""/>
+    <arg name="camera1"                default="camera1"/>            
+    <group ns="$(arg camera1)">
+        <include file="$(find realsense2_camera)/launch/rs_camera.launch">    
+        	
+		<arg name="respawn" value="true"/>   
+		<arg name="serial_no"         value="$(arg serial_no1)"/>
+		<arg name="json_file_path"    value="$(arg json_file_path)"/>
+
+		<arg name="depth_width"       value="424"/>
+		<arg name="depth_height"      value="240"/>
+		<arg name="depth_fps"         value="15"/>
+		
+		<arg name="color_width"       value="424"/>
+		<arg name="color_height"      value="240"/>
+		<arg name="color_fps"         value="15"/>
+
+		<arg name="filters"           value="pointcloud"/>
+		<arg name="tf_prefix"         value="$(arg mvibot_seri)_camera1"/>
+		<arg name="initial_reset"     value="true"/>
+		<arg name="clip_distance"     value="5.0"/>
+	</include>
+    </group>
+</launch>

@@ -1,0 +1,15 @@
+<launch>
+	  <arg name="mvibot_seri" default=""/>
+	  <arg name="axa" default="1.0"/>
+	  <arg name="awa" default="1.0"/>
+	  <arg name="mode" default=""/>
+	  <node name="mvibot_core"  pkg="mvibot"  type="mvibot_corev2"  respawn="true">
+	  		<param name="mvibot_seri" value="$(arg mvibot_seri)"/>  
+			<param name="mode" value="$(arg mode)"/>
+			<param name="ax" value="$(arg axa)"/>
+			<param name="aw" value="$(arg awa)"/>
+	  </node>
+	  <node name="mvibot_config"  pkg="mvibot"  type="mvibot_config"  respawn="true">
+                        <param name="mvibot_seri" value="$(arg mvibot_seri)"/>
+          </node>
+</launch>

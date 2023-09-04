@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="tf2_web_republisher" type="tf2_web_republisher" name="tf2_web_republisher" output="screen">
+	<param  name="publish_frequency" value="5" />
+	<param  name="advertise_transforms" value="false" />
+  </node>
+</launch>

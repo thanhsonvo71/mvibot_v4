@@ -1,0 +1,17 @@
+<launch>
+		<arg name="mvibot_seri" default=""/>
+		<node pkg="mbf_costmap_nav" type="mbf_costmap_nav" respawn="true" name="move_base_flex" output="screen" clear_params="true"> 
+			    <remap from="map" to="/map" />
+			    <remap from="odom" to="/$(arg mvibot_seri)/odometry/filtered" />
+			    <remap from="move_base_simple/goal" to="move_base_simple/goal" />
+			    <remap from="cmd_vel" to="/$(arg mvibot_seri)/cmd_vel" />
+
+			    <rosparam subst_value="True" file="$(find mvibot)/param/costmap_common_params_mvibot.yaml" command="load" ns="global_costmap" />
+			    <rosparam subst_value="True" file="$(find mvibot)/param/costmap_common_params_mvibot.yaml" command="load" ns="local_costmap" />
+			    <rosparam subst_value="True" file="$(find mvibot)/param/local_costmap_params.yaml" command="load" />
+			    <rosparam subst_value="True" file="$(find mvibot)/param/global_costmap_params.yaml" command="load" />
+			    <rosparam subst_value="True" file="$(find mvibot)/param/move_base_params.yaml" command="load" />
+			    <rosparam subst_value="True" file="$(find mvibot)/param/dwa_local_planner_params_mvibot.yaml" command="load" />
+			    <rosparam subst_value="True" file="$(find mvibot)/param/dwb_local_planner_params_mvibot.yaml" command="load" />	
+		</node>				
+</launch>	

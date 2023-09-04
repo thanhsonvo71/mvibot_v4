@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="mvibot">
+<xacro:property name="width" value="0.69" />
+<xacro:property name="lenght" value="0.813" />
+<xacro:property name="height" value="0.3845" />
+<xacro:property name="R" value="0.07" />
+<xacro:property name="L" value="0.485" />
+<xacro:arg name="mvibot_seri" default="MB22_916b"/>
+  <!--color robot ########################-->
+  <material name="gray">
+    <color rgba="${200/255} ${200/255} ${200/255} 1.0"/>
+  </material>
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+  <material name="white1">
+    <color rgba="0 1 0 1"/>
+  </material>
+
+<!--link robot ########################-->
+  <link name="$(arg mvibot_seri)/base_footprint" >
+    </link>
+
+  <link name="$(arg mvibot_seri)/base_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 ${height/2}" />
+      <geometry>
+          <!-- <mesh filename="file:///home/hitech/catkin_ws/src/rosmvibot/param/ABC7.stl" scale="0.001 0.001 0.001" /> -->
+          <!-- <mesh filename="ABC7.stl" scale="0.001 0.001 0.001" /> -->
+          <mesh filename="file:///home/mvibot/catkin_ws/src/mvibot/mesh/mvibot.stl" scale="1 1 1"/>
+      </geometry>
+      <material name="gray"/>
+    </visual>
+  </link>
+  <!--base_link #########################-->
+  <joint name="$(arg mvibot_seri)/base_link" type="fixed">
+        <origin rpy="0 0 0" xyz="0 0.0 ${R}"/>
+        <parent link="$(arg mvibot_seri)/base_footprint"/>
+        <child link="$(arg mvibot_seri)/base_link"/>
+    </joint>
+  
+  <!--base_wheel_left#########################-->
+  <link name="$(arg mvibot_seri)/base_wheel_left">
+  </link>
+  
+  
+  <joint name="base_wheel_left" type="fixed">     <!--type: loai khop, fixed: co dinh-->
+     <origin rpy="${-pi/2} 0 0" xyz="0 ${L/2} 0"/>
+     <parent link="$(arg mvibot_seri)/base_link"/>
+     <child link="$(arg mvibot_seri)/base_wheel_left"/>
+  </joint>
+     
+  <!--base_wheel_right #########################-->
+  <link name="$(arg mvibot_seri)/base_wheel_right">
+  </link>
+  
+  <joint name="base_wheel_right" type="fixed">     <!--type: loai khop, fixed: co dinh-->
+     <origin rpy="${pi/2} 0 0" xyz="0 ${-L/2} 0"/>
+     <parent link="$(arg mvibot_seri)/base_link"/>
+     <child link="$(arg mvibot_seri)/base_wheel_right"/>
+  </joint>
+  
+  <!--base_lidar_2 #########################-->
+  <link name="$(arg mvibot_seri)/base_lidar_2">
+  </link>
+  
+  <joint name="base_lidar_2" type="fixed">     <!--type: loai khop, fixed: co dinh-->
+     <origin rpy="0 0 ${pi/2}" xyz="-0.3545 -0.2895 ${0.1 - R/2}"/>
+     <parent link="$(arg mvibot_seri)/base_link"/>
+     <child link="$(arg mvibot_seri)/base_lidar_2"/>
+  </joint>
+  
+  
+    <!--base_lidar_1 #########################-->
+  <link name="$(arg mvibot_seri)/base_lidar_1">
+        
+  </link>
+  
+  <joint name="base_lidar_1" type="fixed">     <!--type: loai khop, fixed: co dinh-->
+     <origin rpy="0 0 ${-pi/2}" xyz="0.3545 0.2895 ${0.1 - R/2}"/>
+     <parent link="$(arg mvibot_seri)/base_link"/>
+     <child link="$(arg mvibot_seri)/base_lidar_1"/>
+  </joint>
+
+  <!--MB22_916b/base_camera 1 update to 2-->
+    <joint name="MB22_916b_camera2_link" type="fixed">
+        <origin rpy="${-pi/2} 0 ${-pi/9}" xyz="${lenght/2-0.00322} 0.036365 ${0.215-R/2}"/>
+        <parent link="$(arg mvibot_seri)/base_link"/>
+        <child link="$(arg mvibot_seri)_camera2_link"/>
+    </joint>
+    <link name="$(arg mvibot_seri)_camera2_link">
+    </link>
+    <!--MB22_916b/base_camera 2 update to 1-->
+    <joint name="$(arg mvibot_seri)_camera1_link" type="fixed">
+        <origin rpy="${-pi/2} 0 ${pi/9}" xyz="${lenght/2-0.00322} -0.036365 ${0.215-R/2}"/>
+        <parent link="$(arg mvibot_seri)/base_link"/>
+        <child link="$(arg mvibot_seri)_camera1_link"/>
+    </joint>
+    <link name="$(arg mvibot_seri)_camera1_link">
+    </link>
+
+</robot>

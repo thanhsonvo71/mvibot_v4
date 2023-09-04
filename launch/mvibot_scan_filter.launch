@@ -1,0 +1,28 @@
+<launch>
+	  <arg name="mvibot_seri" default=""/>
+	    <node pkg="laser_filters" type="scan_to_scan_filter_chain" name="laser_filter1" respawn="true">
+			<rosparam subst_value="True" command="load" file="$(find mvibot)/param/my_laser_config.yaml" />
+			<remap from="scan" to="/$(arg mvibot_seri)/laser/scanf" />
+			<remap from="scan_filtered" to="/$(arg mvibot_seri)/laser/scan"/> 
+  		</node>
+		<node pkg="laser_filters" type="scan_to_scan_filter_chain" name="laser_filter2" respawn="true">
+			<rosparam subst_value="True" command="load" file="$(find mvibot)/param/my_laser_config1.yaml" />
+			<remap from="scan" to="/$(arg mvibot_seri)/camera/scanf" />
+			<remap from="scan_filtered" to="/$(arg mvibot_seri)/camera/scan"/>
+		</node>
+		
+		<node pkg="laser_filters" type="scan_to_scan_filter_chain" name="laser_filter3" respawn="true">
+				<rosparam subst_value="True" command="load" file="$(find mvibot)/param/my_laser_config3.yaml" />
+				<remap from="scan" to="/$(arg mvibot_seri)/camera/scan" />
+				<remap from="scan_filtered" to="/$(arg mvibot_seri)/camera/scan_m5"/>
+		</node>
+
+		<node pkg="laser_filters" type="scan_to_scan_filter_chain" name="laser_filter4" respawn="true">
+				<rosparam subst_value="True" command="load" file="$(find mvibot)/param/my_laser_config2.yaml" />
+				<remap from="scan" to="/$(arg mvibot_seri)/laser/scan" />
+				<remap from="scan_filtered" to="/$(arg mvibot_seri)/laser/scan_m5"/>
+		</node>
+
+
+</launch>
+

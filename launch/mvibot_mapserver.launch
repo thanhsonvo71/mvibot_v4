@@ -1,0 +1,7 @@
+<launch>
+
+  <arg name="map_file" default=""/>
+  <!-- Run the map server -->
+  <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+  <!--<node name="mvibot_server" pkg="mvibot" type="mvibot_serverv2" respawn="true"/>  --> 
+</launch>

@@ -1,0 +1,50 @@
+
+<launch>
+	<arg name="mvibot_seri" default=""/>
+	<node pkg="ira_laser_tools" name="laserscan_multi_merge1" type="laserscan_multi_merger" output="screen"  respawn="true">
+		<param name="destination_frame" value="$(arg mvibot_seri)/base_link"/>
+		<param name="scan_destination_topic" value="/$(arg mvibot_seri)/laser/scanf"/>
+		<param name="laserscan_topics" value ="/$(arg mvibot_seri)/laser/scan1 /$(arg mvibot_seri)/laser/scan2" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
+		<param name="angle_min" value="-3.1415927410125732"/>
+		<param name="angle_max" value="3.1415927410125732"/>
+		<param name="angle_increment" value="0.005454154219478369"/>
+		<param name="scan_time" value="0.07355789840221405"/>
+		<param name="range_min" value="0.0"/>
+		<param name="range_max" value="16.0"/>
+	</node>
+        <node pkg="ira_laser_tools" name="laserscan_multi_merger2" type="laserscan_multi_merger" output="screen"  respawn="true">
+                <param name="destination_frame" value="$(arg mvibot_seri)/base_link"/>
+                <param name="scan_destination_topic" value="/$(arg mvibot_seri)/camera/scanf"/>
+                <param name="laserscan_topics" value ="/$(arg mvibot_seri)/camera1/scan /$(arg mvibot_seri)/camera2/scan" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
+                <param name="angle_min" value="-0.58"/>
+                <param name="angle_max" value="0.58"/>
+                <param name="angle_increment" value="0.01745329251"/>
+                <param name="scan_time" value="0.0333333"/>
+                <param name="range_min" value="0.0"/>
+                <param name="range_max" value="5.0"/>
+        </node>
+
+	<node pkg="ira_laser_tools" name="laserscan_multi_merger3" type="laserscan_multi_merger" output="screen"  respawn="true">
+                <param name="destination_frame" value="$(arg mvibot_seri)/base_link"/>
+                <param name="scan_destination_topic" value="/$(arg mvibot_seri)/laser/base_link/scan1"/>
+                <param name="laserscan_topics" value ="/$(arg mvibot_seri)/laser/scan1" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
+                <param name="angle_min" value="-3.1415927410125732"/>
+                <param name="angle_max" value="3.1415927410125732"/>
+                <param name="angle_increment" value="0.005454154219478369"/>
+                <param name="scan_time" value="0.0333333"/>
+                <param name="range_min" value="0.0"/>
+                <param name="range_max" value="5.0"/>
+        </node>
+
+	<node pkg="ira_laser_tools" name="laserscan_multi_merger4" type="laserscan_multi_merger" output="screen"  respawn="true">
+                <param name="destination_frame" value="$(arg mvibot_seri)/base_link"/>
+                <param name="scan_destination_topic" value="/$(arg mvibot_seri)/laser/base_link/scan2"/>
+                <param name="laserscan_topics" value ="/$(arg mvibot_seri)/laser/scan2" /> <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
+                <param name="angle_min" value="-3.1415927410125732"/>
+                <param name="angle_max" value="3.1415927410125732"/>
+                <param name="angle_increment" value="0.005454154219478369"/>
+                <param name="scan_time" value="0.0333333"/>
+                <param name="range_min" value="0.0"/>
+                <param name="range_max" value="5.0"/>
+        </node>
+</launch>

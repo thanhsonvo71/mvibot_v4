@@ -1,0 +1,8 @@
+<launch>
+      <arg name="mvibot_seri" default=""/>
+	  <node pkg="imu_transformer" type="imu_transformer_node" name="imu_data_transformer" output="screen">
+			<remap from="imu_in/data" to="/$(arg mvibot_seri)/imu"/>
+			<remap from="imu_out/data" to="/$(arg mvibot_seri)/imu_baselink"/>
+    		<param name="target_frame" value="$(arg mvibot_seri)/base_link"/>
+  	  </node>
+</launch>

@@ -1,0 +1,19 @@
+scan_filter_chain:
+- name: speckle_filter
+  type: laser_filters/LaserScanSpeckleFilter
+  params:
+    filter_type: 0
+    max_range: 1.0
+    max_range_difference: 0.1
+    filter_window: 1
+- name: box
+  type: laser_filters/LaserScanBoxFilter
+  params:
+    box_frame: $(arg mvibot_seri)/base_footprint
+    min_x: -0.3
+    max_x: 0.3
+    min_y: -0.345
+    max_y: 0.345
+    min_z: -1.0
+    max_z: 1.0
+

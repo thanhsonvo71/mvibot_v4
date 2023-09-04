@@ -1,0 +1,43 @@
+global_costmap:
+  global_frame: map
+  robot_base_frame: $(arg mvibot_seri)/base_footprint
+
+  update_frequency: 2.0
+  publish_frequency: 1.0
+  transform_tolerance: 0.5
+
+  static_map: true
+
+  track_unknown_space: true
+  obstacle_range: 3.5
+  raytrace_range: 8.0
+  plugins:
+    - {name: static_map2,       type: "costmap_2d::StaticLayer"}
+    - {name: static_map,        type: "costmap_2d::StaticLayer"}
+    - {name: obstacles1,       type: "costmap_2d::ObstacleLayer"}
+    - {name: obstacles2,       type: "costmap_2d::ObstacleLayer"}
+    - {name: obstacles3,       type: "costmap_2d::ObstacleLayer"}
+    - {name: inflation_layer,  type: "costmap_2d::InflationLayer"}
+#    - {name: static_map2,      type: "costmap_2d::StaticLayer"}
+  static_map:
+     map_topic: /map
+     use_maximum: true
+     trinary_costmap: false
+  
+ static_map2:
+     map_topic: /map2
+     trinary_costmap: false
+     use_maximum: true
+  obstacles1:
+     observation_sources: scan
+     scan: {sensor_frame:  $(arg mvibot_seri)/base_link, data_type: LaserScan, topic: /$(arg mvibot_seri)/laser/scan_m5, marking: true, clearing: true}
+  obstacles2:
+     observation_sources: scan
+     scan: {sensor_frame:  $(arg mvibot_seri)/base_link, data_type: LaserScan, topic: /$(arg mvibot_seri)/camera/scan_m5, marking: true, clearing: true}
+  obstacles3:
+     observation_sources: scan
+     scan: {sensor_frame: $(arg mvibot_seri)/base_hook, data_type: LaserScan, topic: /$(arg mvibot_seri)/hook_laser, marking: true, clearing: true}
+  inflation_layer:
+     inflation_radius: 1.2
+     cost_scaling_factor: 1.0
+
