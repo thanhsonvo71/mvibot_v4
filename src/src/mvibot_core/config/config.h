@@ -2,6 +2,7 @@
 #include"../../common/libary/libary_ros.h"
 #include"../../common/hardware/hardware.h"
 #include"../../common/stof/stof.h"
+#include"../../common/exec/exec.h"
 #include"../mvibot_core_init.h"
 using namespace std;
 std::string load_file(string name_file){
@@ -74,6 +75,7 @@ void pub_robot_config(){
 }
 void robot_load_config(){
         static string config;
+        static string my_port;
         //
         robot_config_string=mvibot_seri+"|";
         // robot config 
@@ -89,7 +91,7 @@ void robot_load_config(){
         if(config!="-1") gear=stof_f(config);
         if(config!="-1") robot_config_string+="robot_gear:"+config+"|";
         //
-            config=load_file("robot_ax");
+        config=load_file("robot_ax");
         if(config!="-1") ax=stof_f(config);
         if(config!="-1") robot_config_string+="robot_ax:"+config+"|";
         //
@@ -113,7 +115,11 @@ void robot_load_config(){
         if(config!="-1") robot_config_string+="robot_low_battery:"+config+"|";
         //
         config=load_file("robot_type_connect");
-        if(config!="-1") robot_config_string+="robot_type_connect:"+config+"|";
+        if(config!="-1") {
+            robot_config_string+="robot_type_connect:"+config+"|";
+            if(config=="lan") my_port=load_file("lan_port");
+            if(config=="wifi") my_port=load_file("wifi_port");
+        }
         // camera seri config
         config=load_file("serial_camera1");
         if(config!="-1") robot_config_string+="serial_camera1:"+config+"|";
@@ -152,7 +158,13 @@ void robot_load_config(){
         config=load_file("is_master");
         if(config!="-1") robot_config_string+="is_master:"+config+"|";  
         //
+        config="ip -4 addr show "+my_port+" | grep -oP '(?<=inet\\s)\\d+(\\.\\d+){3}')";
+        config=exec(config.c_str());
+        config.erase(std::remove(config.begin(), config.end(), '\n'), config.cend());
+        robot_config_string+="ip_node:"+config;//+"|"; 
+        /*
         config=load_file("ip_node");
         if(config!="-1") robot_config_string+="ip_node:"+config;//+"|";  
-        //
+        //*/
+        
 }
