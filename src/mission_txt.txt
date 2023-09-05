@@ -301,3 +301,32 @@ else_step
     (name:reset_all|time_out:-1|mode:gpio|data:~out_reset=0,1,2,3~~not_set_out=0~)
 }
 @
+
+
+
+
+rostopic pub /IB07_916b/mission_normal std_msgs/String "data: '
+&/name_mission>mission1//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_pullup=2~)/
+*
+{
+    (name:set_all|time_out:-1|mode:gpio|data:~out_set=0,1,2,3~~not_set_out=0~)
+    (name:sleep|time_out:-1|mode:sleep|data:~time_sleep=1.0~)   
+    (name:reset_all|time_out:-1|mode:gpio|data:~out_reset=0,1,2,3~~not_set_out=0~)
+}
+@
+&/name_mission>mission2//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_pullup=0~)/
+*
+{
+    (name:set_all|time_out:-1|mode:gpio|data:~out_set=0,1,2,3~~not_set_out=0~)
+}
+@
+&/name_mission>mission3//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_pullup=1~)/
+*
+{
+    (name:reset_all|time_out:-1|mode:gpio|data:~out_reset=0,1,2,3~~not_set_out=0~)
+}
+@
+'"

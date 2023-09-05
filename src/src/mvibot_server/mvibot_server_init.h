@@ -102,19 +102,27 @@ using namespace sql;
     // moudle gpio v2
     class node{
         public:
+            std::string mission_normal;
             std::string output_user_set_string;
             std::string output_user_status_string;
             std::string input_user_status_string;
             std::string name_node;
-            ros::NodeHandle n;
-            ros::Subscriber sub;
+            //
+            ros::NodeHandle n,n2;
+            ros::Subscriber sub,sub2;
             void output_user_set(const std_msgs::String & msg){
                 // cout<<msg.data<<endl;
                 // cout<<name_node<<endl;
                 output_user_set_string=name_node+"||"+msg.data;
             }
+            void mission_normalf(const std_msgs::String & msg){
+                if(msg.data=="") mission_normal="RESET";
+                else mission_normal=msg.data;
+                //cout<<mission_normal<<endl;
+            }
             void init(){
                 sub = n.subscribe("/"+name_node+"/output_user_set", 1,&node::output_user_set,this);
+                sub2 = n.subscribe("/"+name_node+"/mission_normal", 1,&node::mission_normalf,this);
             }
     };
     class module_gpio_v2_information{

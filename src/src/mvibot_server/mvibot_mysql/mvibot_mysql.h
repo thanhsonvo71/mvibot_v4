@@ -173,6 +173,7 @@ void table_init(){
     my_module_gpio_v2.add_colume("output_status_string","varchar(255)");
     my_module_gpio_v2.add_colume("output_user_set_string","varchar(255)");
     my_module_gpio_v2.add_colume("mission_normal","TEXT");
+    my_module_gpio_v2.add_colume("mission_normal_backup","TEXT");
     my_module_gpio_v2.add_colume("battery","varchar(255)");
     my_module_gpio_v2.add_colume("output_user_set_string_fesp","varchar(255)");
     my_module_gpio_v2.init_table();
@@ -234,7 +235,7 @@ void database_process(){
             }
             my_robots[i].update_database=1;
         }else{
-            my_robots[i].time_out+=ts_my_robots;
+            my_robots[i].time_out=my_robots[i].time_out+(float)ts_my_robots;
             if(my_robots[i].time_out>=10) my_robots[i].time_out=10.0;
             cout<<my_robots[i].name_seri<<"|"<<my_robots[i].time_out<<endl;
             //

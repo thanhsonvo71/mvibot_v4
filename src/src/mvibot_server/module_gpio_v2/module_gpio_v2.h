@@ -60,7 +60,7 @@ void update_module_gpio_v2(){
         try{
             pub_input_user_status_string(my_module_gpio_v2s[i].my_node->input_user_status_string);
             pub_output_user_status_string(my_module_gpio_v2s[i].my_node->output_user_status_string);
-            //
+            // update msg set gpio
             if(my_module_gpio_v2s[i].my_node->output_user_set_string!=""){
                 static string cmd;
                 cmd="UPDATE my_module_gpio_v2 set output_user_set_string='"+my_module_gpio_v2s[i].my_node->output_user_set_string+"'";
@@ -68,7 +68,20 @@ void update_module_gpio_v2(){
                 stmt->execute(cmd);
                 my_module_gpio_v2s[i].my_node->output_user_set_string="";
             }
-            //
+            // update msg mission_normal
+            if(my_module_gpio_v2s[i].my_node->mission_normal!=""){
+                static string cmd;
+                // update mission normal
+                cmd="UPDATE my_module_gpio_v2 set mission_normal='"+my_module_gpio_v2s[i].my_node->mission_normal+"'";
+                cmd=cmd+" where name_seri='"+my_module_gpio_v2s[i].my_node->name_node+"'";
+                stmt->execute(cmd);
+                // update mission normal backup
+                cmd="UPDATE my_module_gpio_v2 set mission_normal_backup='"+my_module_gpio_v2s[i].my_node->mission_normal+"'";
+                cmd=cmd+" where name_seri='"+my_module_gpio_v2s[i].my_node->name_node+"'";
+                stmt->execute(cmd);
+                //
+                my_module_gpio_v2s[i].my_node->mission_normal="";
+            }
 
         }catch (sql::SQLException &e) {
             cout << "# ERR: " << e.what();
