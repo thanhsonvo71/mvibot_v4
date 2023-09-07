@@ -127,7 +127,6 @@ void set_led(){
              else {
                 if(action_mode_mission==Mission_normal_) pub_led(100,60,0,1,1,1,1);
                 else pub_led(0,100,100,1,1,1,1);
-		//pub_led(100,60,0,2,2,2,1);
              }
         }
     }
