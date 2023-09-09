@@ -330,3 +330,17 @@ rostopic pub /IB07_916b/mission_normal std_msgs/String "data: '
 }
 @
 '"
+
+
+
+&/name_mission>Module_GPIO_IN0//id_mission>2/
+/data_configuration>(name:wakeup|time_out:-1|mode:gpio|data:~in_on=0~)/
+*
+{normal#normal_step{
+    {
+        (name:out0_set|time_out:-1|mode:gpio|data:~out_set=0~)
+        (name:wait_in0_off|time_out:-1|mode:gpio|data:~in_off=0~)
+    }
+    }
+}
+@
