@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-09-09T12:01:34.828Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" etag="ksFEO6aBjIAFtuAvbfr6" version="21.5.0" type="device" pages="2">
+<mxfile host="app.diagrams.net" modified="2023-09-09T12:07:56.828Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" etag="CNpJdZx1nBX-2jJHtmfA" version="21.5.0" type="device" pages="2">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Position Define">
     <mxGraphModel dx="1362" dy="803" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
@@ -136,7 +136,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="iNyCEpVz17pNf7lKZjKi" name="Position action flow chart">
-    <mxGraphModel dx="1703" dy="1004" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="1602" dy="945" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -527,6 +527,9 @@
         </mxCell>
         <mxCell id="sRHCgQ6Ub0x1ko7PjDaY-72" value="&lt;div style=&quot;font-family: &amp;quot;Droid Sans Mono&amp;quot;, &amp;quot;monospace&amp;quot;, monospace; line-height: 19px; font-size: 9px;&quot;&gt;&lt;div style=&quot;&quot;&gt;#define Error_   3&lt;/div&gt;&lt;div style=&quot;&quot;&gt;#define Active_  1&lt;/div&gt;&lt;div style=&quot;&quot;&gt;#define Cancel_  4&lt;/div&gt;&lt;div style=&quot;&quot;&gt;#define Finish_  2&lt;/div&gt;&lt;div style=&quot;&quot;&gt;#define N_A_     0  &lt;/div&gt;&lt;div style=&quot;&quot;&gt;#define Skip_    5&lt;/div&gt;&lt;div style=&quot;&quot;&gt;#define True_    6&lt;/div&gt;&lt;div style=&quot;&quot;&gt;#define False_   7&lt;/div&gt;&lt;div style=&quot;&quot;&gt;#define Wake_up_ 8&lt;/div&gt;&lt;div style=&quot;&quot;&gt;#define Stop_    9&lt;/div&gt;&lt;div style=&quot;&quot;&gt;#define Break_   10&lt;/div&gt;&lt;div style=&quot;&quot;&gt;#define is_robot 1&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="29" y="5" width="120" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="sRHCgQ6Ub0x1ko7PjDaY-73" value="when operating, call&amp;nbsp; function &quot;int acition(int action)&quot; to operating. Created loop&amp;nbsp; and set&amp;nbsp; timer to call action. If step finish -&amp;gt; return Finish" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="5" y="790" width="620" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
