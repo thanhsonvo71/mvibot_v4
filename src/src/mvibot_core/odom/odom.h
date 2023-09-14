@@ -1,7 +1,17 @@
 #include"../../common/libary/libary_basic.h"
 #include"../../common/libary/libary_ros.h"
-#include"../mvibot_core_init.h"
 using namespace std;
+//
+extern string mvibot_seri;
+extern nav_msgs::Odometry odom_wheel;
+extern sensor_msgs::Imu imu_msg;
+extern float x_wheel,y_wheel,theta_wheel;
+extern float vx_wheel,vy_wheel,vth_wheel;
+extern float distance_robot;
+extern float distance_wheel_right;
+extern float distance_wheel_left;
+extern float R,L,vr,vl;
+extern  int mvibot_sensor_ready;
 //
 void pub_imu(){
     static ros::NodeHandle n;

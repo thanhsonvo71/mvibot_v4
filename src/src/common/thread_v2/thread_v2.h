@@ -87,7 +87,7 @@ pthread_mutex_t my_thread::process_mutex_thread[256]=PTHREAD_RECURSIVE_MUTEX_INI
 void lock(){
 	pthread_mutex_lock(&my_thread::process_mutex_task);
 }
-void unclok(){
+void unlock(){
 	pthread_mutex_unlock(&my_thread::process_mutex_task);
 }
 string get_time(){
@@ -97,3 +97,4 @@ string get_time(){
 	string_return=to_string((long double)realtime.tv_sec+(long double)realtime.tv_nsec*1e-9);
 	return string_return;
 }
+//

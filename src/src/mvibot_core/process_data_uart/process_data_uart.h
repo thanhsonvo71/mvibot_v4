@@ -1,7 +1,46 @@
 #include"../../common/libary/libary_basic.h"
-#include"../mvibot_core_init.h"
 #include "../../common/data_uart/data_uart.h"
 using namespace std;
+//
+extern std::vector<uint8_t> data_receive;
+extern std::vector<uint8_t> data_tran;
+// battery 
+extern float battery_soc;
+extern float battery_vol;
+extern float battery_cycle;
+extern float battery_mah_now;
+extern float battery_mah_max;
+extern float battery_guard;
+extern float battery_temperature;
+extern float battery_num_cell;
+extern float battery_current;
+extern float battery_cell[8];
+extern int battery1_charge;
+// small battery
+extern float battery_small_soc;
+extern float battery_small_vol;
+extern float low_battery_small;
+extern float battery_small_temperature;
+extern float battery_small_current;
+extern float battery_small_mah_now;
+extern float battery_small_mah_max;
+extern float battery_small_num_cell;
+extern int battery2_charge;
+//gpio
+extern std_msgs::Float32MultiArray input_user;
+extern std_msgs::Float32MultiArray output_user;
+// led & color
+extern float green,red,blue;
+extern float led_r,led_l,led_f,led_b;
+// hook
+extern float encoder,encoder2;
+extern float encoder_offset;
+extern float encoder_dir;
+extern float d_hook;
+extern int hook_switch;
+// robot cmd
+extern float robot_shutdown;
+//
 void process_data_uart_read(){
     if(data_receive.size()==num_byte_stm_pc){
         // read status live motor

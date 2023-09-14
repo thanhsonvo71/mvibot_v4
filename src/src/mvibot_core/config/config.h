@@ -3,8 +3,12 @@
 #include"../../common/hardware/hardware.h"
 #include"../../common/stof/stof.h"
 #include"../../common/exec/exec.h"
-#include"../mvibot_core_init.h"
 using namespace std;
+//
+extern string robot_config_string;
+extern string mvibot_seri;
+extern float R,L,ax,aw,gear,v_max,w_max,volume;
+//
 std::string load_file(string name_file){
     //
     static string value_return;

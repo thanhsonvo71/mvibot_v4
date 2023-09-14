@@ -1,7 +1,35 @@
 #include"../../common/libary/libary_basic.h"
 #include"../../common/libary/libary_ros.h"
-#include"../mvibot_core_init.h"
+//#include"../mvibot_core_init.h"
 using namespace std;
+extern string mvibot_seri;
+// battery 
+extern float battery_soc;
+extern float battery_vol;
+extern float battery_cycle;
+extern float battery_mah_now;
+extern float battery_mah_max;
+extern float battery_guard;
+extern float battery_temperature;
+extern float battery_num_cell;
+extern float battery_current;
+extern float battery_cell[8];
+extern int battery1_charge;
+// small battery
+extern float battery_small_soc;
+extern float battery_small_vol;
+extern float low_battery_small;
+extern float battery_small_temperature;
+extern float battery_small_current;
+extern float battery_small_mah_now;
+extern float battery_small_mah_max;
+extern float battery_small_num_cell;
+extern int battery2_charge;
+//
+extern int battery_live_status;
+extern int battery_small_live_status; 
+extern float distance_robot,distance_wheel_left,distance_wheel_right;
+//
 void pub_battery_status(){
     static ros::NodeHandle n,n1;
     static ros::Publisher pub_battery_status = n.advertise<std_msgs::String>("/"+mvibot_seri+"/battery_status",1);
@@ -10,7 +38,7 @@ void pub_battery_status(){
         if(creat_fun==1){
                 static std_msgs::String msg;
                 msg.data=mvibot_seri+"|";
-                if(time_out_battery==0){
+                if(battery_live_status==1){
                     msg.data=msg.data+"soc:"+to_string((int)battery_soc)+"|";
                     msg.data=msg.data+"vol:"+to_string(battery_vol)+"|";
                     msg.data=msg.data+"cycle:"+to_string((int)battery_cycle)+"|";
@@ -45,7 +73,7 @@ void pub_battery_cell_status(){
         if(creat_fun==1){
                 static std_msgs::String msg;
                  msg.data=mvibot_seri+"|";
-                if(time_out_battery==0){
+                if(battery_live_status==1){
                     for(int i=0;i<7;i++){
                         msg.data=msg.data+"Cell"+to_string(i+1)+":"+to_string(battery_cell[i])+"|";
                     }
@@ -63,7 +91,7 @@ void pub_battery_small_status(){
         if(creat_fun==1){
                 static std_msgs::String msg;
                 msg.data=mvibot_seri+"|";
-                if(time_out_battery==0){
+                if(battery_small_live_status==0){
                     msg.data=msg.data+"soc:"+to_string((int)battery_small_soc)+"|";
                     msg.data=msg.data+"vol:"+to_string(battery_small_vol)+"|";
                     msg.data=msg.data+"capacity_now:"+to_string(battery_small_mah_now/100)+"|";

@@ -3,20 +3,20 @@
 #include "src/common/libary/libary_basic.h"
 #include "src/common/libary/libary_ros.h"
 #include "src/common/string_Iv2/string_Iv2.h"
-#include "src/mvibot_core/mvibot_core_init.h"
-//
-#include "src/common/thread/thread.h"
+#include "src/common/thread_v2/thread_v2.h"
+// lib function
+#include "src/mvibot_core/led/led.h"
+#include "src/mvibot_core/battery/battery.h"
+#include "src/mvibot_core/music/music.h"
+#include "src/mvibot_core/gpio/gpio.h"
+#include "src/mvibot_core/odom/odom.h"
+#include "src/mvibot_core/config/config.h"
 #include "src/mvibot_core/sensor/sensor.h"
 #include "src/mvibot_core/motor/motor.h"
 #include "src/mvibot_core/speed_control/speed_control.h"
-#include "src/mvibot_core/process_data_uart/process_data_uart.h"
 #include "src/mvibot_core/hook/hook.h"
-#include "src/mvibot_core/odom/odom.h"
-#include "src/mvibot_core/gpio/gpio.h"
-#include "src/mvibot_core/music/music.h"
-#include "src/mvibot_core/battery/battery.h"
-#include "src/mvibot_core/config/config.h"
-#include "src/mvibot_core/led/led.h"
+#include "src/mvibot_core/process_data_uart/process_data_uart.h"
+#include "src/mvibot_core/mvibot_core_init.h"
 //
 using namespace std;
 // socket var
@@ -32,49 +32,12 @@ void read_data_socket();
 void send_data_socket(std::vector<uint8_t> data_tranf);
 void process_data_socket();
 int modify_socket();
-// settime process
-long double ts_process1=1.0; //time set for process1
-long double ts_process2=0.05; //time set for process2
-long double ts_process3=0.05; //time set for process3
-long double ts_process4=0.05; //time set for process4
-static pthread_mutex_t process_mutex=PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
-static pthread_t p_process1;
-static pthread_t p_process2;
-static pthread_t p_process3;
-static pthread_t p_process4;
 // create function system
-void lock();
-void unlock();
 void function1();
 void function2();
 void function3();
 void function4();
 void time_now(string data);
-// creat thread
-void * process1(void * nothing){
-    char name[]="Process A";
-	  process(name,ts_process1,0,function1);
-    void *value_return;
-    return value_return;
-}
-void * process2(void * nothing){
-	  char name[]="Process B";
-	  process(name,ts_process2,1,function2);
-    void *value_return;
-    return value_return;
-}
-void * process3(void * nothing){
-	char name[]="Process C";
-	process(name,ts_process3,2,function3);
-    void *value_return;
-    return value_return;
-}
-void * process4(void * nothing){
-	char name[]="Process D";
-	process(name,ts_process4,3,function4);
-    void *value_return;
-    return value_return;
-}
 // IAM & rqt_test
 void pub_IAM(string name){
     static ros::NodeHandle n,n1;
@@ -119,7 +82,8 @@ void scan2_check(const sensor_msgs::LaserScan& msg){
     lock();
       radar2_live_status=1;
     unlock();
-}
+}    //float time_out_battery_small=0;
+
 void camera1_check(const sensor_msgs::LaserScan& msg){
     lock();
       camera1_live_status=1;
@@ -278,18 +242,18 @@ void robot_update_softwaref(const std_msgs::String & msg){
     unlock();
 }
 int main(int argc, char** argv){
-    // update time check sensor
-    ts_scan_sensor=ts_process1;
-    ts_pid=ts_process2;
-    ts_speed_control=ts_process2;
+    // update time to memorry
+    ts_scan_sensor=1.0;
+    ts_pid=0.05;
+    ts_speed_control=0.05;
     //
-    ros::init(argc, argv, "mvibot_corev2");   // creat mvibot_node
+    ros::init(argc, argv, "mvibot_corev3");   // creat mvibot_node
     ros::NodeHandle nh("~");
     nh.getParam("mvibot_seri", mvibot_seri);
     nh.getParam("mode", mode);
-    while(modify_socket()==-1){
-        sleep(1);
-    }
+    // while(modify_socket()==-1){
+    //     sleep(1);
+    // }
     sleep(2);
     //
     input_user.data.resize(num_in_put_user+3);
@@ -323,11 +287,13 @@ int main(int argc, char** argv){
     update_config.data="1";
     robot_load_configf(update_config);
     //creat thread
-    int res;
-    res=pthread_create(&p_process1,NULL,process1,NULL);
-    res=pthread_create(&p_process2,NULL,process2,NULL);
-    res=pthread_create(&p_process3,NULL,process3,NULL);
-    res=pthread_create(&p_process4,NULL,process4,NULL);
+    std::thread thread1,thread2,thread3,thread4;
+    my_thread my_thread1("Thread 1",1.0,function1,false,-1);
+	my_thread my_thread2("Thread 2",0.05,function2,false,-1);
+    my_thread my_thread3("Thread 3",0.05,function3,false,-1);
+    my_thread1.start(thread1);
+    my_thread2.start(thread2);
+    my_thread3.start(thread3);
     //msg ros
     ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n13,n14,n15,n16,n17,n18,n19,n20,n21,n22,n23;
     // sensor check topic
@@ -362,6 +328,10 @@ int main(int argc, char** argv){
     ros::Subscriber sub20 = n20.subscribe("/"+mvibot_seri+"/robot_load_config",1,robot_load_configf);
     ros::Subscriber sub22 = n22.subscribe("/"+mvibot_seri+"/robot_update_software",1,robot_update_softwaref);
     ros::spin();
+    //
+    thread1.join();
+    thread2.join();
+    thread3.join();
     close(sock);
     return 0;
 }
@@ -459,7 +429,7 @@ void process_data_socket(){
                     process_data_uart_read();
                }else uart_live=0;
         }else{
-            time_out_socket+=(float)ts_process2;
+            time_out_socket+=(float)0.05;
             if(time_out_socket>=0.250) time_out_socket=0.250;
             if(time_out_socket>=0.250) uart_live=0;
         }
@@ -480,12 +450,6 @@ void process_data_socket(){
     unlock();
 }
 //
-void lock(){
-    pthread_mutex_lock(&process_mutex);
-}
-void unlock(){
-    pthread_mutex_unlock(&process_mutex);
-}
 void time_now(string name){
     lock();
         static struct timespec realtime;
@@ -514,8 +478,7 @@ void function2(){
     process_data_socket();
     send_data_socket(data_tran);
     lock();
-            //printf("Action function 2\n"); 
-            //time_now("At:");
+            //cout<<"Function 2  at|"<<get_time()<<endl;
             caculate_and_send_odom();
             send_hook_frame(hook_switch);
     unlock();

@@ -1,8 +1,30 @@
 #include"../../common/libary/libary_basic.h"
 #include"../../common/libary/libary_ros.h"
-#include"../mvibot_core_init.h"
 //
 using namespace std;
+//
+extern string mvibot_seri;
+extern int motor_enable;
+extern int motor_break;
+extern int motor_reset;
+extern int motor_right_disable,motor_left_disable;
+extern int motor_right_break,motor_left_break;
+extern int motor_right_state_live,motor_left_state_live;
+extern int motor_right_state_error,motor_left_state_error;
+extern float ivr,ivl,vr_out,vl_out;
+extern float kpvrl,kivrl,kdvrl;
+extern float vr,vl;
+extern float tr,tl;
+extern float vr_set,vl_set;
+extern float torqueL_set,torqueR_set;
+extern float vrl_max;
+extern float ts_pid;
+extern int motor_stop;
+extern int robot_emg;
+extern float v_set1,v_set2,v_set3,w_set1,w_set2,w_set3;
+extern float ts_speed_control;
+extern float time_out_cmd_vel;
+//
 void pub_motor_right_status(){
     static ros::NodeHandle n,n1;
     static ros::Publisher pub_motor_status = n.advertise<std_msgs::String>("/"+mvibot_seri+"/motor_right_status",1);

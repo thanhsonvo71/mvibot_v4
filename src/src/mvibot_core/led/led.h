@@ -1,7 +1,15 @@
 #include"../../common/libary/libary_basic.h"
-#include"../mvibot_core_init.h"
 using namespace std;
-//
+// led & color
+extern float green,red,blue;
+extern float led_r,led_l,led_f,led_b;
+// mode
+extern string mode;
+extern int  motor_left_state_error,motor_left_state_live,motor_right_state_error,motor_right_state_live;
+extern float software_update_status,software_update;
+extern float battery_soc;
+extern float low_battery;
+extern int mvibot_sensor_ready;
 void set_color_led(float cred, float cgreen, float cblue){
     red=cred;
     blue=cblue;

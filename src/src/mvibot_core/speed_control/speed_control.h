@@ -1,6 +1,19 @@
 #include"../../common/libary/libary_basic.h"
-#include"../mvibot_core_init.h"
 using namespace std;
+//
+extern int motor_enable;
+extern int motor_right_disable,motor_left_disable;
+extern int motor_right_state_live,motor_left_state_live;
+extern int motor_right_state_error,motor_left_state_error;
+extern float ivr,ivl,vr_out,vl_out;
+extern float kpvrl,kivrl,kdvrl;
+extern float vr,vl;
+extern float vr_set,vl_set;
+extern float torqueL_set,torqueR_set;
+extern int motor_stop;
+extern float v_set1,v_set2,v_set3,w_set1,w_set2,w_set3;
+extern float ts_speed_control;
+extern float time_out_cmd_vel;
 //
 void speed_robot_control(){
     // time out cmd_vel

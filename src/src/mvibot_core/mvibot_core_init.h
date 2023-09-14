@@ -52,7 +52,6 @@ using namespace std;
     std::vector<uint8_t> data_receive={};
     std::vector<uint8_t> data_tran={};
     // battery 
-    float time_out_battery=0;
     float battery_soc=-1;
     float battery_vol=0;
     float battery_cycle=0;
@@ -65,7 +64,6 @@ using namespace std;
     float battery_cell[8];
     int battery1_charge;
     // small battery
-    float time_out_battery_small=0;
     float battery_small_soc=-1;
     float battery_small_vol=0;
     float low_battery_small=5;
@@ -100,4 +98,3 @@ using namespace std;
     std_msgs::Float32MultiArray rqt_data;
     #define mvibot_core_init 1
 #endif
-

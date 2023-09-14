@@ -1,8 +1,13 @@
 #include"../../common/libary/libary_basic.h"
 #include"../../common/libary/libary_ros.h"
 #include"../../common/hardware/hardware.h"
-#include"../mvibot_core_init.h"
 using namespace std;
+//
+extern float volume;
+extern int status_music_n;
+extern int start_music_n;
+extern int motor_right_state_error,motor_left_state_error;
+extern int motor_right_state_live,motor_left_state_live;
 void on_music(int mode){
 	if(mode==0) system("killall -9 mplayer");
 	else{

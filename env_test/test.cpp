@@ -13,8 +13,8 @@ int main(){
 	//
 	pthread_mutex_lock(&my_thread::process_mutex_task);
 	std::thread thread1,thread2;
-	my_thread my_thread1("Thread 1",0.5,function1,false,0);
-	my_thread my_thread2("Thread 2",0.05,function2,false,0);
+	my_thread my_thread1("Thread 1",0.5,function1,true,0);
+	my_thread my_thread2("Thread 2",0.05,function2,true,0);
 	my_thread1.start(thread1);
 	my_thread2.start(thread2);
 	//

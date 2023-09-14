@@ -1,5 +1,17 @@
 #include"../../common/libary/libary_ros.h"
 #include"../../common/libary/libary_basic.h"
+using namespace std;
+//
+extern string mvibot_seri,mode;
+extern float ts_scan_sensor;
+extern int mvibot_sensor_ready;
+extern int radar1_live_status;
+extern int radar2_live_status;
+extern int camera1_live_status;
+extern int camera2_live_status;
+extern int battery_live_status;
+extern int battery_small_live_status;
+//
 int start_software_launch=0;
 // radar1 status
 int radar1_live=0;

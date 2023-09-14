@@ -1,7 +1,12 @@
 #include"../../common/libary/libary_basic.h"
 #include"../../common/libary/libary_ros.h"
-#include"../mvibot_core_init.h"
 using namespace std;
+//seri number
+extern string mvibot_seri;
+//gpio
+extern std_msgs::Float32MultiArray input_user;
+extern std_msgs::Float32MultiArray output_user;
+//
 void pub_output_user_status(){
     static ros::NodeHandle n,n1;
     static ros::Publisher pub_output_user_status = n.advertise<std_msgs::Float32MultiArray>("/"+mvibot_seri+"/output_user_status",1);

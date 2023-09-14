@@ -1,7 +1,13 @@
 #include"../../common/libary/libary_basic.h"
 #include"../../common/libary/libary_ros.h"
 #include"../../common/send_tranfrom/send_tranfrom.h"
-#include"../mvibot_core_init.h"
+// hook
+extern float encoder,encoder2;
+extern float encoder_offset;
+extern float encoder_dir;
+extern float d_hook;
+extern int hook_switch;
+//
 using namespace std;
 void pub_hook_laser(){
     static ros::NodeHandle n;
