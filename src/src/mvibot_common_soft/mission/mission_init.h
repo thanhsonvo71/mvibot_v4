@@ -5,6 +5,7 @@
 #include "../../common/set_get_param/set_get_param.h"
 //
 #include "mission_define.h"
+#include "high_step/high_step_define.h"
 //
 #include "low_step/sleep.h"
 #include "low_step/variable.h"
@@ -25,8 +26,6 @@
 #include "high_step/while.h"
 #include "high_step/logic_and.h"
 #include "high_step/logic_or.h"
-
-
 //
 #include "high_step/step_II.h"
 #include "high_step/multiple_step_II.h"

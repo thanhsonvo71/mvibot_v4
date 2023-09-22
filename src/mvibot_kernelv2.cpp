@@ -1,14 +1,15 @@
 // must have 
 #include "src/common/libary/libary_basic.h"
-#include "src/common/thread/thread.h"
+#include "src/common/thread_v2/thread_v2.h"
 #include "src/common/string_Iv2/string_Iv2.h"
 //
-#include "src/mvibot_kernel/mvibot_kernel_init.h"
-#include "src/mvibot_kernel/security/security.h"
-#include "src/mvibot_kernel/monitor/monitor.h"
-#include "src/mvibot_kernel/keyboard/keyboard.h"
-#include "src/mvibot_kernel/backup/backup.h"
 #include "src/mvibot_kernel/uart/uart.h"
+#include "src/mvibot_kernel/backup/backup.h"
+#include "src/mvibot_kernel/keyboard/keyboard.h"
+#include "src/mvibot_kernel/monitor/monitor.h"
+#include "src/mvibot_kernel/security/security.h"
+//
+#include "src/mvibot_kernel/mvibot_kernel_init.h"
 //  
 using namespace std;
 // socket var 
@@ -29,91 +30,18 @@ class port_receive{
 port_receive port_clinet_receive[1000];
 float time_out_socket=0.0;
 int max_n_clinet=1000;
-// settime process
-long double ts_process1=0.05; //time set for process1
-long double ts_process2=0.05; //time set for process2
-long double ts_process3=0.05; //time set for process3
-long double ts_process4=0.05; //time set for process4
-long double ts_process5=0.05; //time set for process5
-static pthread_mutex_t process_mutex=PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
-static pthread_t p_process1;
-static pthread_t p_process2;
-static pthread_t p_process3;
-static pthread_t p_process4;
-static pthread_t p_process5;
+//
 // create function system
 void modify_socket();
 void send_data_socket_server();
 void check_time_out_socket();
 void read_data_socket_server();
-void lock();
-void unlock();
 void function1();
 void function2();
 void function3();
 void function4();
 void function5();
 void time_now(string data);
-// creat thread
-void * process1(void * nothing){
-    while(1){
-        while(n_client<max_n_clinet){
-            //listen
-            if (listen(server_fd, max_n_clinet) < 0) 
-            { 
-                perror("listen"); 
-                exit(EXIT_FAILURE); 
-            } 
-            //accept 
-            if ((socket_port[n_client] = accept(server_fd, (struct sockaddr *)&address,(socklen_t*)&addrlen))<0) 
-            { 
-                perror("accept"); 
-                exit(EXIT_FAILURE); 
-            }
-            sleep(1);
-            lock();
-                ip_client= (struct sockaddr_in*)&address;
-                inet_ntop(AF_INET, &ip_client->sin_addr, str_cli_ip, INET_ADDRSTRLEN);
-                //
-                port_clinet_receive[n_client].ip=str_cli_ip;
-                port_clinet_receive[n_client].port=ntohs(ip_client->sin_port);
-                n_client++;
-                cout<<"accept: "<<n_client<<endl;
-                //
-                system_command="echo ";
-                system_command=system_command+"robot accept socket at: `date` "+">> "+define_path+"history/startup.log";
-                system(system_command.c_str());
-            unlock();
-        }
-        usleep(1000000);
-    }  
-    void *value_return;
-    return value_return;
-}
-void * process2(void * nothing){
-	char name[]="Process B";
-	process(name,ts_process2,1,function2);
-    void *value_return;
-    return value_return;
-}
-void * process3(void * nothing){
-	char name[]="Process C";
-	process(name,ts_process3,2,function3);
-    void *value_return;
-    return value_return;
-}
-void * process4(void * nothing){
-	char name[]="Process D";
-	process(name,ts_process4,3,function4);
-    void *value_return;
-    return value_return;
-}
-void * process5(void * nothing){
-	char name[]="Process E";
-	process(name,ts_process5,4,function5);
-    void *value_return;
-    return value_return;
-}
 //
 void modify_socket(){
     A:
@@ -152,7 +80,8 @@ void send_data_socket_server(){
             for(int i=0;i<sizeof data_send_socket_local;i++)
             printf("0x%x ",data_send_socket_local[i]);
             cout<<endl;
-            send(socket_port[n_client-1], data_send_socket_local,sizeof data_send_socket_local, MSG_NOSIGNAL );  //MSG_NOSIGNAL no exit when the core close socket
+            send(socket_port[n_client-1], data_send_socket_local,sizeof data_send_socket_local, MSG_NOSIGNAL );  
+            //MSG_NOSIGNAL no exit when the core close socket
         }
 }
 void check_time_out_socket(){
@@ -271,12 +200,17 @@ int main(int argc, char** argv){
         }
     }
     // creat thread
-    int res;
-    res=pthread_create(&p_process1,NULL,process1,NULL);
-    res=pthread_create(&p_process2,NULL,process2,NULL);
-    res=pthread_create(&p_process3,NULL,process3,NULL);
-    res=pthread_create(&p_process4,NULL,process4,NULL);
-    res=pthread_create(&p_process5,NULL,process5,NULL);
+    thread thread1,thread2,thread3,thread4,thread5;
+    my_thread my_thread1("Thread1",0.05,function1,false,-1);
+    my_thread my_thread2("Thread2",0.05,function2,false,-1);
+    my_thread my_thread3("Thread3",0.05,function3,false,-1);
+    my_thread my_thread4("Thread4",0.05,function4,false,-1);
+    my_thread my_thread5("Thread5",0.05,function5,false,-1);
+    my_thread1.start(thread1);
+    my_thread2.start(thread2);
+    my_thread3.start(thread3);
+    my_thread4.start(thread4);
+    my_thread5.start(thread5);
     while (1)
     {
         sleep(1);
@@ -284,12 +218,6 @@ int main(int argc, char** argv){
     return 0;
 }
 //
-void lock(){
-    pthread_mutex_lock(&process_mutex);
-}
-void unlock(){
-    pthread_mutex_unlock(&process_mutex);
-}
 void time_now(string name){
     lock();
         static struct timespec realtime;
@@ -298,49 +226,74 @@ void time_now(string name){
     unlock();
 }
 void function1(){
-    lock();
-        
-    unlock();
+    while(1){
+        while(n_client<max_n_clinet){
+            //listen
+            if (listen(server_fd, max_n_clinet) < 0) 
+            { 
+                perror("listen"); 
+                exit(EXIT_FAILURE); 
+            } 
+            //accept 
+            if ((socket_port[n_client] = accept(server_fd, (struct sockaddr *)&address,(socklen_t*)&addrlen))<0) 
+            { 
+                perror("accept"); 
+                exit(EXIT_FAILURE); 
+            }
+            sleep(1);
+            lock();
+                ip_client= (struct sockaddr_in*)&address;
+                inet_ntop(AF_INET, &ip_client->sin_addr, str_cli_ip, INET_ADDRSTRLEN);
+                //
+                port_clinet_receive[n_client].ip=str_cli_ip;
+                port_clinet_receive[n_client].port=ntohs(ip_client->sin_port);
+                n_client++;
+                cout<<"accept: "<<n_client<<endl;
+                //
+                system_command="echo ";
+                system_command=system_command+"robot accept socket at: `date` "+">> "+define_path+"history/startup.log";
+                system(system_command.c_str());
+            unlock();
+        }
+        usleep(1000000);
+    }  
 
 }
 void function2(){
         lock();
-            printf("Action function 2\n"); 
-            time_now("At:");
+           cout<<"Function 2 at |"<<get_time()<<endl;
         unlock();
         // communicate with stm
         lock();
-            uart_write();
+            //uart_write();
         unlock();
             usleep(30000);
         // check time out data from stm
         lock();
-            uart_read();
-            uart_timeout();
+            //uart_read();
+            //uart_timeout();
         unlock();
 }
 void function3(){
         lock();
-            printf("Action function 3\n"); 
-            time_now("At:");
+           cout<<"Function 3 at |"<<get_time()<<endl;
         unlock();
         // read data socket
         read_data_socket_server();
 }
 void function4(){
         lock();
-            printf("Action function 4\n"); 
-            time_now("At:");
+            cout<<"Function 4 at |"<<get_time()<<endl;
+            // check time out socket
+            check_time_out_socket();
+            // send data socket
+            send_data_socket_server();
         unlock();
-        // check time out socket
-        check_time_out_socket();
-        // send data socket
-        send_data_socket_server();
 }
 void function5(){
     lock();
-        printf("Action function 5\n"); 
-        time_now("At:");
+        cout<<"Function 5 at |"<<get_time()<<endl;
+        /*
         // bacup request
         if(request_backup==1){
             static int finish_backup=0;
@@ -348,7 +301,7 @@ void function5(){
                 backup();
                 finish_backup=1;
             }else{
-                time_out_backup-=ts_process5;
+                time_out_backup-=0.05;
                 if(time_out_backup<=0){
                     robot_backup_reboot=1;
                 }
@@ -359,6 +312,6 @@ void function5(){
             cout<<"Some one is connect to output display..."<<endl;
             send_mail("mvpkouki@gmail.com",name_seri_fix+" Alarm Security",name_seri_fix+" : someone is plugined display port At `date`","");
             security_code();
-        }
+        }*/
     unlock();
 }

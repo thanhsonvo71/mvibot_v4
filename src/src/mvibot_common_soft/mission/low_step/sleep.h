@@ -1,5 +1,18 @@
 using namespace std;
 //
+class sleep_{
+	public:
+        string data;
+		long double time;
+        long double time_sleep;
+        int status=0;
+        int num_tab;
+        //
+        void print(int n);
+        void process_data();
+        int action(int action); 
+        void reset();
+};
 void sleep_::process_data(){
     static string_Iv2 data_return;
     data_return.detect(data,"~","=","~");

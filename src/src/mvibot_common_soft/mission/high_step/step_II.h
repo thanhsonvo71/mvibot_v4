@@ -1,4 +1,5 @@
 using namespace std;
+
 void step_II::process_data(){
     static string detect;
     static string detect2;

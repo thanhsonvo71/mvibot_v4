@@ -344,3 +344,110 @@ rostopic pub /IB07_916b/mission_normal std_msgs/String "data: '
     }
 }
 @
+
+
+
+rostopic pub /ABC/mission_normal std_msgs/String "data: '
+&/name_mission>mission1//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio_module|data:~name_seri=ABC~~in_pullup=0~)/
+*
+{
+    (name:creat_a|time_out:-1|mode:variable|data:~command_action=new~~name_variable=a~~focus_value=1~)
+    (name:creat_b|time_out:-1|mode:variable|data:~command_action=new~~name_variable=b~~focus_value=2~)
+    (name:creat_c|time_out:-1|mode:variable|data:~command_action=new~~name_variable=c~~focus_value=3~)
+    (name:sleep|time_out:-1|mode:sleep|data:~time_sleep=1.0~)   
+}
+@
+'
+"
+
+rostopic pub /ABC/mission_normal std_msgs/String "data: '
+&/name_mission>mission1//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio_module|data:~name_seri=IB07_916b~~in_pullup=0~)/
+*
+{
+    (name:delete|time_out:-1|mode:variable|data:~command_action=delete~)
+    (name:sleep|time_out:-1|mode:sleep|data:~time_sleep=3.0~)   
+    (name:creat_a|time_out:-1|mode:variable|data:~command_action=new~~name_variable=a~~focus_value=0~)
+    (name:creat_b|time_out:-1|mode:variable|data:~command_action=new~~name_variable=b~~focus_value=1~)
+    (name:creat_c|time_out:-1|mode:variable|data:~command_action=new~~name_variable=c~~focus_value=2~)
+    (name:sleep|time_out:-1|mode:sleep|data:~time_sleep=3.0~)  
+    (name:reset|time_out:-1|mode:variable|data:~command_action=reset~)
+}
+@
+'
+"
+
+rostopic pub /IB06_916b/mission_normal std_msgs/String "data: '
+&/name_mission>mission1//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_on=0~)/
+*
+{if_else#
+    condition_step{
+        (name:check_out3|time_out:0|mode:gpio|data:~out_set=3~~not_set_out=1~)
+    }
+    if_step{
+        (name:reset_out_3|time_out:-1|mode:gpio|data:~out_reset=3~~not_set_out=0~)
+
+    }
+    else_step{
+        (name:set_out_3|time_out:-1|mode:gpio|data:~out_set=3~~not_set_out=0~)
+    }
+}
+{
+    (name:wait|time_out:-1|mode:gpio|data:~in_off=0~)
+}
+@
+&/name_mission>mission3//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_on=2~)/
+*
+{if_else#
+    condition_step{
+        (name:check_out5|time_out:0|mode:gpio|data:~out_set=5~~not_set_out=1~)
+    }
+    if_step{
+        (name:reset_out_5|time_out:-1|mode:gpio|data:~out_reset=5~~not_set_out=0~)
+
+    }
+    else_step{
+        (name:set_out_5|time_out:-1|mode:gpio|data:~out_set=5~~not_set_out=0~)
+    }
+}
+{
+    (name:wait|time_out:-1|mode:gpio|data:~in_off=2~)
+}
+@
+&/name_mission>mission2//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_off=1~)/
+*
+{
+    (name:set_out_4|time_out:-1|mode:gpio|data:~out_set=4~~not_set_out=0~)
+    (name:reset_out_6|time_out:-1|mode:gpio|data:~out_reset=1,2~~out_set=0~~not_set_out=0~)
+    (name:wait|time_out:-1|mode:gpio|data:~in_on=1~)
+    (name:reset_out_4|time_out:-1|mode:gpio|data:~out_reset=4~~not_set_out=0~)
+}
+@
+&/name_mission>mission4//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_off=3~)/
+*
+{
+    (name:set_out_6|time_out:-1|mode:gpio|data:~out_set=6~~not_set_out=0~)
+    (name:reset_out_6|time_out:-1|mode:gpio|data:~out_reset=1,2~~out_set=0~~not_set_out=0~)
+    (name:wait|time_out:-1|mode:gpio|data:~in_on=3~)
+    (name:reset_out_6|time_out:-1|mode:gpio|data:~out_reset=6~~not_set_out=0~)
+}
+@
+'
+"
+
+
+rostopic pub /ABC/mission_normal std_msgs/String "data: '
+&/name_mission>mission1//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio_module|data:~name_seri=IB07_916b~~in_pullup=0~)/
+*
+{
+    (name:set|time_out:-1|mode:gpio_module|data:~name_seri=IB07_916b~~out_set=1~~out_reset=0,2~)
+}
+@
+'
+"

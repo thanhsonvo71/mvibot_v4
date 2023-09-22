@@ -1,7 +1,9 @@
-#include "../mvibot_kernel_init.h"
 #include "../../common/exec/exec.h"
 #include "../../common/string_Iv2/string_Iv2.h"
 using namespace std;
+//
+extern vector<string> list_monitor;
+//
 void get_list_monitor(){
     // check list output display
     static string_Iv2 string_suport;

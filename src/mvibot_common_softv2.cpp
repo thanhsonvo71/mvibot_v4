@@ -445,9 +445,9 @@ int  main(int argc, char** argv){
     nh.getParam("mvibot_seri", mvibot_seri);
     static string mode;
     nh.getParam("mode", mode);
-    while(mode!="navigation"){
-        sleep(1);
-    }
+    //while(mode!="navigation"){
+    //    sleep(1);
+    //}
     //
     ts_mission_step_scan=(float)ts_process3;
     user_path.header.frame_id="map";
@@ -466,7 +466,7 @@ int  main(int argc, char** argv){
             // Process str
             data=data+str;
 	    }
-        my_multiple_mission.data=data;
+        my_multiple_mission.data="";//data;
         my_multiple_mission.delete_free();
         my_multiple_mission.process_data();
         my_multiple_mission.print(0);
@@ -478,7 +478,7 @@ int  main(int argc, char** argv){
             // Process str
             data=data+str;
 	    }
-        my_mission_error.data=data;
+        my_mission_error.data="";//data;
         my_mission_error.delete_free();
         my_mission_error.process_data();
         my_mission_error.print(0);
@@ -490,7 +490,7 @@ int  main(int argc, char** argv){
             // Process str
             data=data+str;
 	    }
-        my_mission_charge_battery.data=data;
+        my_mission_charge_battery.data="";//data;
         my_mission_charge_battery.delete_free();
         my_mission_charge_battery.process_data();
         my_mission_charge_battery.print(0);
@@ -505,8 +505,8 @@ int  main(int argc, char** argv){
     pub_gpio_msg_common("");
     //
     static int res;
-    res=pthread_create(&p_process1,NULL,process1,NULL);
-    res=pthread_create(&p_process2,NULL,process2,NULL); 
+    //res=pthread_create(&p_process1,NULL,process1,NULL);
+    //res=pthread_create(&p_process2,NULL,process2,NULL); 
     res=pthread_create(&p_process3,NULL,process3,NULL);
     //
     ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n14,n15,n16,n17,n18;
@@ -622,7 +622,7 @@ void function2(){
 	if(motor_left_ready == 0 | motor_right_ready==0) action_mission=Cancel_;
         //
         cout<<"Variable is:"<<endl;
-        my_vars_global.print();
+        my_vars_local.print();
         //
         input_user_status_2=input_user_status_1;
         input_user_status_1=input_user_status;
@@ -731,14 +731,14 @@ void function3(){
         //
         static int res;
         //
+        my_vars_local.print();
+        //
         if(action_mode_mission==Mission_normal_){
             if(action_mission!=Active_){
                 res=my_multiple_mission.action(Cancel_);
                 if(res==Wake_up_) action_mission=Active_;
             }else{
                 res=my_multiple_mission.action(Active_);
-                // if(res==Finish_) action_mission=Finish_;
-                // action_mission=res;
                 action_mission=res;
             }
             // change to battery mission
@@ -770,7 +770,7 @@ void function3(){
         if(action_mission==Error_){
             my_mission_error.action(Active_);
         }else {
-            my_mission_error.reset();
+            //my_mission_error.reset();
         }
         // control led
         set_led();

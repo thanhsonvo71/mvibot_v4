@@ -1,7 +1,7 @@
 #include "../common/libary/libary_basic.h"
 #include "../common/hardware/hardware.h"
-#include <CppLinuxSerial/SerialPort.hpp>
 #include "../common/data_uart/data_uart.h"
+#include <CppLinuxSerial/SerialPort.hpp>
 using namespace std;
 using namespace mn::CppLinuxSerial;
 #if !defined(mvibot_kernel_init)

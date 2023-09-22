@@ -1,5 +1,19 @@
 using namespace std;
 //
+class footprint_{
+    public:
+        string data;
+        int  num_tab;
+		float x1;
+		float y1;
+		float x2;
+		float y2;
+        int status=0;
+        void print(int n);
+        void process_data();
+        int action(int action);
+        void reset(); 
+}; 
 void footprint_::process_data(){
     static string_Iv2 data_return;
     data_return.detect(data,"~","=","~");

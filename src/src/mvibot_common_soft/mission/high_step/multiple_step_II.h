@@ -1,5 +1,4 @@
 using namespace std;
-//
 void multiple_step_II::process_data(){
     if(data!=""){
         if(data[0]==start_char){

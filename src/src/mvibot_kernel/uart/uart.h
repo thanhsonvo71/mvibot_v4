@@ -1,7 +1,29 @@
-#include "../mvibot_kernel_init.h"
 #include "../../common/exec/exec.h"
+#include "../../common/data_uart/data_uart.h"
+#include <CppLinuxSerial/SerialPort.hpp>
 using namespace std;
 using namespace mn::CppLinuxSerial;
+//
+extern string name_port;
+extern SerialPort serialPort;
+extern vector<uint8_t>  data_tran_uart_defaunt;
+extern vector<uint8_t>  data_tran_uart;
+extern vector<uint8_t>  data_receive_uart;
+extern vector<uint8_t>  data_tran_local;
+extern vector<uint8_t>  data_receive_local;
+extern vector<uint8_t>  data_tran_socket;
+extern vector<uint8_t>  data_tran_socket_defaunt;
+extern vector<uint8_t>  data_receive_socket;
+//
+extern float time_out_uart;
+extern float ts_uart;
+extern int uart_enable;
+extern int send_command_shutdown;
+extern int request_backup,robot_backup_reboot;
+extern float button_hold,button_hold_backup;
+extern float ts_button_hold;
+extern string define_path,system_command;
+extern void view_data(string name, std::vector<uint8_t> data);
 //
 uint16_t checksum(uint8_t i, std::vector<uint8_t> data, uint8_t length){
      uint16_t Sum = 0;

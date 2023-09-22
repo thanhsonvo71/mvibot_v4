@@ -1,5 +1,19 @@
 using namespace std;
 //
+class marker_{
+    public:
+        string data;
+        int num_tab;
+		string mode_marker;
+		float x_offset;
+		float y_offset;
+		float yaw_offset;
+        int status=0;
+        void print(int n);
+        void process_data();
+        int action(int action);
+        void reset();
+};
 void pub_action_makrer(std_msgs::String data){
     static ros::NodeHandle n;
     static ros::Publisher  pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/start_marker", 1);

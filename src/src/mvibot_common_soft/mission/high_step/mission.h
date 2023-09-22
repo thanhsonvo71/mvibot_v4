@@ -103,7 +103,7 @@ int mission::action(int action){
                 if(value_return==Finish_ | value_return==True_ | value_return==False_ | value_return==Break_){
                     cout<<BOLDMAGENTA;
                     reset();
-                    my_vars_global.reset();
+                    //my_vars_local.reset();
                     //
                     infor_action_step="";
                     step_action_information="0";
@@ -113,7 +113,7 @@ int mission::action(int action){
                 }
                 //
                 if(action==Active_){
-                    my_vars_global.print();
+                    //my_vars_local.print();
                     cout<<BOLDYELLOW<<"Name mision:"<<name_mission<<endl;
                     cout<<"id:"<<id_mission<<endl;
                     cout<<"infor_step:"<<infor_action_step<<endl;

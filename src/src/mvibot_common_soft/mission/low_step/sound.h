@@ -1,5 +1,18 @@
 using namespace std;
 //
+class sound_{
+	public:
+        string data;
+        string music_name;
+        int  num_tab;
+	   	float music_start=0;
+		float music_mode=0;
+        int status=0;
+        void print(int n);
+        void process_data();
+        int action(int action);
+        void reset();
+};
 void sound_::process_data(){
     static string_Iv2 data_return;
     data_return.detect(data,"~","=","~");

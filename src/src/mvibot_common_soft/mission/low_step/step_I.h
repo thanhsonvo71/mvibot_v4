@@ -1,4 +1,33 @@
 using namespace std;
+class step_I{
+	public:
+		//
+        string          data;
+		string 			name_step;
+		string 			mode_step;
+        int num_tab;
+        int id;
+		//
+		long double		time_out_step=-1;	
+		long double	    time_action_step=0;
+		//
+		sound_			sound_step;
+		position_		position_goal_step; 
+		marker_			marker_step;
+		gpio_			gpio_step;
+		gpio_module_	gpio_module_step;
+		sleep_ 			sleep_step;
+		footprint_		footprint_step;
+        // follow_path_    follow_path_step;
+        break_          break_step;
+        variable_       variable_step;
+        //
+        void process_data();
+        void print(int n);
+        int  action(int action); 
+        void reset();
+        int  set_id(int n);
+};
 void step_I::process_data(){
     static string_Iv2 data_return;
     data_return.detect(data,"","|","");

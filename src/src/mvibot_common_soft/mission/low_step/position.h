@@ -10,6 +10,21 @@ mbf_msgs::MoveBaseGoal goal_pub;
 nav_msgs::Path goal_path;
 nav_msgs::Path user_path;
 //
+class position_{
+	public:
+        string data;
+        string mode;
+        int num_tab;
+		float x;
+		float y;
+		float z;
+		float w;
+        int status=0;
+        void print(int n);
+        void process_data();
+        int action(int action);
+        void reset(); 
+};
 void pub_request_map(){
     static ros::NodeHandle n;
     static ros::Publisher  pub = n.advertise<std_msgs::String>("/request_map", 1);

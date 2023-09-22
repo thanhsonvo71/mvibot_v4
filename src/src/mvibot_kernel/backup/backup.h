@@ -1,9 +1,10 @@
-#include "../mvibot_kernel_init.h"
 #include "../../common/exec/exec.h"
 #include "../../common/string_Iv2/string_Iv2.h"
 #include "../../common/send_mail/send_mail.h"
-
 using namespace std;
+//
+extern string board_serial,name_seri_fix,mail_master,define_path;
+//
 void backup_file(string name_file,string value){
     static string cmd;
     cmd="";

@@ -1,4 +1,19 @@
 using namespace std;
+class multiple_step_I{
+    public:
+        string data;
+        int num_tab;
+        long n_step=0;
+        long action_step=0;
+        float time_out;
+        float time;
+        vector<step_I> 	my_step; 
+        void process_data();
+        void print(int n);
+        int action(int action);
+        void reset();
+        int set_id(int n);
+};
 //
 void multiple_step_I::process_data(){
     //

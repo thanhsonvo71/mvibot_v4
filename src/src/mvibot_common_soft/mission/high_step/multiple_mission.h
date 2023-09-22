@@ -1,5 +1,16 @@
 using namespace std;
 //
+class multiple_mission{
+    public:
+        string data="";
+        vector<mission*> multiple_mission;
+        void process_data();
+        int action(int action);
+        int num_mission_action=-1;
+        void print(int n);
+        void reset();
+        void delete_free();
+};
 void multiple_mission::process_data(){
     static string_Iv2 data1;
     //

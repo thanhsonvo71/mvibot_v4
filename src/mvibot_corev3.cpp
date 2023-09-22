@@ -82,8 +82,7 @@ void scan2_check(const sensor_msgs::LaserScan& msg){
     lock();
       radar2_live_status=1;
     unlock();
-}    //float time_out_battery_small=0;
-
+}
 void camera1_check(const sensor_msgs::LaserScan& msg){
     lock();
       camera1_live_status=1;
@@ -251,9 +250,9 @@ int main(int argc, char** argv){
     ros::NodeHandle nh("~");
     nh.getParam("mvibot_seri", mvibot_seri);
     nh.getParam("mode", mode);
-    // while(modify_socket()==-1){
-    //     sleep(1);
-    // }
+    while(modify_socket()==-1){
+        sleep(1);
+    }
     sleep(2);
     //
     input_user.data.resize(num_in_put_user+3);

@@ -68,6 +68,13 @@ void update_module_gpio_v2(){
                 stmt->execute(cmd);
                 my_module_gpio_v2s[i].my_node->output_user_set_string="";
             }
+            if(my_module_gpio_v2s[i].my_node->output_user_set_string2!=""){
+                static string cmd;
+                cmd="UPDATE my_module_gpio_v2 set output_user_set_string='"+my_module_gpio_v2s[i].my_node->output_user_set_string2+"'";
+                cmd=cmd+" where name_seri='"+my_module_gpio_v2s[i].my_node->name_node+"'";
+                stmt->execute(cmd);
+                my_module_gpio_v2s[i].my_node->output_user_set_string2="";
+            }
             // update msg mission_normal
             if(my_module_gpio_v2s[i].my_node->mission_normal!=""){
                 static string cmd;

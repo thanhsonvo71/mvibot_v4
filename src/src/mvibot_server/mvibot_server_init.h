@@ -104,6 +104,7 @@ using namespace sql;
         public:
             std::string mission_normal;
             std::string output_user_set_string;
+            std::string output_user_set_string2;
             std::string output_user_status_string;
             std::string input_user_status_string;
             std::string name_node;
@@ -113,7 +114,8 @@ using namespace sql;
             void output_user_set(const std_msgs::String & msg){
                 // cout<<msg.data<<endl;
                 // cout<<name_node<<endl;
-                output_user_set_string=name_node+"||"+msg.data;
+                output_user_set_string2=name_node+"||"+msg.data;
+                cout<<output_user_set_string2<<endl;
             }
             void mission_normalf(const std_msgs::String & msg){
                 if(msg.data=="") mission_normal="RESET";
@@ -121,8 +123,8 @@ using namespace sql;
                 //cout<<mission_normal<<endl;
             }
             void init(){
-                sub = n.subscribe("/"+name_node+"/output_user_set", 1,&node::output_user_set,this);
-                sub2 = n.subscribe("/"+name_node+"/mission_normal", 1,&node::mission_normalf,this);
+                sub = n.subscribe("/"+name_node+"/output_user_set", 100,&node::output_user_set,this);
+                sub2 = n.subscribe("/"+name_node+"/mission_normal", 100,&node::mission_normalf,this);
             }
     };
     class module_gpio_v2_information{

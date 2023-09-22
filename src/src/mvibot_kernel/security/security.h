@@ -1,6 +1,7 @@
-#include "../mvibot_kernel_init.h"
 #include "../../common/exec/exec.h"
 using namespace std;
+//
+extern string board_manufacturer,board_product_name,board_version,board_serial;
 //
 int check_security(){
     static string string_return;

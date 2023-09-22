@@ -1,5 +1,26 @@
 using namespace std;
 //
+class gpio_{
+	public:
+        string data;
+        int num_tab;
+        string in_pullup_string="";
+        string in_pulldown_string="";
+		// out put user
+        int not_set_out=0;
+		string out_set;
+		string out_reset;
+		// input user
+		string in_on;
+		string in_off;
+		string in_pullup;
+		string in_pulldown;
+        int status;
+        void print(int n);
+        void process_data();
+        int action(int action); 
+        void reset();
+};
 void pub_gpio_set(string gpio_output_string){
     static ros::NodeHandle n;
     static ros::Publisher  pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/output_user_set", 1);
