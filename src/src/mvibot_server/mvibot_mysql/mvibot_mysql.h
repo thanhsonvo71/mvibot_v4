@@ -133,6 +133,7 @@ void table_init(){
     map_active.table_name="map_active";
     map_active.add_colume("name_map_active","varchar(255)");     
     map_active.init_table();
+    
     //
     robot_config_status.table_name="robot_config_status";
     robot_config_status.add_colume("id","bigint");

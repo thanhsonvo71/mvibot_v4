@@ -5,6 +5,8 @@ float *position_robot;
 float position_goal[4];
 int free_space_robot;
 int get_user_path=0;
+int enable_ob1=-1;
+int enable_ob2=-1;
 // var for action mbf
 mbf_msgs::MoveBaseGoal goal_pub;
 nav_msgs::Path goal_path;
@@ -51,12 +53,12 @@ void check_pose_costmap(){
             srv.request.inscrib_cost_mult=0;
             srv.request.unknown_cost_mult=0;
             srv.request.pose.header.stamp=ros::Time::now();
-            srv.request.pose.pose.position.x=0.5; // 0.5 1.0
+            srv.request.pose.pose.position.x=1.25; // 0.5 1.0
             srv.request.pose.pose.orientation.w=1.0;
             srv.request.pose.header.frame_id=mvibot_seri+"/base_footprint";
             srv.request.current_pose=false;
             client.call(srv);
-            if((srv.response.state)==0) free_space_robot=1;
+            if((srv.response.state)==0 | (srv.response.state)==1) free_space_robot=1;
             else free_space_robot=0;
             // cout<<free_space_robot<<endl;
             // cout<<"cost:"<<srv.response.cost<<endl;
@@ -122,7 +124,19 @@ int action_goal(int mode);
 void action_recovery(int mode);
 int action_getpath(int mode);
 int action_exepath(int mode);
-// 
+// call clear costmap via service
+void clear_costmap()
+{
+        static ros::NodeHandle n;
+        static ros::ServiceClient client = n.serviceClient<std_srvs::Empty>("/"+mvibot_seri+"/move_base_flex/clear_costmaps");
+        static std_srvs::Empty srv;
+        static float creat_fun=0;
+        if(creat_fun==1)
+        {
+                client.call(srv);
+        } else creat_fun=1;
+} 
+//
 int action_goal(int mode){
     static float creat_fun=0;
     static GoalClient action_goal("/"+mvibot_seri+"/move_base_flex/move_base", true);
@@ -219,7 +233,7 @@ void action_recovery(int mode){
         creat_fun=1;
     }else{
         msg.behavior="clear_costmap_recovery";
-        msg.concurrency_slot=1;
+        msg.concurrency_slot=10;
         action_recovery.sendGoal(msg);
         action_recovery.waitForResult();
         cout<<""<<action_recovery.getResult().get()->message<<endl;
@@ -240,7 +254,7 @@ int action_getpath(int mode){
         creat_fun=1;
         //
         msg.use_start_pose=false;
-        msg.concurrency_slot=1;
+        msg.concurrency_slot=10;
         msg.tolerance=0.2;
         msg.target_pose.header.frame_id="map";
         //
@@ -274,7 +288,7 @@ int action_exepath(int mode){
         printf("Connection action_exepath server\n");
         creat_fun=1;
         msg.angle_tolerance=0.08;
-        msg.dist_tolerance=0.2;
+        msg.dist_tolerance=0.3;
         msg.concurrency_slot=0;
         msg.tolerance_from_action=true;
         msg.controller="DWAPlannerROS";
@@ -383,10 +397,20 @@ int position_::action(int action){
             dis_y=y-position_robot[1];
             error_dis=sqrt(dis_x*dis_x+dis_y*dis_y);
             if(status==0){
-                for(int j=0;j<num_tab;j++) cout<<"\t";
-                cout<<"clear costmap"<<endl;
-                action_recovery(0);
-                status=1;
+                // disable obstacle to find path
+            	if(enable_ob1!=0){
+                    enable_ob1=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles1/set_parameters","enabled","bool","0"));	
+                    if(enable_ob2!=0)
+                    enable_ob2=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles2/set_parameters","enabled","bool","0"));
+                    //
+                    if(enable_ob1==0 & enable_ob2==0){
+                        for(int j=0;j<num_tab;j++) cout<<"\t";
+                        cout<<"clear costmap"<<endl;
+                        clear_costmap();
+                        action_recovery(0);
+                        status=1;
+                    }
+                }
             }else if(status==1){
                 static int status_getpath;
                 for(int j=0;j<num_tab;j++) cout<<"\t";
@@ -414,6 +438,10 @@ int position_::action(int action){
                     cout<<"no free space to ative"<<endl;
                     action_exepath(0);
                     n_free_space_robot++;
+                    if(n_free_space_robot>=100){
+                    	n_free_space_robot=0;
+                    	action_recovery(0);
+                    }
                 }
             }else if(status==3){
                 static int status_exepath;
@@ -427,7 +455,8 @@ int position_::action(int action){
                         return Finish_;
                     }else if(status_exepath==Active_) return Active_;
                     else if(status_exepath==Error_){
-                        status=2;
+                        //status=2;
+                        status=0;
                     } 
                 }
                 

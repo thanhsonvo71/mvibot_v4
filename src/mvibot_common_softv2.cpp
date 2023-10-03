@@ -24,8 +24,6 @@ float want_to_charge=0;
 int enable_ecoder_local_costmap=-1;
 int enable_ecoder_global_costmap=-1;
 float v_backward=-1;
-int enable_ob1=-1;
-int enable_ob2=-1;
 float switch_for_hook=0;
 int action_mode_mission;
 // settime process
@@ -559,14 +557,14 @@ void function1(){
             if(enable_ecoder_global_costmap!=0)
             enable_ecoder_global_costmap=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles3/set_parameters","enabled","bool","0"));
             //
-            if(enable_ob1!=1)
-            enable_ob1=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles1/set_parameters","enabled","bool","1"));
-            //
-            if(enable_ob2!=1)
-            enable_ob2=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles2/set_parameters","enabled","bool","1"));
-            //
-            if(v_backward==0)
-            v_backward=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/DWAPlannerROS/set_parameters","min_vel_x","double","-0.2"));
+            // if(enable_ob1!=1)
+            // enable_ob1=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles1/set_parameters","enabled","bool","1"));
+            // //
+            // if(enable_ob2!=1)
+            // enable_ob2=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles2/set_parameters","enabled","bool","1"));
+            // //
+            // if(v_backward==0)
+            // v_backward=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/DWAPlannerROS/set_parameters","min_vel_x","double","-0.2"));
             //
         }else{
             if(enable_ecoder_local_costmap!=1)
@@ -574,14 +572,14 @@ void function1(){
             //
             if(enable_ecoder_global_costmap!=1)
             enable_ecoder_global_costmap=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles3/set_parameters","enabled","bool","1"));
-            if(enable_ob1!=0)
-            enable_ob1=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles1/set_parameters","enabled","bool","0"));
-            //
-            if(enable_ob2!=0)
-            enable_ob2=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles2/set_parameters","enabled","bool","0"));
-            //
-            if(v_backward!=0.0)
-            v_backward=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/DWAPlannerROS/set_parameters","min_vel_x","double","0.0"));
+            // if(enable_ob1!=0)
+            // enable_ob1=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles1/set_parameters","enabled","bool","0"));
+            // //
+            // if(enable_ob2!=0)
+            // enable_ob2=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles2/set_parameters","enabled","bool","0"));
+            // //
+            // if(v_backward!=0.0)
+            // v_backward=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/DWAPlannerROS/set_parameters","min_vel_x","double","0.0"));
         }
         // add negative speed ....
         check_pose_costmap();
