@@ -380,7 +380,7 @@ rostopic pub /ABC/mission_normal std_msgs/String "data: '
 
 rostopic pub /IB06_916b/mission_normal std_msgs/String "data: '
 &/name_mission>mission1//id_mission>/
-/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_on=0~)/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_off=0~)/
 *
 {if_else#
     condition_step{
@@ -395,11 +395,11 @@ rostopic pub /IB06_916b/mission_normal std_msgs/String "data: '
     }
 }
 {
-    (name:wait|time_out:-1|mode:gpio|data:~in_off=0~)
+    (name:wait|time_out:-1|mode:gpio|data:~in_on=0~)
 }
 @
 &/name_mission>mission3//id_mission>/
-/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_on=2~)/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_off=2~)/
 *
 {if_else#
     condition_step{
@@ -414,26 +414,26 @@ rostopic pub /IB06_916b/mission_normal std_msgs/String "data: '
     }
 }
 {
-    (name:wait|time_out:-1|mode:gpio|data:~in_off=2~)
+    (name:wait|time_out:-1|mode:gpio|data:~in_on=2~)
 }
 @
 &/name_mission>mission2//id_mission>/
-/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_off=1~)/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_on=1~)/
 *
 {
     (name:set_out_4|time_out:-1|mode:gpio|data:~out_set=4~~not_set_out=0~)
     (name:reset_out_6|time_out:-1|mode:gpio|data:~out_reset=1,2~~out_set=0~~not_set_out=0~)
-    (name:wait|time_out:-1|mode:gpio|data:~in_on=1~)
+    (name:wait|time_out:-1|mode:gpio|data:~in_off=1~)
     (name:reset_out_4|time_out:-1|mode:gpio|data:~out_reset=4~~not_set_out=0~)
 }
 @
 &/name_mission>mission4//id_mission>/
-/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_off=3~)/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_on=3~)/
 *
 {
     (name:set_out_6|time_out:-1|mode:gpio|data:~out_set=6~~not_set_out=0~)
     (name:reset_out_6|time_out:-1|mode:gpio|data:~out_reset=1,2~~out_set=0~~not_set_out=0~)
-    (name:wait|time_out:-1|mode:gpio|data:~in_on=3~)
+    (name:wait|time_out:-1|mode:gpio|data:~in_off=3~)
     (name:reset_out_6|time_out:-1|mode:gpio|data:~out_reset=6~~not_set_out=0~)
 }
 @

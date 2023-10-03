@@ -142,7 +142,6 @@ int action_goal(int mode){
         return 0;
     }else {
         if(mode==0) {
-            
             if(action_goal.getState().toString()=="ACTIVE") {
                 action_goal.cancelGoal();
                 action_goal.waitForResult();
@@ -166,6 +165,7 @@ int action_goal(int mode){
             msg.target_pose.pose.orientation.z=position_goal[2];
             msg.target_pose.pose.orientation.w=position_goal[3];
             if(action_goal.getState().toString()!="ACTIVE"){
+                //action_goal.
                 if(action_goal.getState().toString()=="SUCCEEDED"){
                     static float dis_x,dis_y;
                     dis_x=position_goal[0]-position_robot[0];
