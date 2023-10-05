@@ -11,7 +11,13 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  message_generation
   tf
+  geometry_msgs
+  robot_state_publisher
+  urdf
+  nav_msgs
+  mbf_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -206,23 +212,23 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(tran_ros_localhost src/tran_ros_localhost.cpp)
-target_link_libraries(tran_ros_localhost ${catkin_LIBRARIES} -lpthread)
-add_dependencies(tran_ros_localhost ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_executable(tran_ros_localhostv2 src/tran_ros_localhost.cpp)
+target_link_libraries(tran_ros_localhostv2 ${catkin_LIBRARIES} -lpthread)
+add_dependencies(tran_ros_localhostv2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
-add_executable(tran_ros_ipmaster src/tran_ros_ipmaster.cpp)
-target_link_libraries(tran_ros_ipmaster ${catkin_LIBRARIES} -lpthread)
-add_dependencies(tran_ros_ipmaster ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_executable(tran_ros_ipmasterv2 src/tran_ros_ipmaster.cpp)
+target_link_libraries(tran_ros_ipmasterv2 ${catkin_LIBRARIES} -lpthread)
+add_dependencies(tran_ros_ipmasterv2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-add_executable(tran_ros_localhost_mapping src/tran_ros_localhost_mapping.cpp)
-target_link_libraries(tran_ros_localhost_mapping ${catkin_LIBRARIES} -lpthread)
-add_dependencies(tran_ros_localhost_mapping ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_executable(tran_ros_localhost_mappingv2 src/tran_ros_localhost_mapping.cpp)
+target_link_libraries(tran_ros_localhost_mappingv2 ${catkin_LIBRARIES} -lpthread)
+add_dependencies(tran_ros_localhost_mappingv2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
-add_executable(tran_ros_master_mapping src/tran_ros_master_mapping.cpp)
-target_link_libraries(tran_ros_master_mapping ${catkin_LIBRARIES} -lpthread)
-add_dependencies(tran_ros_master_mapping ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_executable(tran_ros_master_mappingv2 src/tran_ros_master_mapping.cpp)
+target_link_libraries(tran_ros_master_mappingv2 ${catkin_LIBRARIES} -lpthread)
+add_dependencies(tran_ros_master_mappingv2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
 add_executable(mvibot_common_softv2 src/mvibot_common_softv2.cpp)
