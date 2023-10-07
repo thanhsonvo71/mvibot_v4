@@ -8,9 +8,9 @@ void normal_step::process_data(){
         if(my_detect[i]=="normal_step"){
             normal_step=new multiple_step_II;
             normal_step->data=my_detect[i+1];
-            normal_step->process_data();
         }
     }
+    if(normal_step!=nullptr) normal_step->process_data();
 }
 void normal_step::print(int n){
     num_tab=n;

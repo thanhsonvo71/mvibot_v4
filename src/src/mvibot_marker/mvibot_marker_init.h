@@ -164,8 +164,8 @@
             // action maker
             int status=0;         // 0 nothing 1 collect & detect 2 active
             int active_step=0;
-            int move_to_postion_pose_m();
-            int move_to_orientation_pose_m();
+            int move_to_postion_pose_n();
+            int move_to_orientation_pose_n();
             int action();
     };
     marker my_marker;

@@ -26,8 +26,8 @@ class logic_and_step{
         int num_tab;
         int set_id(int n);
         //
-        int status_A;
-        int status_B;
+        int status_A=0;
+        int status_B=0;
         //
         multiple_step_II * logic_A=nullptr;
         multiple_step_II * logic_B=nullptr;
@@ -43,8 +43,8 @@ class logic_or_step{
         int num_tab;
         int set_id(int n);
         //
-        int status_A;
-        int status_B;
+        int status_A=0;
+        int status_B=0;
         //
         multiple_step_II * logic_A=nullptr;
         multiple_step_II * logic_B=nullptr;
@@ -134,4 +134,5 @@ class mission{
         int action(int action);
         void reset();
         void delete_free();
+        string get_infor();
 };

@@ -10,6 +10,7 @@ extern float software_update_status,software_update;
 extern float battery_soc;
 extern float low_battery;
 extern int mvibot_sensor_ready;
+extern int battery_status_charge;
 void set_color_led(float cred, float cgreen, float cblue){
     red=cred;
     blue=cblue;
@@ -41,11 +42,16 @@ void led_control(){
             led_b=1;
         }
     }
+     if(battery_status_charge==1){
+    	set_color_led(0,0,100);
+        led_r=1;
+        led_l=1;
+        led_b=1;
+    }
     if(software_update==1){
         set_color_led(0,0,100);
         led_r=2;
         led_l=2;
         led_b=2;
-    }
-   
+    }   
 }

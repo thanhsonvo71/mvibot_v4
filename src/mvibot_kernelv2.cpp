@@ -159,6 +159,13 @@ int main(int argc, char** argv){
     system_command="echo ";
     system_command=system_command+"robot shutdown at: `date` "+">> "+define_path+"history/startup.log";
     system(system_command.c_str());
+    // send mail other
+    system_command="scp /home/mvibot/catkin_ws/src/mvibot/history/battery.log /home/mvibot/catkin_ws/src/mvibot/history/battery_send.log";
+    system(system_command.c_str());
+    //
+    system_command="cd /home/mvibot/catkin_ws/src/mvibot/history/ &&";
+    system_command+=" (echo $(date) | mail -s \"Battery history\" mvpkouki@gmail.com -A battery_send.log )";
+    system(system_command.c_str());
     // modify uart
     serialPort.SetTimeout(5);
     uart_open();
@@ -265,13 +272,13 @@ void function2(){
         unlock();
         // communicate with stm
         lock();
-            //uart_write();
+            uart_write();
         unlock();
             usleep(30000);
         // check time out data from stm
         lock();
-            //uart_read();
-            //uart_timeout();
+            uart_read();
+            uart_timeout();
         unlock();
 }
 void function3(){
@@ -293,7 +300,6 @@ void function4(){
 void function5(){
     lock();
         cout<<"Function 5 at |"<<get_time()<<endl;
-        /*
         // bacup request
         if(request_backup==1){
             static int finish_backup=0;
@@ -312,6 +318,6 @@ void function5(){
             cout<<"Some one is connect to output display..."<<endl;
             send_mail("mvpkouki@gmail.com",name_seri_fix+" Alarm Security",name_seri_fix+" : someone is plugined display port At `date`","");
             security_code();
-        }*/
+        }
     unlock();
 }

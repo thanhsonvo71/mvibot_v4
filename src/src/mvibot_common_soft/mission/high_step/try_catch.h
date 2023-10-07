@@ -8,14 +8,15 @@ void try_catch_step::process_data(){
         if(my_detect[i]=="try_step"){
             try_step=new multiple_step_II;
             try_step->data=my_detect[i+1];
-            try_step->process_data();
+
         }
         if(my_detect[i]=="catch_step"){
             catch_step=new multiple_step_II;
             catch_step->data=my_detect[i+1];
-            catch_step->process_data();
         }
     }
+    if(try_step!=nullptr) try_step->process_data();
+    if(catch_step!=nullptr) catch_step->process_data();
 }
 void try_catch_step::print(int n){
     num_tab=n;
@@ -71,6 +72,6 @@ void try_catch_step::reset(){
 int try_catch_step::set_id(int n){
     static int value_return;
     value_return=try_step->set_id(n);
-    value_return=catch_step->set_id(value_return+1);
+    value_return=catch_step->set_id(value_return);
     return value_return;
 }

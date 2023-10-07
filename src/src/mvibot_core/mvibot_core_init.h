@@ -73,6 +73,7 @@ using namespace std;
     float battery_small_mah_max=0;
     float battery_small_num_cell=0;
     int battery2_charge;
+    int battery_status_charge;
     //gpio
     std_msgs::Float32MultiArray input_user;
     std_msgs::Float32MultiArray output_user;

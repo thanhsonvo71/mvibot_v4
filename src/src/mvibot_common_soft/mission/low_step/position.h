@@ -398,18 +398,17 @@ int position_::action(int action){
             error_dis=sqrt(dis_x*dis_x+dis_y*dis_y);
             if(status==0){
                 // disable obstacle to find path
-            	if(enable_ob1!=0){
-                    enable_ob1=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles1/set_parameters","enabled","bool","0"));	
-                    if(enable_ob2!=0)
-                    enable_ob2=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles2/set_parameters","enabled","bool","0"));
-                    //
-                    if(enable_ob1==0 & enable_ob2==0){
-                        for(int j=0;j<num_tab;j++) cout<<"\t";
-                        cout<<"clear costmap"<<endl;
-                        clear_costmap();
-                        action_recovery(0);
-                        status=1;
-                    }
+                if(enable_ob1!=0)
+                enable_ob1=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles1/set_parameters","enabled","bool","0"));	
+                if(enable_ob2!=0)
+                enable_ob2=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles2/set_parameters","enabled","bool","0"));
+                //
+                if(enable_ob1==0 & enable_ob2==0){
+                    for(int j=0;j<num_tab;j++) cout<<"\t";
+                    cout<<"clear costmap"<<endl;
+                    clear_costmap();
+                    action_recovery(0);
+                    status=1;
                 }
             }else if(status==1){
                 static int status_getpath;

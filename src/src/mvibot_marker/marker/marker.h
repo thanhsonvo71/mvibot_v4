@@ -5,7 +5,7 @@ using namespace  std;
 //
 int marker::tranform_offset(){
     static int value_return;
-    value_return=1;
+    value_return=0;
     if(marker_type=="none_marker_dis" | marker_type=="none_marker_angle" ){
         // creat pose for marker dis or angle
         my_pose.resize(1);
@@ -62,6 +62,7 @@ int marker::tranform_offset(){
         y_set=robot_position[1];
         z_set=robot_position[2];
         w_set=robot_position[3];
+        cout<<x_set<<"|"<<y_set<<"|"<<z_set<<"|"<<w_set<<endl;
     }
     else{
         value_return=0;
@@ -93,6 +94,13 @@ int marker::tranfrom_pose_marker(int mode){
             listener.waitForTransform(mvibot_seri+"/odom", mvibot_seri+"/base_marker", ros::Time(0), ros::Duration(0.1));
             listener.lookupTransform (mvibot_seri+"/odom", mvibot_seri+"/base_marker", ros::Time(0), transform);
             if(mode==1){
+                //
+                pose_o.pose=my_pose2[0];
+                pose_n.pose=my_pose2[1];
+                //
+                pose_o.header.frame_id=mvibot_seri+"/base_marker";
+                pose_n.header.frame_id=mvibot_seri+"/base_marker";
+                //
                 listener.transformPose(mvibot_seri+"/base_footprint",pose_o,pose_o_robot);
                 listener.transformPose(mvibot_seri+"/base_footprint",pose_n,pose_n_robot);
             }
@@ -124,20 +132,20 @@ int marker::check_first_tranfrom_pose_marker(){
     }else value_return=0;     
     return value_return;
 }
-int marker::move_to_postion_pose_m(){
+int marker::move_to_postion_pose_n(){
     static int value_return;
     value_return=0;
-    cout<<"move to postion pose_m:"<<endl;
-    cout<<"\t _x:"<<pose_m_robot.pose.position.x;
-    cout<<"|_y:"<<pose_m_robot.pose.position.y;
-    cout<<"|_theta:"<<atan2(pose_m_robot.pose.position.y,pose_m_robot.pose.position.x)/M_PI*180<<endl;
+    cout<<"move to postion pose_n:"<<endl;
+    cout<<"\t _x:"<<pose_n_robot.pose.position.x;
+    cout<<"|_y:"<<pose_n_robot.pose.position.y;
+    cout<<"|_theta:"<<atan2(pose_n_robot.pose.position.y,pose_n_robot.pose.position.x)/M_PI*180<<endl;
     //
     static float dis,angle;
     static float x,y;
-    x=pose_m_robot.pose.position.x;
-    y=pose_m_robot.pose.position.y;
+    x=pose_n_robot.pose.position.x;
+    y=pose_n_robot.pose.position.y;
     dis=sqrt(x*x+y*y);
-    angle=atan2(pose_m_robot.pose.position.y,pose_m_robot.pose.position.x);
+    angle=atan2(pose_n_robot.pose.position.y,pose_n_robot.pose.position.x);
     if(marker_type=="none_marker_dis") off_set_dis=x;
     //
     if(angle>M_PI*1/2) angle=angle-M_PI;
@@ -146,13 +154,13 @@ int marker::move_to_postion_pose_m(){
     static float v,w;
     v=0;
     w=0;
-    if(fabs(dis)<=0.005){
+    if(fabs(dis)<=0.01){ // 0.005
         value_return=1;
         v=0;
         w=0;
         robot_emg();
     }else{
-        if(fabs(angle)<=M_PI/180*10){
+        if(fabs(angle)<=M_PI/180*30){
             static int k;
             if(x>0) k=1;
             if(x<0) k=-1;
@@ -163,21 +171,29 @@ int marker::move_to_postion_pose_m(){
             else if(fabs(dis)<0.2 & fabs(dis)>=0.1) v=0.08*k;
             else if(fabs(dis)<0.1 & fabs(dis)>=0.05) v=0.04*k;
             else if(fabs(dis)<0.05 & fabs(dis)>=0.03) v=0.02*k;
-            else if(fabs(dis)<=0.03) v=0.01*k;
+            else if(fabs(dis)<=0.03) v=0.02*k;
             //
             static int k2;
             if(angle>0) k2=1;
             if(angle<0) k2=-1;
             //
-            if(fabs(angle)>=M_PI/180*5) w=k2*M_PI/180*3;
-            else if( fabs(angle)<M_PI/180*5 &  fabs(angle)>=M_PI/180*3) w=k2*M_PI/180*1;
+            // if(fabs(angle)>=M_PI/180*5) w=k2*M_PI/180*3;
+            // else if( fabs(angle)<M_PI/180*5 &  fabs(angle)>=M_PI/180*3) w=k2*M_PI/180*1;
+            // else if( fabs(angle)<M_PI/180*3 &  fabs(angle)>=M_PI/180/2) w=k2*M_PI/180*1;
+            // else if( fabs(angle)<M_PI/180/2) w=k2*M_PI/180/2;
+            if(fabs(angle)>=M_PI/180*15) w=k2*M_PI/180*10;	    
+            else if( fabs(angle)<M_PI/180*15 &  fabs(angle)>=M_PI/180*10) w=k2*M_PI/180*5;	    
+            else if( fabs(angle)<M_PI/180*10 &  fabs(angle)>=M_PI/180*5) w=k2*M_PI/180*5;	    
+            else if( fabs(angle)<M_PI/180*5 &  fabs(angle)>=M_PI/180*3) w=k2*M_PI/180*3;
             else if( fabs(angle)<M_PI/180*3 &  fabs(angle)>=M_PI/180/2) w=k2*M_PI/180*1;
             else if( fabs(angle)<M_PI/180/2) w=k2*M_PI/180/2;
         }
         else{
             v=0;
-            if(angle>0) w=M_PI/180*10;
-            else w=-M_PI/180*10;
+            // if(angle>0) w=M_PI/180*10;
+            // else w=-M_PI/180*10;
+            if(angle>0) w=M_PI/10;//180*10;
+            else w=-M_PI/10;
         }
     }
     cout<<"v:"<<v<<"|w"<<w<<endl;
@@ -188,22 +204,22 @@ int marker::move_to_postion_pose_m(){
     }else pub_cmd_vel(v,w);
     return value_return;
 }
-int marker::move_to_orientation_pose_m(){
+int marker::move_to_orientation_pose_n(){
     static int value_return;
     value_return=0;
-    cout<<"move to orientation pose_m:"<<endl;
-    cout<<"_theta:"<<getyaw(pose_m_robot.pose.orientation)/M_PI*180<<endl;
+    cout<<"move to orientation pose_n:"<<endl;
+    cout<<"_theta:"<<getyaw(pose_n_robot.pose.orientation)/M_PI*180<<endl;
     //
     static float dis,angle;
     static float x,y;
-    angle=getyaw(pose_m_robot.pose.orientation);
+    angle=getyaw(pose_n_robot.pose.orientation);
     //
     if(marker_type=="none_marker_angle") off_set_angle=angle/M_PI*180;
     static float v,w;
     v=0;
     w=0;
-    if(fabs(angle)<=M_PI/180*10){
-            if(fabs(angle)<=M_PI/180/6){
+    if(fabs(angle)<=M_PI/180*30){
+            if(fabs(angle)<=M_PI/180/3){
                 value_return=1;
                 v=0;
                 w=0;
@@ -213,15 +229,24 @@ int marker::move_to_orientation_pose_m(){
                 if(angle>0) k2=1;
                 if(angle<0) k2=-1;
                 //
-                if(fabs(angle)>=M_PI/180*5) w=k2*M_PI/180*3;
-                else if( fabs(angle)<M_PI/180*5 &  fabs(angle)>=M_PI/180*3) w=k2*M_PI/180*1;
+                // if(fabs(angle)>=M_PI/180*5) w=k2*M_PI/180*3;
+                // else if( fabs(angle)<M_PI/180*5 &  fabs(angle)>=M_PI/180*3) w=k2*M_PI/180*1;
+                // else if( fabs(angle)<M_PI/180*3 &  fabs(angle)>=M_PI/180/2) w=k2*M_PI/180*1;
+                // else if( fabs(angle)<M_PI/180/2) w=k2*M_PI/180*1;
+                //
+                if(fabs(angle)>=M_PI/180*15) w=k2*M_PI/180*10;	    
+                else if( fabs(angle)<M_PI/180*15 &  fabs(angle)>=M_PI/180*10) w=k2*M_PI/180*5;	    
+                else if( fabs(angle)<M_PI/180*10 &  fabs(angle)>=M_PI/180*5) w=k2*M_PI/180*5;	    
+                else if( fabs(angle)<M_PI/180*5 &  fabs(angle)>=M_PI/180*3) w=k2*M_PI/180*3;
                 else if( fabs(angle)<M_PI/180*3 &  fabs(angle)>=M_PI/180/2) w=k2*M_PI/180*1;
-                else if( fabs(angle)<M_PI/180/2) w=k2*M_PI/180*1;
+                else if( fabs(angle)<M_PI/180/2) w=k2*M_PI/180/2;
             } 
-        }
-        else{
-            if(angle>0) w=M_PI/180*10;
-            else w=-M_PI/180*10;
+    }
+    else{
+            // if(angle>0) w=M_PI/180*10;
+            // else w=-M_PI/180*10;
+            if(angle>0) w=M_PI/10;//180*10;
+            else w=-M_PI/10;
     }
     cout<<"v:"<<v<<"|w"<<w<<endl;
     //
@@ -234,16 +259,23 @@ int marker::move_to_orientation_pose_m(){
 int marker::action(){
     static int value_return;
     static int res;
-    if(status==1){
-        if(my_data.process_data(marker_dir)){
-            status==2;
+    if(status==0){
+        cout<<"Collect data..."<<endl;
+        if(marker_type=="none_marker_dis" |  marker_type=="none_marker_angle"){
+            status=1;
             active_step=0;
         }
+        else{
+            if(my_data.process_data(marker_dir)){
+                status=1;
+                active_step=0;
+            }
+        }
     }
-    else if(status==2){
+    else if(status==1){
         if(active_step==0){
             if(marker_type=="none_marker_dis" |  marker_type=="none_marker_angle"){
-                status=1;
+                active_step=1;
                 cout<<"don 't near detect so skip"<<endl;
             }else{
                 // detect maker
@@ -254,17 +286,21 @@ int marker::action(){
                 if(res==1) {
                     cout<<"\t Detect finsh"<<endl;
                     cout<<"\t Continue tranform offset...."<<endl;
+                    active_step=1;
                 }
                 else{
                     my_data.reset();
-                    status=1; 
+                    status=0;
+                    active_step=0; 
                     cout<<"Can't detect. Retry collet laser msg...."<<endl;
                 }
             }
         }else if(active_step==1){
             res=tranform_offset();
             if(res==1) active_step=2;
+            cout<<"Tranfrom offset"<<endl;
         }else if(active_step==2){
+            cout<<"Send frame to tf2 and get footprint"<<endl;
             if(send_tranfrom_marker()){
                 if(tranfrom_pose_marker(1)){
                     if(check_first_tranfrom_pose_marker()){
@@ -273,6 +309,7 @@ int marker::action(){
                 }
             }     
         }else if(active_step>=3){
+            cout<<"action"<<endl;
             if(send_tranfrom_marker()){
                 if(tranfrom_pose_marker(1)){
                     // safe
@@ -284,8 +321,8 @@ int marker::action(){
                       if(safe<0) safe=0;
                     }
                     //
-                    if(active_step==3) res=move_to_postion_pose_m();
-                    if(active_step==4) res=move_to_orientation_pose_m();
+                    if(active_step==3) res=move_to_postion_pose_n();
+                    if(active_step==4) res=move_to_orientation_pose_n();
                     //
                     if(res==1){
                         active_step++;
@@ -293,6 +330,8 @@ int marker::action(){
                             active_step=0;
                             status=0;
                             reset(0);
+                            start=2;
+                            cout<<"Finish marker"<<endl;
                         }
                     }
                 }

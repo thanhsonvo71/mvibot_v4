@@ -22,14 +22,14 @@ void while_step::process_data(){
         if(my_detect[i]=="do_step"){
             do_step=new multiple_step_II;
             do_step->data=my_detect[i+1];
-            do_step->process_data();
         }
         if(my_detect[i]=="condition_step"){
             condition_step=new multiple_step_II;
             condition_step->data=my_detect[i+1];
-            condition_step->process_data();
         }
     }
+    if(do_step!=nullptr) do_step->process_data();
+    if(condition_step!=nullptr) condition_step->process_data();
 }
 void while_step::print(int n){
     num_tab=n;

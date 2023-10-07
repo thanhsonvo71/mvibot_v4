@@ -271,6 +271,7 @@ int data::process_data(string marker_dir){
     return value_return;
 }
 void data::reset(){
+        //
         my_scan.resize(0);
         my_points.resize(0);
         my_group.resize(0);

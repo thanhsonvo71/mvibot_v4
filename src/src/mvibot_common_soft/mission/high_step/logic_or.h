@@ -8,14 +8,14 @@ void logic_or_step::process_data(){
         if(my_detect[i]=="logic_A"){
             logic_A=new multiple_step_II;
             logic_A->data=my_detect[i+1];
-            logic_A->process_data();
         }
         if(my_detect[i]=="logic_B"){
             logic_B=new multiple_step_II;
             logic_B->data=my_detect[i+1];
-            logic_B->process_data();
         }
     }
+    if(logic_A!=nullptr) logic_A->process_data();
+    if(logic_B!=nullptr) logic_B->process_data();
 }
 void logic_or_step::print(int n){
     num_tab=n;
@@ -93,6 +93,6 @@ void logic_or_step::reset(){
 int logic_or_step::set_id(int n){
     static int value_return;
     value_return=logic_A->set_id(n);
-    value_return=logic_B->set_id(value_return+1);
+    value_return=logic_B->set_id(value_return);
     return value_return;
 }

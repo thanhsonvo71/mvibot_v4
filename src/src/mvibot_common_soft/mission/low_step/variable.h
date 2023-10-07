@@ -147,7 +147,7 @@ int variable_::action(int action){
                     }
                 }
                 else{
-                    if(my_vars_local.var[is_have2-1].data==stof(focus_value)){
+                    if(my_vars_local.var[is_have2-1].data==stof_f(focus_value)){
                         for(int i=0;i<num_tab;i++) cout<<"\t ";
                         cout<<"Equal variable is true"<<endl;
                         value_return=True_;
@@ -180,7 +180,7 @@ int variable_::action(int action){
                     }
                 }
                 else{
-                    if(my_vars_local.var[is_have2-1].data!=stof(focus_value)){
+                    if(my_vars_local.var[is_have2-1].data!=stof_f(focus_value)){
                         for(int i=0;i<num_tab;i++) cout<<"\t ";
                         cout<<"Equal not variable is true"<<endl;
                         value_return=True_;
@@ -209,7 +209,7 @@ int variable_::action(int action){
                 if(is_have!=0) 
                 my_vars_local.var[is_have2-1].data=my_vars_local.var[is_have-1].data;
                 else 
-                my_vars_local.var[is_have2-1].data=stof(focus_value);
+                my_vars_local.var[is_have2-1].data=stof_f(focus_value);
                 value_return=Finish_;
             }
             
@@ -224,7 +224,7 @@ int variable_::action(int action){
                 if(is_have!=0) 
                 my_vars_local.var[is_have2-1].data+=my_vars_local.var[is_have-1].data;
                 else 
-                my_vars_local.var[is_have2-1].data+=stof(focus_value);
+                my_vars_local.var[is_have2-1].data+=stof_f(focus_value);
                 value_return=Finish_;
             }
         }
@@ -236,7 +236,7 @@ int variable_::action(int action){
                 value_return=Error_;
             }else{
                 if(is_have!=0) my_vars_local.var[is_have2-1].data-=my_vars_local.var[is_have-1].data;
-                else my_vars_local.var[is_have2-1].data-=stof(focus_value);
+                else my_vars_local.var[is_have2-1].data-=stof_f(focus_value);
                 value_return=Finish_;
             }
         }

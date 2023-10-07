@@ -247,7 +247,7 @@ add_executable(mvibot_serverv3 src/mvibot_serverv3.cpp)
 target_link_libraries(mvibot_serverv3 ${catkin_LIBRARIES} -lpthread  -L/usr/lib -lmysqlcppconn)
 add_dependencies(mvibot_serverv3 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-add_executable(mvibot_maker src/mvibot_maker.cpp)
-target_link_libraries(mvibot_maker ${catkin_LIBRARIES} -lpthread )
-add_dependencies(mvibot_maker ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_executable(mvibot_marker src/mvibot_marker.cpp)
+target_link_libraries(mvibot_marker ${catkin_LIBRARIES} -lpthread )
+add_dependencies(mvibot_marker ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 

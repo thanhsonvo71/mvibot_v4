@@ -8,19 +8,19 @@ void if_else_step::process_data(){
         if(my_detect[i]=="if_step"){
             if_step=new multiple_step_II;
             if_step->data=my_detect[i+1];
-            if_step->process_data();
         }
         if(my_detect[i]=="else_step"){
             else_step=new multiple_step_II;
             else_step->data=my_detect[i+1];
-            else_step->process_data();
         }
         if(my_detect[i]=="condition_step"){
             condition_step=new multiple_step_II;
             condition_step->data=my_detect[i+1];
-            condition_step->process_data();
         }
     }
+    if(if_step!=nullptr) if_step->process_data();
+    if(else_step!=nullptr) else_step->process_data();
+    if(condition_step!=nullptr) condition_step->process_data();
 }
 void if_else_step::print(int n){
     num_tab=n;

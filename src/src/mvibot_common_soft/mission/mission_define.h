@@ -30,6 +30,7 @@
 #define Stop_    9
 #define Break_   10
 #define is_robot 1
+#define Continue_ 11
 
 #define Mission_normal_             0
 #define Mission_charge_battery_     1

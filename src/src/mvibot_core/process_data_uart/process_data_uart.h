@@ -26,6 +26,7 @@ extern float battery_small_mah_now;
 extern float battery_small_mah_max;
 extern float battery_small_num_cell;
 extern int battery2_charge;
+extern int battery_status_charge;
 //gpio
 extern std_msgs::Float32MultiArray input_user;
 extern std_msgs::Float32MultiArray output_user;
@@ -98,6 +99,8 @@ void process_data_uart_read(){
             battery_mah_now=(float)((uint16_t)data_receive[battery_mah_now_H_re]<<8| data_receive[battery_mah_now_L_re]);
             battery_mah_max=(float)((uint16_t)data_receive[battery_mah_max_H_re]<<8| data_receive[battery_mah_max_L_re]);
             battery_current=(float)((int16_t)(data_receive[battery_current_H_re]<<8 | data_receive[battery_current_L_re]));
+            if(battery_current>=0) battery_status_charge=1;
+            else battery_status_charge=0;
             battery_temperature=(float)(data_receive[battery_temperature1_re]+data_receive[battery_temperature1_re])/2;
             //
             for(int i=0;i<8;i++){

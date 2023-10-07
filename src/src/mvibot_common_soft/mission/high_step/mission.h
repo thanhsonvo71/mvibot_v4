@@ -59,13 +59,13 @@ int mission::action(int action){
                     }
                 }
             }
-            if(my_configuration->my_step[i].name_step=="skip"){
+            if(my_configuration->my_step[i].name_step=="continue"){
                 if(my_configuration->my_step[i].mode_step=="gpio" | my_configuration->my_step[i].mode_step=="gpio_module"){
                     static int res;
                     res=my_configuration->my_step[i].action(Active_);
                     if(res==Finish_){
                         wake_up_true=1;
-                        value_return=Wake_up_;
+                        value_return=Continue_;
                         break;
                     }
                 }
@@ -136,16 +136,26 @@ void mission::reset(){
     cout<<"Reset Mission"<<endl;
     my_configuration->reset();
     my_multiple_step_II->reset();
+    
     //
 }
 void mission::delete_free(){
    if(my_configuration!=nullptr){
-    delete my_configuration;
-    my_configuration=nullptr;
+        delete my_configuration;
+        my_configuration=nullptr;
    }
    if(my_multiple_step_II!=nullptr){
         my_multiple_step_II->delete_free();
         delete my_multiple_step_II;
         my_multiple_step_II=nullptr;
    }
+}
+string mission::get_infor(){
+    static string value_return;
+    value_return="";
+    value_return+="(name_mission:"+name_mission+")";
+    value_return+="(step_action_information:"+step_action_information+")";
+    value_return+="(total_step:"+to_string(my_multiple_step_II->num_small_step_action)+")";
+    value_return+="(infor_action_step:"+infor_action_step+")";
+    return value_return;
 }

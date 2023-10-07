@@ -22,9 +22,9 @@ int backup(){
     cout<<"reconfig robot......"<<endl;
     backup_file("config/name_seri",name_seri_fix);
     // robot config
-    backup_file("config/robot_R","0.0805");
-    backup_file("config/robot_L","0.594");
-    backup_file("config/robot_gear","25");
+    //backup_file("config/robot_R","0.0805");
+    //backup_file("config/robot_L","0.594");
+    //backup_file("config/robot_gear","25");
     backup_file("config/robot_vmax","0.5");
     backup_file("config/robot_wmax","0.314");
     backup_file("config/robot_ax","1.0");

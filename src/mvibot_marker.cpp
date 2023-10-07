@@ -90,6 +90,8 @@ void start_markerf(const std_msgs::String& msg){
             if(start==0){
                 start=1;
                 my_marker.reset(0);
+                process_data(msg.data);
+                cout<<msg.data<<endl;
             }
         }
     unlock();
@@ -136,12 +138,15 @@ int main(int argc, char** argv){
         usleep(1e5);
     }
     //
+    cout<<"Setup_Finish"<<endl;
     pub_cmd_vel(0,0);
     robot_emg();
     pub_status_marker();
     //
     static int res;
     res=pthread_create(&p_process1,NULL,process1,NULL);
+    res=pthread_create(&p_process2,NULL,process2,NULL);
+
     ros::NodeHandle n1,n2,n3,n4,n5;
     //ros::Subscriber sub1 = n1.subscribe("/"+mvibot_seri+"/msg", 1, msgf);    
     ros::Subscriber sub2 = n2.subscribe("/"+mvibot_seri+"/laser/base_link/scan1", 1, scan1f); 
@@ -171,11 +176,15 @@ void function1(){
             my_marker.action();
         }
         pub_status_marker();
+        //cout<<"Timer function!"<<endl;
     unlock();
 
 }
 void function2(){
-       
+    lock();
+       robot_position=get_position(mvibot_seri+"/odom",mvibot_seri+"/base_footprint");
+       //cout<<"Timer2 function!"<<endl;
+    unlock();
 }
 void function3(){
        
