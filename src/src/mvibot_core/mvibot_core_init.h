@@ -31,7 +31,7 @@ using namespace std;
     float tr,tl;
     float vr_set,vl_set;
     float torqueL_set=1.92,torqueR_set=1.92;
-    float vrl_max=16; //rad/s
+    float vrl_max=12.0; //rad/s
     float ts_pid;
     // sensor robot
     int mvibot_sensor_ready=0;

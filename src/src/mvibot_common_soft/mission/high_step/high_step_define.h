@@ -77,6 +77,20 @@ class normal_step{
         //
         multiple_step_II * normal_step=nullptr;
 };
+class while_step{
+    public:
+        string data;
+        void process_data();
+        void print(int n);
+        int action(int action);
+        void reset();
+        int status=0;
+        int num_tab;
+        int set_id(int n);
+        //
+        multiple_step_II * condition_step=nullptr;
+        multiple_step_II * do_step=nullptr;
+};
 class step_II{
     public:
         string data;
@@ -134,5 +148,5 @@ class mission{
         int action(int action);
         void reset();
         void delete_free();
-        string get_infor();
+        string get_infor(int mode_get);
 };

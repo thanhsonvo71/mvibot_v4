@@ -108,3 +108,14 @@ void pub_status_marker(){
 		pub.publish(data);
 	} else creat_fun=1;
 }
+void pub_status(){
+    static ros::NodeHandle n;
+    static ros::Publisher  pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/status_marker_test", 1);
+	static float creat_fun=0;
+	if(creat_fun==1)
+	{
+        static std_msgs::String data;
+        data.data=to_string(my_marker.status)+"|"+to_string(my_marker.active_step);
+		pub.publish(data);
+	} else creat_fun=1;
+}

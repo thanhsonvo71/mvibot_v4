@@ -39,6 +39,7 @@ using namespace std;
 float ts_mission_step_scan=0.05;
 // global var for robot
 int action_mission=0;
+int action_mode_mission;
 int sound=0;
 int status_action_marker=0;
 // class for variable mision
@@ -133,11 +134,18 @@ std_msgs::Float32MultiArray  input_user_status;
 std_msgs::Float32MultiArray  input_user_status_1;
 std_msgs::Float32MultiArray  input_user_status_2;
 std_msgs::Float32MultiArray  output_user_status;
+//
 // infor mission
 string type_action_step;
 string step_action_information;
 string infor_action_step;
-int id_action_information;
+//int id_action_information;
+string step_action_information2;
+string infor_action_step2;
+//int id_action_information2;
+string step_action_information3;
+string infor_action_step3;
+//int id_action_information3;
 // moudle status
 class moudle_ {
     public:

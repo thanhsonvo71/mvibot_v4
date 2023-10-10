@@ -389,6 +389,42 @@ void pub_robot_list_wifi(string data){
         creat_fun=1;
     }
 }
+void pub_local_variable(string data){
+    static ros::NodeHandle n;
+    static ros::Publisher pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/local_variable",1);
+    static float creat_fun=0;
+    if(creat_fun==1){
+            static std_msgs::String msg;
+            msg.data=data;
+            pub.publish(msg);
+    }else {
+        creat_fun=1;
+    }
+}
+void pub_mission_action_infor(string data){
+    static ros::NodeHandle n;
+    static ros::Publisher pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/mission_action_infor",1);
+    static float creat_fun=0;
+    if(creat_fun==1){
+            static std_msgs::String msg;
+            msg.data=data;
+            pub.publish(msg);
+    }else {
+        creat_fun=1;
+    }
+}
+void pub_mission_memory(string data){
+    static ros::NodeHandle n;
+    static ros::Publisher pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/mission_memory",1);
+    static float creat_fun=0;
+    if(creat_fun==1){
+            static std_msgs::String msg;
+            msg.data=data;
+            pub.publish(msg);
+    }else {
+        creat_fun=1;
+    }
+}
 //
 void cmd_velf(const geometry_msgs::Twist& msg){
     lock();
@@ -640,6 +676,9 @@ int main(int argc, char** argv)
     pub_hook_encoder("");
     pub_hook_switch("");
     pub_robot_list_wifi("");
+    pub_local_variable("");
+    pub_mission_action_infor("");
+    pub_mission_memory("");
     //
     while(modify_socket()==-1){
         sleep(2);
@@ -813,6 +852,9 @@ void process_data(string data){
                 if(name_topic=="hook_encoder")                pub_hook_encoder(data2);
                 if(name_topic=="hook_switch")                 pub_hook_switch(data2);
                 if(name_topic=="robot_list_wifi")             pub_robot_list_wifi(data2);
+                if(name_topic=="local_variable")              pub_local_variable(data2);
+                if(name_topic=="mission_action_infor")        pub_mission_action_infor(data2);
+                if(name_topic=="mission_memory")              pub_mission_memory(data2);
             }
         }
     }

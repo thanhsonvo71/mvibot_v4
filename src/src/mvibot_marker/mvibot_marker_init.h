@@ -181,5 +181,6 @@
     sensor_msgs::LaserScan scan_safe;
     int check_safe();
     void pub_status_marker();
+    void pub_status();
     #define mvibot_marker_define 1
 #endif

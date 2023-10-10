@@ -1,19 +1,5 @@
 using namespace std;
 //
-class while_step{
-    public:
-        string data;
-        void process_data();
-        void print(int n);
-        int action(int action);
-        void reset();
-        int status=0;
-        int num_tab;
-        int set_id(int n);
-        //
-        multiple_step_II * condition_step=nullptr;
-        multiple_step_II * do_step=nullptr;
-};
 void while_step::process_data(){
     static vector<string> my_detect;
     my_detect=detect_data_v1(data,'{','}');

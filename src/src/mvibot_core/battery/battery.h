@@ -91,7 +91,7 @@ void pub_battery_small_status(){
         if(creat_fun==1){
                 static std_msgs::String msg;
                 msg.data=mvibot_seri+"|";
-                if(battery_small_live_status==0){
+                if(battery_small_live_status==1){
                     msg.data=msg.data+"soc:"+to_string((int)battery_small_soc)+"|";
                     msg.data=msg.data+"vol:"+to_string(battery_small_vol)+"|";
                     msg.data=msg.data+"capacity_now:"+to_string(battery_small_mah_now/100)+"|";

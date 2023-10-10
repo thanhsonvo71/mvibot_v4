@@ -7,6 +7,9 @@ int free_space_robot;
 int get_user_path=0;
 int enable_ob1=-1;
 int enable_ob2=-1;
+//
+int movebase_goal_id=0;
+int target_goal_id=0;
 // var for action mbf
 mbf_msgs::MoveBaseGoal goal_pub;
 nav_msgs::Path goal_path;
@@ -59,7 +62,7 @@ void check_pose_costmap(){
             srv.request.current_pose=false;
             client.call(srv);
             if((srv.response.state)==0 | (srv.response.state)==1) free_space_robot=1;
-            else free_space_robot=0;
+            else free_space_robot=1; //0
             // cout<<free_space_robot<<endl;
             // cout<<"cost:"<<srv.response.cost<<endl;
             // cout<<"state:"<<to_string(srv.response.state)<<endl;
@@ -180,35 +183,45 @@ int action_goal(int mode){
             msg.target_pose.pose.orientation.w=position_goal[3];
             if(action_goal.getState().toString()!="ACTIVE"){
                 //action_goal.
-                if(action_goal.getState().toString()=="SUCCEEDED"){
-                    static float dis_x,dis_y;
-                    dis_x=position_goal[0]-position_robot[0];
-                    dis_y=position_goal[1]-position_robot[1];
-                    //
-                    static float yaw1,yaw2;
-                    yaw1=getyaw(position_goal[2],position_goal[3]);
-                    yaw2=getyaw(position_robot[2],position_robot[3]);
-                    if(sqrt(dis_x*dis_x+dis_y*dis_y)<=0.35 & (fabs(cos(yaw1)-cos(yaw2))< 0.1) & (fabs(sin(yaw1)-sin(yaw2))< 0.1))
-                    {
-                        return 1;
-                    }else{
-                        send_cmd++; 
-                        if(send_cmd>=4){
-                            action_goal.sendGoal(msg);
-                            send_cmd=0;
-                        }
-                        return 0;
-                    }
-                }else{
-                    send_cmd++;
-                    if(send_cmd>=4){
-                        action_goal.sendGoal(msg);
-                        send_cmd=0;
-                    }
-                    return 0;
-                }
+                // if(action_goal.getState().toString()=="SUCCEEDED"){
+                //     static float dis_x,dis_y;
+                //     dis_x=position_goal[0]-position_robot[0];
+                //     dis_y=position_goal[1]-position_robot[1];
+                //     //
+                //     static float yaw1,yaw2;
+                //     yaw1=getyaw(position_goal[2],position_goal[3]);
+                //     yaw2=getyaw(position_robot[2],position_robot[3]);
+                //     if(sqrt(dis_x*dis_x+dis_y*dis_y)<=0.35 & (fabs(cos(yaw1)-cos(yaw2))< 0.1) & (fabs(sin(yaw1)-sin(yaw2))< 0.1))
+                //     {
+                //         return 1;
+                //     }else{
+                //         send_cmd++; 
+                //         if(send_cmd>=4){
+                //             action_goal.sendGoal(msg);
+                //             send_cmd=0;
+                //         }
+                //         return 0;
+                //     }
+                // }else{
+                //     send_cmd++;
+                //     if(send_cmd>=4){
+                //         action_goal.sendGoal(msg);
+                //         send_cmd=0;
+                //     }
+                //     return 0;
+                // }
+                //
+                // action_goal.getResult().get()->dist_to_goal;   
+                // action_goal.getResult().get()->angle_to_goal; 
+                // action_goal.sendGoal(msg);
+                action_goal.sendGoal(msg);
+                return 1;
             }
-            else return 1;
+            else{
+                action_goal.cancelGoal();
+                action_goal.waitForResult();
+                return 0;
+            }
         }
         else if(mode==2){
             cout<<"\t \t \t \t \t "<<action_goal.getState().toString()<<endl;
@@ -341,10 +354,13 @@ int position_::action(int action){
     if(action==Active_){
         if(mode=="normal"){
             if(status==0){
-                for(int j=0;j<num_tab;j++) cout<<"\t";
-                cout<<"clear costmap"<<endl;
-                action_recovery(0);
-                status=1;
+                if(action_goal(2)!=Active_){
+                    target_goal_id=movebase_goal_id;
+                    for(int j=0;j<num_tab;j++) cout<<"\t";
+                    cout<<"clear costmap"<<endl;
+                    action_recovery(0);
+                    status=1;
+                }else action_goal(0);
             }else if(status==1){
                 for(int j=0;j<num_tab;j++) cout<<"\t";
                 cout<<"send goal"<<endl;
@@ -369,26 +385,37 @@ int position_::action(int action){
                     status=0;
                 }
                 if(get_action_goal_status==Finish_){
-                    for(int j=0;j<num_tab;j++) cout<<"\t";
-                    cout<<"Check finish goal"<<endl;
-                    //
-                    static float dis_x,dis_y;
-                    dis_x=x-position_robot[0];
-                    dis_y=y-position_robot[1];
-                    //
-                    static float yaw1,yaw2;
-                    yaw1=getyaw(z,w);
-                    yaw2=getyaw(position_robot[2],position_robot[3]);
-                    if(sqrt(dis_x*dis_x+dis_y*dis_y)<=0.35 & (fabs(cos(yaw1)-cos(yaw2))< 0.1) & (fabs(sin(yaw1)-sin(yaw2))< 0.1)){
+                    // for(int j=0;j<num_tab;j++) cout<<"\t";
+                    // cout<<"Check finish goal"<<endl;
+                    // //
+                    // static float dis_x,dis_y;
+                    // dis_x=x-position_robot[0];
+                    // dis_y=y-position_robot[1];
+                    // //
+                    // static float yaw1,yaw2;
+                    // yaw1=getyaw(z,w);
+                    // yaw2=getyaw(position_robot[2],position_robot[3]);
+                    // if(sqrt(dis_x*dis_x+dis_y*dis_y)<=0.35 & (fabs(cos(yaw1)-cos(yaw2))< 0.1) & (fabs(sin(yaw1)-sin(yaw2))< 0.1)){
+                    //     for(int j=0;j<num_tab;j++) cout<<"\t";
+                    //     cout<<"finish goal"<<endl;
+                    //     status=0;
+                    //     return Finish_;
+                    // }else{
+                    //     for(int j=0;j<num_tab;j++) cout<<"\t";
+                    //     cout<<"replay goal because this goal is corret with set goal"<<endl;
+                    //     status=0;
+                    // }   
+                    if(target_goal_id<movebase_goal_id){
                         for(int j=0;j<num_tab;j++) cout<<"\t";
                         cout<<"finish goal"<<endl;
                         status=0;
                         return Finish_;
                     }else{
                         for(int j=0;j<num_tab;j++) cout<<"\t";
-                        cout<<"replay goal because this goal is corret with set goal"<<endl;
+                        cout<<"replay goal because this goal is corret with id set goal"<<endl;
+                        cout<<target_goal_id<<"|"<<movebase_goal_id<<endl;
                         status=0;
-                    }   
+                    }
                 }
             }
         }else if(mode=="line_follow"){

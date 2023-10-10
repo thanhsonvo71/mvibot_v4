@@ -73,7 +73,14 @@ int marker::tranform_offset(){
 int marker::send_tranfrom_marker(){
     static int value_return;
     // send_tranfrom
-    send_tranfrom(x_set,y_set,z_set,w_set,mvibot_seri+"/odom",mvibot_seri+"/base_marker");
+    // if(robot_position[0]!=-1 | robot_position[1]!=-1 | robot_position[2]!=-1 | robot_position[3]!=-1){
+    //     x_set=robot_position[0];
+    //     y_set=robot_position[1];
+    //     z_set=robot_position[2];
+    //     w_set=robot_position[3];
+    //     cout<<x_set<<"|"<<y_set<<"|"<<z_set<<"|"<<w_set<<endl;
+    // }
+    //send_tranfrom(x_set,y_set,z_set,w_set,mvibot_seri+"/odom",mvibot_seri+"/base_marker");
     robot_position_get=get_position(mvibot_seri+"/odom",mvibot_seri+"/base_marker");
     if(fabs(x_set-robot_position_get[0])<=0.001 | fabs(y_set-robot_position_get[1])<=0.001){
         if(fabs(z_set-robot_position_get[2])<=0.001 | fabs(w_set-robot_position_get[3])<=0.001){            
@@ -259,6 +266,9 @@ int marker::move_to_orientation_pose_n(){
 int marker::action(){
     static int value_return;
     static int res;
+    //    
+    //send_tranfrom(x_set,y_set,z_set,w_set,mvibot_seri+"/odom",mvibot_seri+"/base_marker");
+    //
     if(status==0){
         cout<<"Collect data..."<<endl;
         if(marker_type=="none_marker_dis" |  marker_type=="none_marker_angle"){
@@ -273,6 +283,7 @@ int marker::action(){
         }
     }
     else if(status==1){
+        if(active_step>0) send_tranfrom(x_set,y_set,z_set,w_set,mvibot_seri+"/odom",mvibot_seri+"/base_marker");
         if(active_step==0){
             if(marker_type=="none_marker_dis" |  marker_type=="none_marker_angle"){
                 active_step=1;
@@ -307,7 +318,7 @@ int marker::action(){
                         if(get_footprint()) active_step=3;
                     }
                 }
-            }     
+            }else active_step=1;    
         }else if(active_step>=3){
             cout<<"action"<<endl;
             if(send_tranfrom_marker()){

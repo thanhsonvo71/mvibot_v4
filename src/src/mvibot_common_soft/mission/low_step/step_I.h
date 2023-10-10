@@ -163,10 +163,21 @@ int step_I::action(int action){
         if(value_return==Finish_ | value_return==Error_ | value_return==True_ | value_return== False_) time_action_step=0;
     }
     //
-    if(name_step!="wake_up" & name_step!="stop" & name_step!="skip") type_action_step=mode_step;
-    if(name_step!="wake_up" & name_step!="stop" & name_step!="skip") {
-        step_action_information=to_string(id+1);
-        infor_action_step=data;
+    if(name_step!="wake_up" & name_step!="stop" & name_step!="continue") type_action_step=mode_step;
+    if(name_step!="wake_up" & name_step!="stop" & name_step!="continue") {
+        if(action_mission==Error_){
+            step_action_information3=to_string(id+1);
+            infor_action_step3=data;
+        }else{
+            if(action_mode_mission==Mission_normal_){
+                step_action_information=to_string(id+1);
+                infor_action_step=data;
+            }
+            if(action_mode_mission==Mission_charge_battery_){
+                step_action_information2=to_string(id+1);
+                infor_action_step2=data;
+            }
+        }
     }
     if(action==Active_ & value_return!=Finish_) time_action_step+=(float)ts_mission_step_scan;
     //

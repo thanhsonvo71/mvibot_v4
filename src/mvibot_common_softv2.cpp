@@ -25,7 +25,6 @@ int enable_ecoder_local_costmap=-1;
 int enable_ecoder_global_costmap=-1;
 float v_backward=-1;
 float switch_for_hook=0;
-int action_mode_mission;
 // settime process
 long double ts_process1=0.5; //time set for process1
 long double ts_process2=0.1; //time set for process2
@@ -86,28 +85,6 @@ void pub_led(float red, float green, float blue, float ll, float lr, float lb, f
     } else creat_fun=1;
 }
 void set_led(){
-    /*
-    if(tranfom_map_robot==0) pub_led(100,100,100,1,1,1,1);
-    else {
-        if(action_mission==Active_) {
-            if(action_mode_mission==Mission_normal_){
-                if(type_action_step=="sleep") pub_led(100,0,100,3,3,3,1);
-                else if(type_action_step=="gpio" | type_action_step=="gpio_module") pub_led(100,0,100,2,2,2,1);
-                else if(type_action_step=="marker")  pub_led(100,0,100,1,1,1,1);
-                else pub_led(0,100,0,1,1,1,1);
-            }else if(action_mode_mission==Mission_charge_battery_){
-                pub_led(0,100,100,2,2,2,1);
-            }
-        }
-        else{
-             if(action_mission==Error_) pub_led(100,0,0,1,1,1,1);
-             else {
-                if(action_mode_mission==Mission_normal_) pub_led(100,60,0,1,1,1,1);
-                else pub_led(100,60,0,2,2,2,1);
-             }
-        }
-    }*/
-    // new from test in mvibot2
     if(tranfom_map_robot==0) pub_led(100,100,100,1,1,1,1);
     else {
         if(action_mission==Active_) {
@@ -445,10 +422,20 @@ void motor_left_statusf(const std_msgs::String &msg)
         motor_left_ready=is_ready;
 	unlock();
 }
+void move_base_statusf(const actionlib_msgs::GoalStatusArray & msg){
+    lock();
+        static string_Iv2 data;
+        if(msg.status_list.size()>0){
+            data.detect(msg.status_list[msg.status_list.size()-1].goal_id.id,"","-","");
+            movebase_goal_id=stof_f(data.data1[1]);
+            //data.print();
+        }
+    unlock();
+}
 //
-void pub_infor_action_mission(){
+void pub_mission_action_infor(){
     static ros::NodeHandle n;
-    static ros::Publisher  pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/infor_action_mission", 10);
+    static ros::Publisher  pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/mission_action_infor", 10);
     static float creat_fun=0;
     static std_msgs::String msg;
     if(creat_fun==1)
@@ -461,14 +448,23 @@ void pub_infor_action_mission(){
         if(action_mission==Active_) msg.data=msg.data+"Active/";
         if(action_mission==Cancel_) msg.data=msg.data+"Cancel/";
         if(action_mission==Error_) msg.data=msg.data+"Error/";
+        if(action_mission==Stop_) msg.data=msg.data+"Stop/";
         //
-        msg.data=msg.data+"/action_mode_mission>";
-        if(action_mode_mission==Mission_normal_)         msg.data=msg.data+"Normal/";
-        if(action_mode_mission==Mission_charge_battery_) msg.data=msg.data+"Battery/";
-        //
-        msg.data=msg.data+"/Normal_mission_infor:"+my_multiple_mission.get_infor()+"/";
-        msg.data=msg.data+"/Battery_mission_infor:"+my_mission_charge_battery.get_infor()+"/";
-        msg.data=msg.data+"/Error_mission_infor:"+my_mission_error.get_infor()+"/";
+        msg.data=msg.data+"/mission_action_infor>";
+        if(action_mission==Error_) {
+            msg.data=msg.data+"Error/";
+            msg.data=msg.data+"/Error_mission_infor:"+my_mission_error.get_infor(2)+"/";
+        }
+        else{
+            if(action_mode_mission==Mission_normal_){
+                msg.data=msg.data+"Normal/";
+                msg.data=msg.data+"/Normal_mission_infor:"+my_multiple_mission.get_infor(0)+"/";
+            }
+            if(action_mode_mission==Mission_charge_battery_){
+                msg.data=msg.data+"Battery/";
+                msg.data=msg.data+"/Battery_mission_infor:"+my_mission_charge_battery.get_infor(1)+"/";
+            }
+        }
         //
         pub.publish(msg);
     } else creat_fun=1;
@@ -484,6 +480,30 @@ void pub_local_variable(){
         for(int i=0;i<my_vars_local.var.size();i++){
             msg.data=msg.data+"("+my_vars_local.var[i].name+":"+to_string(my_vars_local.var[i].data)+")";
         }
+        pub.publish(msg);
+    } else creat_fun=1;
+}
+void pub_mission_memory(){
+    static ros::NodeHandle n;
+    static ros::Publisher  pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/mission_memory", 10);
+    static float creat_fun=0;
+    static std_msgs::String msg;
+    if(creat_fun==1)
+    {
+        msg.data="";
+        //
+        msg.data=msg.data+"/Normal_mission:";
+        msg.data=msg.data+my_multiple_mission.get_list_mission_name();
+        msg.data=msg.data+"/";
+        //
+        msg.data=msg.data+"/Battery_mission:";
+        msg.data=msg.data+my_mission_charge_battery.name_mission;
+        msg.data=msg.data+"/";
+        //
+        msg.data=msg.data+"/Error_mission:";
+        msg.data=msg.data+my_mission_error.name_mission;
+        msg.data=msg.data+"/";
+        //
         pub.publish(msg);
     } else creat_fun=1;
 }
@@ -558,7 +578,7 @@ int  main(int argc, char** argv){
     res=pthread_create(&p_process2,NULL,process2,NULL); 
     res=pthread_create(&p_process3,NULL,process3,NULL);
     //
-    ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n14,n15,n16,n17,n18;
+    ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n14,n15,n16,n17,n18,n19;
     //ros::Subscriber sub1 = n1.subscribe("/"+mvibot_seri+"/msg", 1, msgf);   
     ros::Subscriber sub2 = n2.subscribe("/"+mvibot_seri+"/mission_normal", 1, mission_normalf); 
     ros::Subscriber sub3 = n3.subscribe("/"+mvibot_seri+"/mission_action", 1, mission_actionf); 
@@ -580,6 +600,7 @@ int  main(int argc, char** argv){
     //
     ros::Subscriber sub17 = n17.subscribe("/"+mvibot_seri+"/motor_right_status", 1, motor_right_statusf);
     ros::Subscriber sub18 = n18.subscribe("/"+mvibot_seri+"/motor_left_status", 1, motor_left_statusf);
+    ros::Subscriber sub19 = n19.subscribe("/"+mvibot_seri+"/move_base_flex/move_base/status", 1, move_base_statusf);
     ros::spin(); 
     return 0; 
 }
@@ -666,103 +687,12 @@ void function2(){
         }
     unlock();
 }
-/*void function3(){ 
-    lock();
-	if(motor_left_ready == 0 | motor_right_ready==0) action_mission=Cancel_;
-        //
-        cout<<"Variable is:"<<endl;
-        my_vars_local.print();
-        //
-        input_user_status_2=input_user_status_1;
-        input_user_status_1=input_user_status;
-        //
-        battery_soc2=battery_soc1;
-        battery_soc1=battery_soc;
-        //
-        cout<<battery_soc_set_mission<<"|1:"<<battery_soc1<<"|2:"<<battery_soc2<<endl;
-        if(battery_soc1!=-1 & battery_soc2 != -1 & battery_soc_set_mission!=-1){
-            if(battery_soc1<=battery_soc_set_mission & battery_soc2>battery_soc_set_mission){
-                want_to_charge=1;
-            }
-        }else if (battery_soc1 == -1 | battery_soc2 == -1){
-	    if(battery_soc_set_mission!=-1 & battery_soc_set_mission >= battery_soc & battery_soc!=-1) want_to_charge=1;	
-	}
-        //
-        for(int i=0;i<my_module.size();i++){
-            my_module[i].input_user2=my_module[i].input_user1;
-            my_module[i].input_user1=my_module[i].input_user;
-        }
-        //
-        static int res;
-        if(action_mode_mission==Mission_normal_){
-            if(action_mission==Active_){
-                res=my_multiple_mission.action(Active_);
-                if(res==Finish_) action_mission=Finish_;
-                action_mission=res;
-            }else{
-                if(action_mission==Error_){
-                    my_multiple_mission.action(Error_);
-                }else{
-                    res=my_multiple_mission.action(Cancel_);
-                    if(motor_left_ready == 1 & motor_right_ready== 1){
-		      	if(res==Wake_up_){
-                        	if(action_mission!=Error_) action_mission=Active_;
-                        	else action_mission=Cancel_;
-                      	}
-		    }
-                }
-            }
-            //
-            if(action_mission!=Active_ & action_mission!=Error_  & motor_left_ready == 1 & motor_right_ready== 1 & my_multiple_mission.num_mission_action==-1){
-            	//
-                if(want_to_charge==1){
-                    action_mode_mission=Mission_charge_battery_;
-                    // want_to_charge=0;
-                    action_mission=Active_;
-                }
-		if(my_mission_charge_battery.data!=""){
-                   if(my_mission_charge_battery.action(Cancel_)==Wake_up_){
-                     action_mode_mission=Mission_charge_battery_;
-                     // want_to_charge=0;
-                     action_mission=Active_;
-                   }
-		}
-            }
-        }
-        else if(action_mode_mission==Mission_charge_battery_){
-            if(action_mission==Active_){
-                res=my_mission_charge_battery.action(Active_);
-                if(res==Finish_) {
-                    action_mission=Finish_;
-                    action_mode_mission=Mission_normal_;
-                    want_to_charge=0;
-                }
-                action_mission=res;
-            }else{
-                if(my_mission_charge_battery.action(Cancel_)==Wake_up_)  action_mission=Active_;
-		//my_mission_charge_battery.action(Cancel_);
-		/*if(action_mission==Error_){
-                    my_mission_charge_battery.action(Error_);
-                }
-            }
-        }
-        // error mission
-        if(action_mission==Error_){
-            my_mission_error.action(Active_);
-        }else {
-            my_mission_error.action_step_II=0;
-        }
-        // control led
-        set_led();
-        // control sound
-        set_sound();
-        // save class  
-    unlock();
-}*/
 void function3(){
     lock();
         // update gpio
-        if(motor_left_ready == 0 | motor_right_ready==0) action_mission=Cancel_;
+        if(motor_left_ready == 0 | motor_right_ready==0){
+            if(action_mission==Active_) action_mission=Cancel_;
+        }
         input_user_status_2=input_user_status_1;
         input_user_status_1=input_user_status;
         for(int i=0;i<my_module.size();i++){
@@ -772,6 +702,12 @@ void function3(){
         // update battery soc
         battery_soc2=battery_soc1;
         battery_soc1=battery_soc;
+        static variable_local battery_varialbe;
+        battery_varialbe.name="battery";
+        battery_varialbe.data=battery_soc;
+        if(my_vars_local.var.size()==0){
+            my_vars_local.add_var(battery_varialbe);
+        }else my_vars_local.update_var(battery_varialbe);
         // check battery soc 
         if(battery_soc1!=-1 & battery_soc2 != -1 & battery_soc_set_mission!=-1){
             if(battery_soc1<=battery_soc_set_mission & battery_soc2>battery_soc_set_mission){
@@ -783,7 +719,12 @@ void function3(){
         //
         my_vars_local.print();
         //
+        //
+        static int action_mode_mission_f;
         if(action_mode_mission==Mission_normal_){
+            //
+            if(action_mode_mission_f==Mission_charge_battery_) my_mission_charge_battery.reset();
+            //
             if(action_mission!=Active_){
                 res=my_multiple_mission.action(Cancel_);
                 if(res==Wake_up_) {
@@ -825,18 +766,24 @@ void function3(){
                 }
             }
         }
+        action_mode_mission_f=action_mode_mission;
         //
+        static int action_mission_f;
         if(action_mission==Error_){
             my_mission_error.action(Active_);
-        }else {
-            //my_mission_error.reset();
+        }else{
+            if(action_mission_f==Error_){
+             my_mission_error.reset();
+            }
         }
+        action_mission_f=action_mission;
         // control led
         set_led();
         // control sound
         set_sound();
         //
-        pub_infor_action_mission();
+        pub_mission_action_infor();
         pub_local_variable();
+        pub_mission_memory();
     unlock();
 }

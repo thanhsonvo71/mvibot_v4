@@ -10,7 +10,8 @@ class multiple_mission{
         void print(int n);
         void reset();
         void delete_free();
-        string get_infor();
+        string get_infor(int mode_get);
+        string get_list_mission_name();
 };
 void multiple_mission::process_data(){
     static string_Iv2 data1;
@@ -96,12 +97,24 @@ void multiple_mission::delete_free(){
     }
     multiple_mission.clear();
 } 
-string multiple_mission::get_infor(){
+string multiple_mission::get_infor(int mode_get){
     static string value_return;
     value_return="";
     if(multiple_mission.size()>0){
         if(num_mission_action!=-1 & num_mission_action<multiple_mission.size()){
-            value_return=multiple_mission[num_mission_action]->get_infor();
+            value_return=multiple_mission[num_mission_action]->get_infor(mode_get);
+        }
+    }
+    return value_return;
+}
+string multiple_mission::get_list_mission_name(){
+    static string value_return;
+    //
+    value_return="";
+    if(multiple_mission.size()){
+        value_return=value_return+multiple_mission[0]->name_mission;
+        for(int i=1;i<multiple_mission.size();i++){
+            value_return=value_return+","+multiple_mission[i]->name_mission;
         }
     }
     return value_return;

@@ -54,7 +54,7 @@ class multiple_variable_local{
             cout<<BOLDCYAN;
             cout<<"Table Global Var~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<endl;
             for(int i=0;i<var.size();i++){
-               cout<<"var_name:"<<var[i].name<<"="<<var[i].data<<"\t\t\t\t\t\t|"<<endl;
+               cout<<"var_name:"<<var[i].name<<"="<<var[i].data<<"\t\t\t\t\t\t"<<endl;
             }
             cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<endl;
             cout<<RESET;
