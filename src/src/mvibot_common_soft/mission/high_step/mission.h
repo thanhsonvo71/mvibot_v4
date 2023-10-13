@@ -49,17 +49,6 @@ int mission::action(int action){
         static int wake_up_true;
         wake_up_true=0;
         for(int i=0;i<my_configuration->my_step.size();i++){
-            if(my_configuration->my_step[i].name_step=="wake_up"){
-                if(my_configuration->my_step[i].mode_step=="gpio" | my_configuration->my_step[i].mode_step=="gpio_module"){
-                    static int res;
-                    res=my_configuration->my_step[i].action(Active_);
-                    if(res==Finish_){
-                        wake_up_true=1;
-                        value_return=Wake_up_;
-                        break;
-                    }
-                }
-            }
             if(my_configuration->my_step[i].name_step=="continue"){
                 if(my_configuration->my_step[i].mode_step=="gpio" | my_configuration->my_step[i].mode_step=="gpio_module"){
                     static int res;
@@ -67,10 +56,23 @@ int mission::action(int action){
                     if(res==Finish_){
                         wake_up_true=1;
                         value_return=Continue_;
-                        break;
+                        //break;
                     }
                 }
             }
+            //
+            if(my_configuration->my_step[i].name_step=="wake_up"){
+                if(my_configuration->my_step[i].mode_step=="gpio" | my_configuration->my_step[i].mode_step=="gpio_module"){
+                    static int res;
+                    res=my_configuration->my_step[i].action(Active_);
+                    if(res==Finish_){
+                        wake_up_true=1;
+                        value_return=Wake_up_;
+                        //break;
+                    }
+                }
+            }
+            //
         }
         if(wake_up_true==0){
             my_multiple_step_II->action(Cancel_);
@@ -179,6 +181,7 @@ string mission::get_infor(int mode_get){
     //
     if(my_multiple_step_II!=nullptr){
         value_return+="(name_mission:"+name_mission+")";
+        value_return+="(id_mission:"+to_string(id_mission)+")";        
         value_return+="(total_step:"+to_string(my_multiple_step_II->num_small_step_action)+")";
         if(mode_get==0){
             value_return+="(now_step:"+step_action_information+")";

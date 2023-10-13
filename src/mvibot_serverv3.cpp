@@ -302,6 +302,17 @@ void output_user_set_stringf(const std_msgs::String & msg){
         }
    unlock();
 }
+void reset_serverf(const std_msgs::String & msg){
+   lock();
+        if(msg.data=="1"){
+            string cmd;
+            cmd="rosnode kill /tf2_web_republisher &";
+            system(cmd.c_str());
+            cmd="rosnode kill /rosbridge_server &";
+            system(cmd.c_str());
+        }
+   unlock();
+}
 int main(int argc, char** argv){
     //
     ts_my_robots=(float)ts_process1;
@@ -357,6 +368,7 @@ int main(int argc, char** argv){
     ros::Subscriber sub13 = n13.subscribe("/map_select", 1, map_selectf);    
     //
     ros::Subscriber sub14 = n14.subscribe("/output_user_set_string", 100, output_user_set_stringf);
+    ros::Subscriber sub15 = n15.subscribe("/reset_server", 1, reset_serverf); 
     //
     while (ros::ok())
     {

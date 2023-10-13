@@ -227,7 +227,36 @@ int action_goal(int mode){
             cout<<"\t \t \t \t \t "<<action_goal.getState().toString()<<endl;
             if(action_goal.getState().toString()=="ACTIVE") return Active_;
             else if(action_goal.getState().toString()=="SUCCEEDED")    return Finish_;
-            else  return Error_;
+            else {
+                // // check pose goal vs set goal
+                // static double x1=0,y1=0,z1=0,w1=0;
+                // static double x2=0,y2=0,z2=0,w2=0;
+                // x1=msg.target_pose.pose.position.x;
+                // y1=msg.target_pose.pose.position.y;
+                // z1=msg.target_pose.pose.orientation.z;
+                // w1=msg.target_pose.pose.orientation.w;
+                // //
+                // if(action_goal.getResult()!=nullptr){
+                //     x2=action_goal.getResult().get()->final_pose.pose.position.x;
+                //     y2=action_goal.getResult().get()->final_pose.pose.position.y;
+                //     z2=action_goal.getResult().get()->final_pose.pose.orientation.z;
+                //     w2=action_goal.getResult().get()->final_pose.pose.orientation.w;
+                // }
+                // if(fabs(x2-x1)<=0.001 & fabs(y2-y1)<=0.001 & fabs(z2-z1)<=0.001 & fabs(w2-w1)<=0.001){
+                //     // match goal
+                //     if(action_goal.getResult().get()->dist_to_goal<=0.35){
+                //         if(fabs(action_goal.getResult().get()->angle_to_goal)<=0.1) return Finish_;
+                //         else{
+                //             msg.target_pose.pose.position.x=position_robot[0];
+                //             msg.target_pose.pose.position.y=position_robot[1];
+                //             action_goal.sendGoal(msg);
+                //             return Active_;
+                //         }
+                //     }else return Error_;
+                // }else return Error_;
+                //
+                return Error_;
+            }
         }   
     }
     return 0;
@@ -268,7 +297,7 @@ int action_getpath(int mode){
         //
         msg.use_start_pose=false;
         msg.concurrency_slot=10;
-        msg.tolerance=0.2;
+        msg.tolerance=0.3;
         msg.target_pose.header.frame_id="map";
         //
         return 0;
@@ -301,14 +330,13 @@ int action_exepath(int mode){
         printf("Connection action_exepath server\n");
         creat_fun=1;
         msg.angle_tolerance=0.08;
-        msg.dist_tolerance=0.3;
+        msg.dist_tolerance=0.35;
         msg.concurrency_slot=0;
         msg.tolerance_from_action=true;
         msg.controller="DWAPlannerROS";
         //
         return 0;
     }else{
-       
         if(mode==0 & action_exepath.getState().toString()=="ACTIVE") action_exepath.cancelGoal();
         if(mode==1){
              msg.path=goal_path;
@@ -318,7 +346,23 @@ int action_exepath(int mode){
             cout<<""<<action_exepath.getState().toString()<<endl;
             if(action_exepath.getState().toString()=="ACTIVE") return Active_;
             else if(action_exepath.getState().toString()=="SUCCEEDED")    return Finish_;
-            else  return Error_;
+            else{
+                // if(action_exepath.getResult().get()->dist_to_goal<=0.35){
+                //     if(fabs(action_exepath.getResult().get()->angle_to_goal)<=0.1) return Finish_;
+                //     else{
+                //         //
+                //         position_goal[0]=position_robot[0];
+                //         position_goal[1]=position_robot[1];
+                //         if(action_getpath(0)==Finish_){
+                //             msg.path=goal_path;
+                //             action_exepath.sendGoal(msg);
+                //             return Active_;
+                //         }else return Error_;
+                //     }
+                // }else return Error_;
+                //
+                return Error_;
+            }
         }
         return Active_;
     }

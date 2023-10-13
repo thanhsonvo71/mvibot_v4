@@ -72,15 +72,7 @@ int marker::tranform_offset(){
 }
 int marker::send_tranfrom_marker(){
     static int value_return;
-    // send_tranfrom
-    // if(robot_position[0]!=-1 | robot_position[1]!=-1 | robot_position[2]!=-1 | robot_position[3]!=-1){
-    //     x_set=robot_position[0];
-    //     y_set=robot_position[1];
-    //     z_set=robot_position[2];
-    //     w_set=robot_position[3];
-    //     cout<<x_set<<"|"<<y_set<<"|"<<z_set<<"|"<<w_set<<endl;
-    // }
-    //send_tranfrom(x_set,y_set,z_set,w_set,mvibot_seri+"/odom",mvibot_seri+"/base_marker");
+    // check tranfrom is true
     robot_position_get=get_position(mvibot_seri+"/odom",mvibot_seri+"/base_marker");
     if(fabs(x_set-robot_position_get[0])<=0.001 | fabs(y_set-robot_position_get[1])<=0.001){
         if(fabs(z_set-robot_position_get[2])<=0.001 | fabs(w_set-robot_position_get[3])<=0.001){            
@@ -321,32 +313,30 @@ int marker::action(){
             }else active_step=1;    
         }else if(active_step>=3){
             cout<<"action"<<endl;
-            if(send_tranfrom_marker()){
-                if(tranfrom_pose_marker(1)){
-                    // safe
-                    if(safe==0) {
-                      if(check_safe()==1)  safe=30;
-                    }
-                    else{
-                      if(check_safe()==0) safe--;
-                      if(safe<0) safe=0;
-                    }
-                    //
-                    if(active_step==3) res=move_to_postion_pose_n();
-                    if(active_step==4) res=move_to_orientation_pose_n();
-                    //
-                    if(res==1){
-                        active_step++;
-                        if(active_step>=5){
-                            active_step=0;
-                            status=0;
-                            reset(0);
-                            start=2;
-                            cout<<"Finish marker"<<endl;
-                        }
+            if(tranfrom_pose_marker(1)){
+                // safe
+                if(safe==0) {
+                if(check_safe()==1)  safe=30;
+                }
+                else{
+                if(check_safe()==0) safe--;
+                if(safe<0) safe=0;
+                }
+                //
+                if(active_step==3) res=move_to_postion_pose_n();
+                if(active_step==4) res=move_to_orientation_pose_n();
+                //
+                if(res==1){
+                    active_step++;
+                    if(active_step>=5){
+                        active_step=0;
+                        status=0;
+                        reset(0);
+                        start=2;
+                        cout<<"Finish marker"<<endl;
                     }
                 }
-            } 
+            }
         }
     }
     return value_return;
