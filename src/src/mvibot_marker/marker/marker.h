@@ -143,16 +143,26 @@ int marker::move_to_postion_pose_n(){
     static float x,y;
     x=pose_n_robot.pose.position.x;
     y=pose_n_robot.pose.position.y;
-    dis=sqrt(x*x+y*y);
-    angle=atan2(pose_n_robot.pose.position.y,pose_n_robot.pose.position.x);
-    if(marker_type=="none_marker_dis") off_set_dis=x;
+    if(marker_type=="none_marker_dis"){
+        //angle=atan2(0,x);
+        //angle=atan2(y,x);
+        angle=getyaw(pose_n_robot.pose.orientation);
+        dis=fabs(x);
+        off_set_dis=x;
+    }
+    else{
+        angle=atan2(y,x);
+        dis=sqrt(x*x+y*y);
+    }
     //
     if(angle>M_PI*1/2) angle=angle-M_PI;
     if(angle<-M_PI_2*1/2) angle=angle+M_PI;
     //
     static float v,w;
+    static float dis_f=0;
     v=0;
     w=0;
+    //
     if(fabs(dis)<=0.01){ // 0.005
         value_return=1;
         v=0;
@@ -189,8 +199,6 @@ int marker::move_to_postion_pose_n(){
         }
         else{
             v=0;
-            // if(angle>0) w=M_PI/180*10;
-            // else w=-M_PI/180*10;
             if(angle>0) w=M_PI/10;//180*10;
             else w=-M_PI/10;
         }

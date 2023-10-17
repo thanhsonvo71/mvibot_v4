@@ -16,7 +16,7 @@
 #include "low_step/gpio_module.h"
 
 #include "low_step/marker.h"
-#include "low_step/position.h"
+#include "low_step/position_v2.h"
 #include "low_step/step_I.h"
 #include "low_step/multiple_step_I.h"
 //

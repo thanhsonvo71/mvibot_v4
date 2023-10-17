@@ -8,8 +8,10 @@ int get_user_path=0;
 int enable_ob1=-1;
 int enable_ob2=-1;
 //
-int movebase_goal_id=0;
-int target_goal_id=0;
+long long movebase_goal_id=0;
+long long exepath_goal_id=0; 
+long long target_goal_id=0;
+long long target_exepath_id=0;
 // var for action mbf
 mbf_msgs::MoveBaseGoal goal_pub;
 nav_msgs::Path goal_path;
@@ -156,26 +158,28 @@ int action_goal(int mode){
         creat_fun=1;
         //
         msg.target_pose.header.frame_id="map";
-        //msg.controller="DWAPlannerROS";
+        msg.controller="DWAPlannerROS";
         return 0;
     }else {
         if(mode==0) {
             if(action_goal.getState().toString()=="ACTIVE") {
                 action_goal.cancelGoal();
                 action_goal.waitForResult();
+                return Active_;
             }  
             else{
                 if(action_goal.getState().toString()=="ABORTED"){
+                    action_goal.cancelGoal();
+                    action_goal.waitForResult();
                     msg.target_pose.pose.position.x=position_robot[0];
                     msg.target_pose.pose.position.y=position_robot[1];
                     msg.target_pose.pose.orientation.z=position_robot[2];
                     msg.target_pose.pose.orientation.w=position_robot[3];
                     action_goal.sendGoal(msg);
-                    action_goal.waitForResult();
-                }
+                    action_goal.waitForResult();            
+                    return Active_;
+                }else return Finish_;
             }
-            send_cmd=0;   
-            return 0;
         }
         else if(mode==1) {
             msg.target_pose.pose.position.x=position_goal[0];
@@ -184,12 +188,12 @@ int action_goal(int mode){
             msg.target_pose.pose.orientation.w=position_goal[3];
             if(action_goal.getState().toString()!="ACTIVE"){
                 action_goal.sendGoal(msg);
-                return 1;
+                return Finish_;
             }
             else{
                 action_goal.cancelGoal();
                 action_goal.waitForResult();
-                return 0;
+                return Active_;
             }
         }
         else if(mode==2){
@@ -201,20 +205,7 @@ int action_goal(int mode){
             else return Error_;
         }
         else if(mode==3){
-            // if(action_goal.getState().toString()!="SUCCEEDED"){
-            //     msg.target_pose.pose.position.x=position_robot[0];
-            //     msg.target_pose.pose.position.y=position_robot[1];
-            //     msg.target_pose.pose.orientation.z=position_robot[2];
-            //     msg.target_pose.pose.orientation.w=position_robot[3];
-            //     action_goal.sendGoal(msg);
-            //     action_goal.waitForResult();
-            // }
-            //
-            cout<<action_goal.getState().toString()<<endl;
-            action_goal.cancelGoal();
-            action_goal.waitForResult();
-            if(action_goal.getState().toString()=="SUCCEEDED") return 0;
-            return 0;
+            
         }
     }
     return 0;
@@ -295,35 +286,40 @@ int action_exepath(int mode){
         //
         return 0;
     }else{
-        if(mode==0 & action_exepath.getState().toString()=="ACTIVE") action_exepath.cancelGoal();
-        if(mode==1){
-             msg.path=goal_path;
-             action_exepath.sendGoal(msg);
+        if(mode==0){
+            if(action_exepath.getState().toString()=="ACTIVE"){
+                action_exepath.cancelGoal();
+                action_exepath.waitForResult();
+                return Active_;
+            }else{
+                if(action_exepath.getState().toString()=="ABORTED"){
+                    action_exepath.cancelGoal();
+                    action_exepath.waitForResult();
+                    return Finish_;
+                }else return Finish_;
+            }
         }
-        else if(mode==2){
+        else if(mode==1){
+            msg.path=goal_path;
+            //
+            if(action_exepath.getState().toString()!="ACTIVE"){
+                action_exepath.sendGoal(msg);
+                return Finish_;
+            }else{
+                action_exepath.cancelGoal();
+                action_exepath.waitForResult();
+                return Active_;
+            }
+        }else if(mode==2){
             cout<<""<<action_exepath.getState().toString()<<endl;
             if(action_exepath.getState().toString()=="ACTIVE") return Active_;
             else if(action_exepath.getState().toString()=="SUCCEEDED")    return Finish_;
-            else{
-                // if(action_exepath.getResult().get()->dist_to_goal<=0.35){
-                //     if(fabs(action_exepath.getResult().get()->angle_to_goal)<=0.1) return Finish_;
-                //     else{
-                //         //
-                //         position_goal[0]=position_robot[0];
-                //         position_goal[1]=position_robot[1];
-                //         if(action_getpath(0)==Finish_){
-                //             msg.path=goal_path;
-                //             action_exepath.sendGoal(msg);
-                //             return Active_;
-                //         }else return Error_;
-                //     }
-                // }else return Error_;
-                //
+            else{   
                 return Error_;
             }
         }
-        return Active_;
     }
+    return 0;
 }
 //
 void position_::process_data(){
@@ -354,116 +350,157 @@ void position_::print(int n){
 }
 int position_::action(int action){
     //
-    static int replay_beacuse_error_map=0;
+    static int complete_position=0;
+    static int is_error;
     static float x1=0,y1=0,z1=0,w1=0;
     static float x2=0,y2=0,z2=0,w2=0;
+    static float sleep=0;
     //
     if(action==Active_){
+        // check is robot aviable in goal
+        x2=position_robot[0];
+        y2=position_robot[1];
+        z2=position_robot[2];
+        w2=position_robot[3];
+        //
+        static float dis;
+        dis=sqrt((x2-x)*(x2-x)+(y2-y)*(y2-y));
+        static float angle1,angle2;
+        angle2=getyaw(z2,w2);
+        angle1=getyaw(z,w);
+        //
+        cout<<"theta:"<<fabs(sin(angle2)-sin(angle1))<<endl;
+        cout<<"dis:"<<dis<<endl;
+        //
+        if(dis<=0.35){
+            complete_position=1;
+            if(fabs(sin(angle2)-sin(angle1))<=0.1) {
+                complete_position=2;
+            }
+        }else complete_position=0;
+        //
+        cout<<"mygoal: "<<position_goal[0]<<"|"<<position_goal[1]<<"|"<<position_goal[2]<<"|"<<position_goal[3]<<endl;
         if(mode=="normal"){
             if(status==0){
+                cout<<"Step"<<status<<endl;
                 // enalbe obstacle
                 if(enable_ob1!=1)
                 enable_ob1=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles1/set_parameters","enabled","bool","1"));	
                 if(enable_ob2!=1)
                 enable_ob2=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles2/set_parameters","enabled","bool","1"));
-                //
+                // Check move base not active
                 if(enable_ob1==1 & enable_ob2==1){
-                    if(action_goal(2)!=Active_){
+                    if(action_goal(0)==Finish_){
                         target_goal_id=movebase_goal_id;
-                        for(int j=0;j<num_tab;j++) cout<<"\t";
-                        cout<<"clear costmap"<<endl;
-                        action_recovery(0);
                         status=1;
-                    }else action_goal(0);
+                    }
                 }
-            }else if(status==1){
-                for(int j=0;j<num_tab;j++) cout<<"\t";
-                cout<<"send goal"<<endl;
-                if(replay_beacuse_error_map==0){
+                return Active_;
+            }
+            else if(status==1){
+                cout<<"Step"<<status<<endl;
+                // clear costmap
+                action_recovery(0);
+                status=2;
+                return Active_;
+            }
+            else if(status==2){
+                //send goal
+                cout<<"Step"<<status<<endl;
+                if(complete_position==1){
+                    if(is_error){
+                        position_goal[0]=position_robot[0]+0.35;
+                        position_goal[1]=position_robot[1];
+                        position_goal[2]=z;
+                        position_goal[3]=w;
+                        is_error=0;
+                    }else{
+                        position_goal[0]=position_robot[0];
+                        position_goal[1]=position_robot[1];
+                        position_goal[2]=z;
+                        position_goal[3]=w;
+                    }
+                }
+                else if(complete_position==2){
+                    position_goal[0]=position_robot[0];
+                    position_goal[1]=position_robot[1];
+                    position_goal[2]=position_robot[2];
+                    position_goal[3]=position_robot[3];
+                }
+                else{
                     position_goal[0]=x;
                     position_goal[1]=y;
                     position_goal[2]=z;
                     position_goal[3]=w;
-                }else{
-                    position_goal[0]=x;//position_robot[0];
-                    position_goal[1]=y;//position_robot[1];
-                    position_goal[2]=z;
-                    position_goal[3]=w;
                 }
-                static int res;
-                res=action_goal(1);
-                if(res==1) status=2;
-            }else if(status==2){
+                //
+                if(action_goal(1)==Finish_){
+                    status=3;
+                    sleep=0;
+                }
+                return Active_;
+            }
+            else if(status==3){
+                cout<<"Step"<<status<<endl;
+                // sleep 1s wait for move base get action goal
+                sleep+=0.05;
+                if(sleep>=1.0){
+                    sleep=0;
+                    status=4;
+                }
+                return Active_;
+            }
+            else if(status==4){
+                cout<<"Step"<<status<<endl;
+                // check move base get goal ? 
+                if(movebase_goal_id>target_goal_id){
+                    //
+                    for(int j=0;j<num_tab;j++) cout<<"\t";
+                    cout<<"Move base receive goal"<<endl;
+                    status=5;
+                }else{
+                    //
+                    for(int j=0;j<num_tab;j++) cout<<"\t";
+                    cout<<"Move base not receive action goal"<<endl;
+                    status=0;
+                }
+                return Active_;
+            }
+            else if(status==5){
+                cout<<"Step"<<status<<endl;
                 static int get_action_goal_status;
-                static int n;
                 get_action_goal_status=action_goal(2);
-                if(get_action_goal_status==Active_){
+                if(get_action_goal_status==Finish_){
+                    for(int j=0;j<num_tab;j++) cout<<"\t";
+                    cout<<"finish goal"<<endl;
+                    // reset variable
+                    status=0;
+                    return Finish_;
+                }
+                else if(get_action_goal_status==Active_){
                     for(int j=0;j<num_tab;j++) cout<<"\t";
                     cout<<"mbf Active goal"<<endl;
+                    return Active_;
                 }
-                if(get_action_goal_status==Error_) {
-                    //
-                    x1=position_goal[0];
-                    y1=position_goal[1];
-                    z1=position_goal[2];
-                    w1=position_goal[3];
-                    //
-                    x2=position_robot[0];
-                    y2=position_robot[1];
-                    z2=position_robot[2];
-                    w2=position_robot[3];
-                    //
-                    static float dis;
-                    dis=sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
-                    static float angle1,angle2;
-                    angle2=getyaw(z2,w2);
-                    angle1=getyaw(z1,w1);
-                    //
-                    cout<<fabs(sin(angle2)-sin(angle1))<<endl;
-                    cout<<dis<<endl;
-                    //
-                    static int is_error;
-                    is_error=0;
-                    if(dis<=0.35){
-                        if(fabs(sin(angle2)-sin(angle1))<=0.1) {
-                            is_error=0;
-                        }else{
-                            is_error=1;
-                            //replay_beacuse_error_map=1;
-                        }
-                    }else is_error=1;
-                    //
-                    if(is_error==1){
-                        for(int j=0;j<num_tab;j++) cout<<"\t";
-                        cout<<"replay goal because mbf error"<<endl;
-                        status=0;
-                        //
-                    }else{
-                        get_action_goal_status=Finish_;
-                    }
-                    //
-                }
-                if(get_action_goal_status==Finish_){
-                    if(target_goal_id<movebase_goal_id){
+                else if(get_action_goal_status==Error_){
+                    if(complete_position==2){
                         for(int j=0;j<num_tab;j++) cout<<"\t";
                         cout<<"finish goal"<<endl;
+                        // reset variable
                         status=0;
-                        replay_beacuse_error_map=0;
                         return Finish_;
                     }else{
                         for(int j=0;j<num_tab;j++) cout<<"\t";
-                        cout<<"replay goal because this goal is corret with id set goal"<<endl;
-                        cout<<target_goal_id<<"|"<<movebase_goal_id<<endl;
+                        cout<<"mbf error!"<<endl;
                         status=0;
-                        replay_beacuse_error_map=0;
+                        is_error=1;
+                        return Active_;
                     }
                 }
             }
-        }else if(mode=="line_follow"){
-            static float dis_x,dis_y,error_dis;
-            dis_x=x-position_robot[0];
-            dis_y=y-position_robot[1];
-            error_dis=sqrt(dis_x*dis_x+dis_y*dis_y);
+        }
+        else if(mode=="line_follow"){
+            cout<<status<<endl;
             if(status==0){
                 // disable obstacle to find path
                 if(enable_ob1!=0)
@@ -472,67 +509,124 @@ int position_::action(int action){
                 enable_ob2=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles2/set_parameters","enabled","bool","0"));
                 //
                 if(enable_ob1==0 & enable_ob2==0){
-                    for(int j=0;j<num_tab;j++) cout<<"\t";
-                    cout<<"clear costmap"<<endl;
-                    clear_costmap();
-                    action_recovery(0);
-                    status=1;
+                    if(action_exepath(0)==Finish_){
+                        target_exepath_id=exepath_goal_id;
+                        status=1;
+                    }
                 }
-            }else if(status==1){
+                return Active_;
+            }
+            else if(status==1){
+                clear_costmap();
+                action_recovery(0);
+                status=2;
+                return Active_;
+            }
+            else if(status==2){
+                //send goal
+                if(complete_position==1){
+                    if(is_error){
+                        position_goal[0]=position_robot[0]+0.35;
+                        position_goal[1]=position_robot[1];
+                        position_goal[2]=z;
+                        position_goal[3]=w;
+                        is_error=0;
+                    }else{
+                        position_goal[0]=position_robot[0];
+                        position_goal[1]=position_robot[1];
+                        position_goal[2]=z;
+                        position_goal[3]=w;
+                    }
+                }
+                else if(complete_position==2){
+                    position_goal[0]=position_robot[0];
+                    position_goal[1]=position_robot[1];
+                    position_goal[2]=position_robot[2];
+                    position_goal[3]=position_robot[3];
+                }
+                else{
+                    position_goal[0]=x;
+                    position_goal[1]=y;
+                    position_goal[2]=z;
+                    position_goal[3]=w;
+                }
+                // find path
                 static int status_getpath;
-                for(int j=0;j<num_tab;j++) cout<<"\t";
-                cout<<"caculate path"<<endl;
-                position_goal[0]=x;
-                position_goal[1]=y;
-                position_goal[2]=z;
-                position_goal[3]=w;
                 status_getpath=action_getpath(0);
-                if(status_getpath==Finish_) status=2;
-                else {
+                if(status_getpath!=Finish_)
+                {
                     status=0;
                     return Error_;
                 }
-            }else if(status==2){
-                static int n_free_space_robot;
-                if(free_space_robot==1 | error_dis <= 1.0){
-                    for(int j=0;j<num_tab;j++) cout<<"\t";
-                    cout<<"send path"<<endl;
-                    action_exepath(1);
+                //
+                if(action_exepath(1)==Finish_){
                     status=3;
-                    n_free_space_robot=0;
-                }else{
-                    for(int j=0;j<num_tab;j++) cout<<"\t";
-                    cout<<"no free space to ative"<<endl;
-                    action_exepath(0);
-                    n_free_space_robot++;
-                    if(n_free_space_robot>=100){
-                    	n_free_space_robot=0;
-                    	action_recovery(0);
-                    }
+                    sleep=0;
                 }
-            }else if(status==3){
-                static int status_exepath;
-                if(free_space_robot==0 & error_dis > 1.0 ) {
-                    status_exepath=action_exepath(0);
-                    status=2;
+                return Active_;
+            }
+            else if(status==3){
+                // sleep 1s wait for move base get action goal
+                sleep+=0.05;
+                if(sleep>=1.0){
+                    sleep=0;
+                    status=4;
+                }
+                return Active_;               
+            }
+            else if(status==4){
+                // check exepath_id 
+                if(exepath_goal_id>target_goal_id){
+                    //
+                    for(int j=0;j<num_tab;j++) cout<<"\t";
+                    cout<<"Exe path receive goal"<<endl;
+                    status=5;
                 }else{
-                    status_exepath=action_exepath(2);
-                    if(status_exepath==Finish_){
+                    //
+                    for(int j=0;j<num_tab;j++) cout<<"\t";
+                    cout<<"Exe path not receive action goal"<<endl;
+                    status=0;
+                }
+                return Active_;
+            }
+            else if(status==5){
+                static int get_action_goal_status;
+                get_action_goal_status=action_exepath(2);
+                if(get_action_goal_status==Finish_){
+                    for(int j=0;j<num_tab;j++) cout<<"\t";
+                    cout<<"finish path"<<endl;
+                    // reset variable
+                    status=0;
+                    return Finish_;
+                }
+                else if(get_action_goal_status==Active_){
+                    for(int j=0;j<num_tab;j++) cout<<"\t";
+                    cout<<"Exepath Active path"<<endl;
+                    return Active_;
+                }
+                else if(get_action_goal_status==Error_){
+                    if(complete_position==2){
+                        for(int j=0;j<num_tab;j++) cout<<"\t";
+                        cout<<"finish path"<<endl;
+                        // reset variable
                         status=0;
                         return Finish_;
-                    }else if(status_exepath==Active_) return Active_;
-                    else if(status_exepath==Error_){
-                        //status=2;
+                    }else{
+                        for(int j=0;j<num_tab;j++) cout<<"\t";
+                        cout<<"mbf error!"<<endl;
                         status=0;
-                    } 
+                        is_error=1;
+                        return Active_;
+                    }
                 }
-                
             }
         }
         return Active_;
    }else{
-        replay_beacuse_error_map=0;
+        complete_position=0;
         status=0;
+        sleep=0;
+        is_error=0;
         action_goal(0);
         action_exepath(0);
         //

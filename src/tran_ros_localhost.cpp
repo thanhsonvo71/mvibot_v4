@@ -322,7 +322,7 @@ void pub_mission_error(string data){
 }
 void pub_mission_battery(string data){
     static ros::NodeHandle n;
-    static ros::Publisher  pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/mission_battery", 1);
+    static ros::Publisher  pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/mission_charge_battery", 1);
     static float creat_fun=0;
     static std_msgs::String msg;
     if(creat_fun==1)

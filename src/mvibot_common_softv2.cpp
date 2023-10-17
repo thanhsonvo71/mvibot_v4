@@ -427,7 +427,17 @@ void move_base_statusf(const actionlib_msgs::GoalStatusArray & msg){
         static string_Iv2 data;
         if(msg.status_list.size()>0){
             data.detect(msg.status_list[msg.status_list.size()-1].goal_id.id,"","-","");
-            movebase_goal_id=stof_f(data.data1[1]);
+            movebase_goal_id=stoll(data.data1[1]);
+            //data.print();
+        }
+    unlock();
+}
+void exe_path_statusf(const actionlib_msgs::GoalStatusArray & msg){
+    lock();
+        static string_Iv2 data;
+        if(msg.status_list.size()>0){
+            data.detect(msg.status_list[msg.status_list.size()-1].goal_id.id,"","-","");
+            exepath_goal_id=stoll(data.data1[1]);
             //data.print();
         }
     unlock();
@@ -578,7 +588,7 @@ int  main(int argc, char** argv){
     res=pthread_create(&p_process2,NULL,process2,NULL); 
     res=pthread_create(&p_process3,NULL,process3,NULL);
     //
-    ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n14,n15,n16,n17,n18,n19;
+    ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n14,n15,n16,n17,n18,n19,n20;
     //ros::Subscriber sub1 = n1.subscribe("/"+mvibot_seri+"/msg", 1, msgf);   
     ros::Subscriber sub2 = n2.subscribe("/"+mvibot_seri+"/mission_normal", 1, mission_normalf); 
     ros::Subscriber sub3 = n3.subscribe("/"+mvibot_seri+"/mission_action", 1, mission_actionf); 
@@ -601,6 +611,7 @@ int  main(int argc, char** argv){
     ros::Subscriber sub17 = n17.subscribe("/"+mvibot_seri+"/motor_right_status", 1, motor_right_statusf);
     ros::Subscriber sub18 = n18.subscribe("/"+mvibot_seri+"/motor_left_status", 1, motor_left_statusf);
     ros::Subscriber sub19 = n19.subscribe("/"+mvibot_seri+"/move_base_flex/move_base/status", 1, move_base_statusf);
+    ros::Subscriber sub20 = n20.subscribe("/"+mvibot_seri+"/move_base_flex/exe_path/status", 1, exe_path_statusf);
     ros::spin(); 
     return 0; 
 }

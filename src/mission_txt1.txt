@@ -589,3 +589,5 @@ rostopic pub /IB05_916b/mission_normal std_msgs/String "data: '
 @
 '
 "
+
+[(name:wake_up|time_out:-1|mode:gpio|data:~in_on=1~)*&name>Button2_function_0/time_out>-1/mode>normal/data>%normal_step#(name:Button_led2_on|time_out:-1|mode:gpio|data:~out_set=4~~out_reset=2,7~)(name:Button2_free|time_out:-1|mode:gpio|data:~in_off=1~)(name:Button_led2_off|time_out:-1|mode:gpio|data:~out_reset=4~)%@][(name:wake_up|time_out:-1|mode:gpio|data:~in_on=3~)*&name>Button4_fucntion_0/time_out>-1/mode>normal/data>%normal_step#(name:Button_led4_on|time_out:-1|mode:gpio|data:~out_set=6~~out_reset=2,7~)(name:Button4_free|time_out:-1|mode:gpio|data:~in_off=3~)(name:Button_led4_off|time_out:-1|mode:gpio|data:~out_reset=6~)%@]
