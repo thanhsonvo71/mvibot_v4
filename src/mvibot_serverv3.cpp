@@ -217,6 +217,13 @@ void request_mapf(const std_msgs::String & msg){
         request_map_topic=1;
     unlock();
 }
+void robot_tff(const std_msgs::String & msg){
+    lock();
+        static string_Iv2 data;
+        data.detect(msg.data,"","|","");
+        send_tranfrom(stof(data.data1[1]),stof(data.data1[2]),stof(data.data1[3]),stof(data.data1[4]),"/map","/"+data.data1[0]+"/base_footprint");
+    unlock();
+}
 void request_actionf(const std_msgs::String & msg){
     lock();
         static string_Iv2 data;
@@ -344,7 +351,7 @@ int main(int argc, char** argv){
     static int res;
     res=pthread_create(&p_process1,NULL,process1,NULL);
     //
-    ros::NodeHandle n0,n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n13,n14,n15;
+    ros::NodeHandle n0,n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n13,n14,n15,n16;
     ros::Subscriber sub0 = n0.subscribe("/IAM", 100, IAMf);    
     ros::Subscriber sub1 = n1.subscribe("/robot_status_string", 100, robot_statusf);
     // sensor 
@@ -369,6 +376,7 @@ int main(int argc, char** argv){
     //
     ros::Subscriber sub14 = n14.subscribe("/output_user_set_string", 100, output_user_set_stringf);
     ros::Subscriber sub15 = n15.subscribe("/reset_server", 1, reset_serverf); 
+    ros::Subscriber sub16 = n16.subscribe("/robot_tf", 1000, robot_tff); 
     //
     while (ros::ok())
     {

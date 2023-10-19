@@ -114,6 +114,7 @@ class variable_;
 class multiple_variable;
 class break_;
 class follow_path_;
+class config_;
 class step_I;
 class multiple_step_I;
 //creat high layer
@@ -156,3 +157,6 @@ class moudle_ {
         std_msgs::Float32MultiArray output_user;
 };
 vector<moudle_>     my_module;
+// data footprint
+float footprint_x1=-0.4,footprint_x2=0.4,footprint_y1=-0.345,footprint_y2=0.345;
+nav_msgs::Path my_path;

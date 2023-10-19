@@ -242,8 +242,18 @@ void pub_laser_scan(string data){
 }
 void pub_tf(string data){
     static string_Iv2 data1;
-    data1.detect(data,"","|","");
-    send_tranfrom(stof(data1.data1[0]),stof(data1.data1[1]),stof(data1.data1[2]),stof(data1.data1[3]),"/map","/"+mvibot_seri+"/base_footprint");
+    //data1.detect(data,"","|","");
+    //send_tranfrom(stof(data1.data1[0]),stof(data1.data1[1]),stof(data1.data1[2]),stof(data1.data1[3]),"/map","/"+mvibot_seri+"/base_footprint");
+    static ros::NodeHandle n;
+    static ros::Publisher pub = n.advertise<std_msgs::String>("/robot_tf",1000);
+    static float creat_fun=0;
+    if(creat_fun==1){
+            static std_msgs::String msg;
+            msg.data=mvibot_seri+"|"+data;
+            pub.publish(msg);
+    }else {
+        creat_fun=1;
+    }
 }
 void pub_output_user_status_string(string data){
     static ros::NodeHandle n;
@@ -416,6 +426,30 @@ void pub_mission_action_infor(string data){
 void pub_mission_memory(string data){
     static ros::NodeHandle n;
     static ros::Publisher pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/mission_memory",1);
+    static float creat_fun=0;
+    if(creat_fun==1){
+            static std_msgs::String msg;
+            msg.data=data;
+            pub.publish(msg);
+    }else {
+        creat_fun=1;
+    }
+}
+void pub_footprint(string data){
+    static ros::NodeHandle n;
+    static ros::Publisher pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/footprint",1);
+    static float creat_fun=0;
+    if(creat_fun==1){
+            static std_msgs::String msg;
+            msg.data=data;
+            pub.publish(msg);
+    }else {
+        creat_fun=1;
+    }
+}
+void pub_path(string data){
+    static ros::NodeHandle n;
+    static ros::Publisher pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/path",1);
     static float creat_fun=0;
     if(creat_fun==1){
             static std_msgs::String msg;
@@ -650,7 +684,6 @@ void output_user_status_stringf(const std_msgs::String& msg){
     }
     unlock();
 }
-
 // main
 int main(int argc, char** argv) 
 { 
@@ -679,6 +712,8 @@ int main(int argc, char** argv)
     pub_local_variable("");
     pub_mission_action_infor("");
     pub_mission_memory("");
+    pub_footprint("");
+    pub_path("");
     //
     while(modify_socket()==-1){
         sleep(2);
@@ -709,7 +744,7 @@ int main(int argc, char** argv)
     ros::Subscriber sub14 = n14.subscribe("/output_user_set_string", 100, output_user_set_stringf);
     ros::Subscriber sub15 = n15.subscribe("/input_user_status_string", 100, input_user_status_stringf);
     ros::Subscriber sub16 = n16.subscribe("/output_user_status_string", 100, output_user_status_stringf);
-    ros::Subscriber sub17 = n17.subscribe("/master_check", 1, master_checkf);
+    ros::Subscriber sub17 = n17.subscribe("/master_check", 1, master_checkf);   
     ros::spin();
     return 0; 
 } 
@@ -855,6 +890,8 @@ void process_data(string data){
                 if(name_topic=="local_variable")              pub_local_variable(data2);
                 if(name_topic=="mission_action_infor")        pub_mission_action_infor(data2);
                 if(name_topic=="mission_memory")              pub_mission_memory(data2);
+                if(name_topic=="footprint")                   pub_footprint(data2);
+                if(name_topic=="path")                        pub_path(data2);
             }
         }
     }

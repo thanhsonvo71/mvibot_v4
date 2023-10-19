@@ -26,7 +26,7 @@ int enable_ecoder_global_costmap=-1;
 float v_backward=-1;
 float switch_for_hook=0;
 // settime process
-long double ts_process1=0.5; //time set for process1
+long double ts_process1=1.0; //time set for process1
 long double ts_process2=0.1; //time set for process2
 long double ts_process3=0.05; //time set for process3
 static pthread_mutex_t process_mutex=PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
@@ -442,6 +442,11 @@ void exe_path_statusf(const actionlib_msgs::GoalStatusArray & msg){
         }
     unlock();
 }
+void planf(const nav_msgs::Path & msg){
+    lock();
+        my_path=msg;
+    unlock();
+}
 //
 void pub_mission_action_infor(){
     static ros::NodeHandle n;
@@ -517,6 +522,54 @@ void pub_mission_memory(){
         pub.publish(msg);
     } else creat_fun=1;
 }
+void pub_footprint_infor(){
+    static ros::NodeHandle n;
+    static ros::Publisher  pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/footprint", 10);
+    static float creat_fun=0;
+    static std_msgs::String msg;
+    if(creat_fun==1)
+    {
+        msg.data="";
+        msg.data=to_string(footprint_x1)+"|"+to_string(footprint_x2)+"|"+to_string(footprint_y1)+"|"+to_string(footprint_y2);
+        //
+        pub.publish(msg);
+    } else creat_fun=1;
+}
+void pub_path_infor(){
+    static ros::NodeHandle n;
+    static ros::Publisher  pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/path", 10);
+    static float creat_fun=0;
+    static std_msgs::String msg;
+    if(creat_fun==1)
+    {
+        //
+        static float dis;
+        static float x1,y1,x2,y2;
+        //
+        msg.data="";
+        if(my_path.poses.size()>0){
+            x1=my_path.poses[0].pose.position.x;
+            y1=my_path.poses[0].pose.position.y;
+            //
+            msg.data=to_string(x1);
+            msg.data+="|"+to_string(y1);
+        }
+        for(int i=0;i<my_path.poses.size();i++){
+            x2=my_path.poses[i].pose.position.x;
+            y2=my_path.poses[i].pose.position.y;
+            dis=sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+            if(dis>=0.5 | i == (my_path.poses.size()-1))
+            {
+                msg.data+="|"+to_string(x2);
+                msg.data+="|"+to_string(y2);
+                x1=x2;
+                y1=y2;
+            }
+        }
+        //
+        pub.publish(msg);
+    } else creat_fun=1;
+}
 int  main(int argc, char** argv){
     ros::init(argc, argv, "mvibot_conmmon_soft_v2");
     ros::NodeHandle nh("~");
@@ -588,7 +641,7 @@ int  main(int argc, char** argv){
     res=pthread_create(&p_process2,NULL,process2,NULL); 
     res=pthread_create(&p_process3,NULL,process3,NULL);
     //
-    ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n14,n15,n16,n17,n18,n19,n20;
+    ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n14,n15,n16,n17,n18,n19,n20,n21;
     //ros::Subscriber sub1 = n1.subscribe("/"+mvibot_seri+"/msg", 1, msgf);   
     ros::Subscriber sub2 = n2.subscribe("/"+mvibot_seri+"/mission_normal", 1, mission_normalf); 
     ros::Subscriber sub3 = n3.subscribe("/"+mvibot_seri+"/mission_action", 1, mission_actionf); 
@@ -612,6 +665,7 @@ int  main(int argc, char** argv){
     ros::Subscriber sub18 = n18.subscribe("/"+mvibot_seri+"/motor_left_status", 1, motor_left_statusf);
     ros::Subscriber sub19 = n19.subscribe("/"+mvibot_seri+"/move_base_flex/move_base/status", 1, move_base_statusf);
     ros::Subscriber sub20 = n20.subscribe("/"+mvibot_seri+"/move_base_flex/exe_path/status", 1, exe_path_statusf);
+    ros::Subscriber sub21 = n21.subscribe("/"+mvibot_seri+"/move_base_flex/NavfnROS/plan", 1, planf);
     ros::spin(); 
     return 0; 
 }
@@ -639,33 +693,17 @@ void function1(){
             //
             if(enable_ecoder_global_costmap!=0)
             enable_ecoder_global_costmap=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles3/set_parameters","enabled","bool","0"));
-            //
-            // if(enable_ob1!=1)
-            // enable_ob1=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles1/set_parameters","enabled","bool","1"));
-            // //
-            // if(enable_ob2!=1)
-            // enable_ob2=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles2/set_parameters","enabled","bool","1"));
-            // //
-            // if(v_backward==0)
-            // v_backward=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/DWAPlannerROS/set_parameters","min_vel_x","double","-0.2"));
-            //
         }else{
             if(enable_ecoder_local_costmap!=1)
             enable_ecoder_local_costmap=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/local_costmap/obstacles3/set_parameters","enabled","bool","1"));
             //
             if(enable_ecoder_global_costmap!=1)
             enable_ecoder_global_costmap=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles3/set_parameters","enabled","bool","1"));
-            // if(enable_ob1!=0)
-            // enable_ob1=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles1/set_parameters","enabled","bool","0"));
-            // //
-            // if(enable_ob2!=0)
-            // enable_ob2=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles2/set_parameters","enabled","bool","0"));
-            // //
-            // if(v_backward!=0.0)
-            // v_backward=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/DWAPlannerROS/set_parameters","min_vel_x","double","0.0"));
         }
         // add negative speed ....
         check_pose_costmap();
+        pub_footprint_infor();
+        pub_path_infor();
         // save the mission
     unlock();
 }

@@ -8,8 +8,7 @@
    
 	<!-- view rviz mvibot-->    
 		<node if="$(arg viewrviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find mvibot)/launch/config.rviz"/>	
-        <!---->
-        
+        <!---->    
 	<node name="mvibot_transport" pkg="new_mission" type="tran_ros_localhost" respawn="true">
 		    <param name="mvibot_seri" value="$(arg name_seri)"/>  
 		    <param name="mode" value="$(arg mode)"/>

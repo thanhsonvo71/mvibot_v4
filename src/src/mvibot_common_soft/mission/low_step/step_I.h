@@ -21,6 +21,7 @@ class step_I{
         // follow_path_    follow_path_step;
         break_          break_step;
         variable_       variable_step;
+        config_         config_step;
         //
         void process_data();
         void print(int n);
@@ -78,6 +79,10 @@ void step_I::process_data(){
                     variable_step.data=data_return2.data1[1];
                     variable_step.process_data();
                 }
+                if(mode_step=="config"){
+                    config_step.data=data_return2.data1[1];
+                    config_step.process_data();
+                }
             }
         }
     }
@@ -111,12 +116,14 @@ void step_I::print(int n){
     // if(mode_step=="follow_path") follow_path_step.print();
     if(mode_step=="break") break_step.print(n+1);
     if(mode_step=="variable") variable_step.print(n+1);
+    if(mode_step=="config") config_step.print(n+1);
     //
     for(int j=0;j<n;j++) cout<<"\t";
     cout<<"------------------------------------------------------"<<endl;
     cout<<endl;
 }
 int step_I::action(int action){
+    //
     static int value_return;
     if(action==Cancel_) time_action_step=0;
     if(time_action_step > time_out_step & time_out_step!=-1){
@@ -132,6 +139,7 @@ int step_I::action(int action){
         // if(mode_step=="follow_pạth")    value_return=follow_path_step.action(action);
         if(mode_step=="break")          value_return=break_step.action(action);
         if(mode_step=="variable")       value_return=variable_step.action(action);
+        if(mode_step=="config")         value_return=config_step.action(action);
         //
         value_return=Error_;
     }else{
@@ -159,6 +167,7 @@ int step_I::action(int action){
         // if(mode_step=="follow_pạth")    value_return=follow_path_step.action(action);
         if(mode_step=="break")          value_return=break_step.action(action);
         if(mode_step=="variable")       value_return=variable_step.action(action);
+        if(mode_step=="config")         value_return=config_step.action(action);
         //
         if(value_return==Finish_ | value_return==Error_ | value_return==True_ | value_return== False_) time_action_step=0;
     }
@@ -195,6 +204,7 @@ void step_I::reset(){
     if(mode_step=="gpio_module")    gpio_module_step.reset();
     if(mode_step=="marker")         marker_step.reset();
     if(mode_step=="position")       position_goal_step.reset();
+    if(mode_step=="config")         config_step.reset();
 }
 int step_I::set_id(int n){
     id=n;

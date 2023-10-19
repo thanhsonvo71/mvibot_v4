@@ -48,6 +48,7 @@ int footprint_::action(int action){
         footprint_set=footprint_set+"["+to_string(x2)+","+to_string(y2)+"],";
         footprint_set=footprint_set+"["+to_string(-x2)+","+to_string(y2)+"]]";
         cout<<"\t \t \t \t \t footprint set:"<<footprint_set<<endl;
+        footprint_x1=x1; footprint_x2=x2; footprint_y1=y1, footprint_y2=y2;
         value_return=Finish_;
         // local
         footprint_return=set_get_param("/"+mvibot_seri+"/move_base_flex/local_costmap/set_parameters","footprint","string",footprint_set);

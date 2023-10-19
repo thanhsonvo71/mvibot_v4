@@ -1,0 +1,13 @@
+<launch>
+     <arg name="name_seri" default=""/> 
+     <group ns="$(arg name_seri)">   
+          <param name="robot_description" command="xacro --inorder '$(find mvibot_v4)/urdf/mvibot3.urdf' mvibot_seri:=$(arg name_seri)"/>    
+          <param name="robot_description_web" command="xacro --inorder '$(find mvibot_v4)/urdf/mvibot_web.urdf' mvibot_seri:=$(arg name_seri)"/>
+          <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true">
+               <param name="use_tf_static" value="true"/>
+               <param name="ignore_timestamp" value="true"/>
+          </node>
+     </group>
+     <!-- <node pkg="tf" type="static_transform_publiduration lifetime                    # How long the object should last before being automatically deleted.  0 means forever
+sher" name="link1_broadcaster" args="8 -6.5 0 0 0 0 1 map ABC/base_footprint 100" /> -->
+</launch>	

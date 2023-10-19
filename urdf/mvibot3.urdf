@@ -8,8 +8,11 @@
 <xacro:property name="L" value="0.485" />
 <xacro:arg name="mvibot_seri" default="MB22_916b"/>
   <!--color robot ########################-->
-  <material name="gray">
-    <color rgba="${200/255} ${200/255} ${200/255} 1.0"/>
+  <material name="robot_color">
+    <color rgba="${0/255} ${255/255} ${255/255} 0.5"/>
+  </material>
+  <material name="robot_color2">
+    <color rgba="${255/255} ${255/255} ${0/255} 1.0"/>
   </material>
   <material name="white">
     <color rgba="1 1 1 1"/>
@@ -24,13 +27,23 @@
 
   <link name="$(arg mvibot_seri)/base_link">
     <visual>
-      <origin rpy="0 0 0" xyz="0 0 ${height/2}" />
+      <origin rpy="0 0 0" xyz="0 0 0" />
       <geometry>
           <!-- <mesh filename="file:///home/hitech/catkin_ws/src/rosmvibot/param/ABC7.stl" scale="0.001 0.001 0.001" /> -->
           <!-- <mesh filename="ABC7.stl" scale="0.001 0.001 0.001" /> -->
-          <mesh filename="file:///home/mvibot/catkin_ws/src/mvibot/mesh/mvibot.stl" scale="1 1 1"/>
+          <mesh filename="file:///home/hitech/catkin_ws/src/mvibot_v4/urdf/mvibot5.stl" scale="0.001 0.001 0.001"/>
       </geometry>
-      <material name="gray"/>
+      <material name="robot_color"/>
+    </visual>
+    
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.41" />
+      <geometry>
+          <!-- <mesh filename="file:///home/hitech/catkin_ws/src/rosmvibot/param/ABC7.stl" scale="0.001 0.001 0.001" /> -->
+          <!-- <mesh filename="ABC7.stl" scale="0.001 0.001 0.001" /> -->
+          <mesh filename="file:///home/hitech/catkin_ws/src/mvibot_v4/urdf/dir3.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="robot_color2"/>
     </visual>
   </link>
   <!--base_link #########################-->

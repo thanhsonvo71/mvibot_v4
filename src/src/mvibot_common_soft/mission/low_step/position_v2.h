@@ -374,7 +374,7 @@ int position_::action(int action){
         //
         if(dis<=0.35){
             complete_position=1;
-            if(fabs(sin(angle2)-sin(angle1))<=0.1) {
+            if(fabs(sin(angle2)-sin(angle1))<=0.05) {
                 complete_position=2;
             }
         }else complete_position=0;
@@ -443,7 +443,7 @@ int position_::action(int action){
             else if(status==3){
                 cout<<"Step"<<status<<endl;
                 // sleep 1s wait for move base get action goal
-                sleep+=0.05;
+                sleep+=ts_mission_step_scan;
                 if(sleep>=1.0){
                     sleep=0;
                     status=4;
@@ -475,6 +475,7 @@ int position_::action(int action){
                     cout<<"finish goal"<<endl;
                     // reset variable
                     status=0;
+                    my_path.poses.resize(0);
                     return Finish_;
                 }
                 else if(get_action_goal_status==Active_){
@@ -488,6 +489,7 @@ int position_::action(int action){
                         cout<<"finish goal"<<endl;
                         // reset variable
                         status=0;
+                        my_path.poses.resize(0);
                         return Finish_;
                     }else{
                         for(int j=0;j<num_tab;j++) cout<<"\t";
@@ -555,6 +557,7 @@ int position_::action(int action){
                 status_getpath=action_getpath(0);
                 if(status_getpath!=Finish_)
                 {
+                    my_path=goal_path;
                     status=0;
                     return Error_;
                 }
@@ -567,7 +570,7 @@ int position_::action(int action){
             }
             else if(status==3){
                 // sleep 1s wait for move base get action goal
-                sleep+=0.05;
+                sleep+=ts_mission_step_scan;
                 if(sleep>=1.0){
                     sleep=0;
                     status=4;
@@ -597,6 +600,7 @@ int position_::action(int action){
                     cout<<"finish path"<<endl;
                     // reset variable
                     status=0;
+                    my_path.poses.resize(0);
                     return Finish_;
                 }
                 else if(get_action_goal_status==Active_){
@@ -610,6 +614,7 @@ int position_::action(int action){
                         cout<<"finish path"<<endl;
                         // reset variable
                         status=0;
+                        my_path.poses.resize(0);
                         return Finish_;
                     }else{
                         for(int j=0;j<num_tab;j++) cout<<"\t";
@@ -623,6 +628,7 @@ int position_::action(int action){
         }
         return Active_;
    }else{
+        my_path.poses.resize(0);
         complete_position=0;
         status=0;
         sleep=0;

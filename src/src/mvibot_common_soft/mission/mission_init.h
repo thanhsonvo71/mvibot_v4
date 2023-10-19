@@ -14,6 +14,8 @@
 #include "low_step/footprint.h"
 #include "low_step/gpio.h"
 #include "low_step/gpio_module.h"
+#include "low_step/config.h"
+
 
 #include "low_step/marker.h"
 #include "low_step/position_v2.h"

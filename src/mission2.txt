@@ -1,0 +1,51 @@
+rostopic pub /IB05_916b/mission_normal std_msgs/String "data: '
+&/name_mission>mission1//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_on=1~)/
+*
+{
+    {
+        (name:set_btled_R1|time_out:-1|mode:gpio|data:~out_set=4~~out_reset=2,7~~not_set_out=0~)
+        (name:wait|time_out:-1|mode:gpio|data:~in_off=1~~not_set_out=0~)
+        (name:reset_btled_R1|time_out:-1|mode:gpio|data:~out_reset=4~~not_set_out=0~)
+    }
+}
+@
+&/name_mission>mission2//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_on=3~)/
+*
+{
+    {
+        (name:set_btled_R2|time_out:-1|mode:gpio|data:~out_set=6~~out_reset=2,7~~not_set_out=0~)
+        (name:wait|time_out:-1|mode:gpio|data:~in_off=3~~not_set_out=0~)
+        (name:reset_btled_R2|time_out:-1|mode:gpio|data:~out_reset=6~~not_set_out=0~)
+    }
+}
+@
+&/name_mission>mission3//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~in_off=0~)/
+*
+{
+    {
+        (name:set_btled_G1|time_out:-1|mode:gpio|data:~out_set=3~~not_set_out=0~)
+        (name:wait|time_out:-1|mode:gpio|data:~in_on=3~~not_set_out=0~)        
+    }
+    {if_else#
+        condition_step{
+            (name:check|time_out:0|mode:gpio|data:~out_set=2~~out_reset=0,1~~not_set_out=1~)
+        }
+        if_step{
+            (name:set|time_out:-1|mode:gpio|data:~out_set=0~~out_reset=1,2~~not_set_out=0~)
+            (name:set|time_out:-1|mode:gpio_module|data:~name_seri=IB05_917b~~out_set=0~~out_reset=1,2~)
+
+        }
+        else_step{
+
+        }
+    }
+    {
+        (name:reset_btled_R|time_out:-1|mode:gpio|data:~out_reset=4~~not_set_out=0~)
+    }
+}
+@
+'
+"

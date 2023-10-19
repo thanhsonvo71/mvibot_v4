@@ -113,6 +113,7 @@ void get_robots_frist(){
             my_robots[my_robots.size()-1].name_seri=res->getString("name_seri");
             my_robots[my_robots.size()-1].type=res->getString("type");
             my_robots[my_robots.size()-1].update_database=1;
+            //
         }
     }catch(sql::SQLException &e){
         cout << "# ERR: " << e.what();

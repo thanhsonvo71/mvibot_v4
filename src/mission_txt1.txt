@@ -570,9 +570,9 @@ rostopic pub /IB05_916b/mission_normal std_msgs/String "data: '
 *
 {
     {
-        (name:set_btled_G|time_out:-1|mode:gpio|data:~out_set=4~~out_reset=2,7~~not_set_out=0~)
+        (name:set_btled_R1|time_out:-1|mode:gpio|data:~out_set=4~~out_reset=2,7~~not_set_out=0~)
         (name:wait|time_out:-1|mode:gpio|data:~in_off=1~~not_set_out=0~)
-        (name:reset_btled_G|time_out:-1|mode:gpio|data:~out_reset=4~~not_set_out=0~)
+        (name:reset_btled_R1|time_out:-1|mode:gpio|data:~out_reset=4~~not_set_out=0~)
     }
 }
 @
@@ -581,9 +581,9 @@ rostopic pub /IB05_916b/mission_normal std_msgs/String "data: '
 *
 {
     {
-        (name:set_btled_R|time_out:-1|mode:gpio|data:~out_set=6~~out_reset=2,7~~not_set_out=0~)
+        (name:set_btled_R2|time_out:-1|mode:gpio|data:~out_set=6~~out_reset=2,7~~not_set_out=0~)
         (name:wait|time_out:-1|mode:gpio|data:~in_off=3~~not_set_out=0~)
-        (name:reset_btled_R|time_out:-1|mode:gpio|data:~out_reset=6~~not_set_out=0~)
+        (name:reset_btled_R2|time_out:-1|mode:gpio|data:~out_reset=6~~not_set_out=0~)
     }
 }
 @
@@ -591,3 +591,4 @@ rostopic pub /IB05_916b/mission_normal std_msgs/String "data: '
 "
 
 [(name:wake_up|time_out:-1|mode:gpio|data:~in_on=1~)*&name>Button2_function_0/time_out>-1/mode>normal/data>%normal_step#(name:Button_led2_on|time_out:-1|mode:gpio|data:~out_set=4~~out_reset=2,7~)(name:Button2_free|time_out:-1|mode:gpio|data:~in_off=1~)(name:Button_led2_off|time_out:-1|mode:gpio|data:~out_reset=4~)%@][(name:wake_up|time_out:-1|mode:gpio|data:~in_on=3~)*&name>Button4_fucntion_0/time_out>-1/mode>normal/data>%normal_step#(name:Button_led4_on|time_out:-1|mode:gpio|data:~out_set=6~~out_reset=2,7~)(name:Button4_free|time_out:-1|mode:gpio|data:~in_off=3~)(name:Button_led4_off|time_out:-1|mode:gpio|data:~out_reset=6~)%@]
+        (name:setconfig_1|time_out:-1|mode:config|data:~footprint_padding=0.02~~max_vel_x=0.9~~acc_lim_x=2.0~~max_vel_theta=none~~acc_lim_theta=3.0~~inflation_radius=1.2~)

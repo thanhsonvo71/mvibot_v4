@@ -763,6 +763,38 @@ void mission_memoryf(const std_msgs::String& msg){
         }
     unlock();
 }
+void footprintf(const std_msgs::String& msg){
+    lock();
+        if(n_client > 0){
+            static string string_process;
+            string_process="";
+            string_process=start_char;
+            string_process=string_process+"{[(name_seri/="+mvibot_seri+")]}";
+            string_process=string_process+"{[(name_topic/=footprint)]}";
+            string_process=string_process+"{[(data/="+msg.data+")]}";
+            string_process=string_process+end_char;
+            //
+            msg_to_socket.resize(msg_to_socket.size()+1);
+            msg_to_socket[msg_to_socket.size()-1]=string_process;
+        }
+    unlock();
+}
+void pathf(const std_msgs::String& msg){
+    lock();
+        if(n_client > 0){
+            static string string_process;
+            string_process="";
+            string_process=start_char;
+            string_process=string_process+"{[(name_seri/="+mvibot_seri+")]}";
+            string_process=string_process+"{[(name_topic/=path)]}";
+            string_process=string_process+"{[(data/="+msg.data+")]}";
+            string_process=string_process+end_char;
+            //
+            msg_to_socket.resize(msg_to_socket.size()+1);
+            msg_to_socket[msg_to_socket.size()-1]=string_process;
+        }
+    unlock();
+}
 int main(int argc, char** argv) 
 { 
     //
@@ -799,7 +831,7 @@ int main(int argc, char** argv)
     res=pthread_create(&p_process5,NULL,process5,NULL);
     res=pthread_create(&p_process6,NULL,process6,NULL);
     //
-    ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n13,n14,n15,n16,n17,n18,n19,n20,n21;
+    ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n13,n14,n15,n16,n17,n18,n19,n20,n21,n22;
     ros::Subscriber sub1 = n1.subscribe("/IAM"+server_topic, 1, IAMf);
     ros::Subscriber sub2 = n2.subscribe("/request_map"+server_topic, 1, request_mapf);
     ros::Subscriber sub3 = n3.subscribe("/sensor_status_string"+server_topic, 1, sensor_status_stringf);
@@ -824,6 +856,8 @@ int main(int argc, char** argv)
     ros::Subscriber sub18 = n18.subscribe("/"+mvibot_seri+"/local_variable", 10, local_variablef);
     ros::Subscriber sub19 = n19.subscribe("/"+mvibot_seri+"/mission_action_infor", 10, mission_action_inforf);
     ros::Subscriber sub20 = n20.subscribe("/"+mvibot_seri+"/mission_memory", 10, mission_memoryf);
+    ros::Subscriber sub21 = n21.subscribe("/"+mvibot_seri+"/footprint", 1, footprintf);
+    ros::Subscriber sub22 = n22.subscribe("/"+mvibot_seri+"/path", 1, pathf);
     ros::spin();
     return 0; 
 } 

@@ -240,7 +240,7 @@ void database_process(){
             if(my_robots[i].time_out>=10) my_robots[i].time_out=10.0;
             cout<<my_robots[i].name_seri<<"|"<<my_robots[i].time_out<<endl;
             //
-            if(my_robots[i].time_out>=3) my_robots[i].update_status_robot(0);
+            if(my_robots[i].time_out>=5) my_robots[i].update_status_robot(0);
             else my_robots[i].update_status_robot(1);
             //
             my_robots[i].cmd_update_database();

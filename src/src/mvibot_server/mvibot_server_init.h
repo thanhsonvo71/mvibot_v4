@@ -1,6 +1,7 @@
 #include "../common/libary/libary_basic.h"
 #include "../common/libary/libary_ros.h"
 #include "../common/string_Iv2/string_Iv2.h"
+#include "../common/send_tranfrom/send_tranfrom.h"
 
 #include "mysql_connection.h"
 #include <mysql_driver.h>
@@ -73,6 +74,7 @@ using namespace sql;
             string                  get_cmd_update_database(string data1_,string data2_);
             void                    update_status_robot(int n);
             void                    send_cmd_to_msyql(string cmd);
+            //
     };
     vector<robot_information> my_robots;
     float ts_my_robots;
