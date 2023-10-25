@@ -149,7 +149,7 @@ int main(int argc, char** argv){
     static int res;
     res=pthread_create(&p_process1,NULL,process1,NULL);
     res=pthread_create(&p_process2,NULL,process2,NULL);
-
+    //
     ros::NodeHandle n1,n2,n3,n4,n5;
     //ros::Subscriber sub1 = n1.subscribe("/"+mvibot_seri+"/msg", 1, msgf);    
     ros::Subscriber sub2 = n2.subscribe("/"+mvibot_seri+"/laser/base_link/scan1", 1, scan1f); 

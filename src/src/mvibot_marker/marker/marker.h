@@ -3,6 +3,14 @@
 #include "../../common/get_position/get_position.h"
 using namespace  std;
 //
+float getyaw2(float data3, float data4){
+  	static geometry_msgs::Quaternion quat_msg;
+	quat_msg.x=0;
+	quat_msg.y=0;
+	quat_msg.z=data3;
+	quat_msg.w=data4;
+	return tf::getYaw(quat_msg);
+}
 int marker::tranform_offset(){
     static int value_return;
     value_return=0;
@@ -74,10 +82,19 @@ int marker::send_tranfrom_marker(){
     static int value_return;
     // check tranfrom is true
     robot_position_get=get_position(mvibot_seri+"/odom",mvibot_seri+"/base_marker");
-    if(fabs(x_set-robot_position_get[0])<=0.001 | fabs(y_set-robot_position_get[1])<=0.001){
-        if(fabs(z_set-robot_position_get[2])<=0.001 | fabs(w_set-robot_position_get[3])<=0.001){            
-            value_return=1;
+    if(fabs(x_set-robot_position_get[0])<=0.001 & fabs(y_set-robot_position_get[1])<=0.001){
+        static float angle1,angle2;
+        angle1=getyaw2(z_set,w_set);
+        angle2=getyaw2(robot_position_get[2],robot_position_get[3]);
+        //
+        // if(fabs(z_set-robot_position_get[2])<=0.001 | fabs(w_set-robot_position_get[3])<=0.001){            
+        //     value_return=1;
+        // }else value_return=0;
+        //
+        if(fabs(sin(angle2)-sin(angle1))<=0.01 & fabs(sin(angle2)-sin(angle1))<=0.01) {
+                value_return=1;
         }else value_return=0;
+
     }else value_return=0;
     return value_return;
 }
@@ -126,7 +143,8 @@ int marker::check_first_tranfrom_pose_marker(){
     xo2=pose_o_robot.pose.position.x;
     yo2=pose_o_robot.pose.position.y;
     yawo2=getyaw(pose_o_robot.pose.orientation);
-    if(fabs(xo1-xo2)<=0.005 & fabs(yo1-yo2)<=0.005 & fabs(yawo1-yawo2)<=0.005){
+    // fabs(yawo1-yawo2)<=0.005
+    if(fabs(xo1-xo2)<=0.005 & fabs(yo1-yo2)<=0.005 & fabs(sin(yawo2)-sin(yawo1))<=0.01 & fabs(cos(yawo2)-cos(yawo1))<=0.01){
         value_return=1;
     }else value_return=0;     
     return value_return;
@@ -144,8 +162,6 @@ int marker::move_to_postion_pose_n(){
     x=pose_n_robot.pose.position.x;
     y=pose_n_robot.pose.position.y;
     if(marker_type=="none_marker_dis"){
-        //angle=atan2(0,x);
-        //angle=atan2(y,x);
         angle=getyaw(pose_n_robot.pose.orientation);
         dis=fabs(x);
         off_set_dis=x;
@@ -266,8 +282,6 @@ int marker::move_to_orientation_pose_n(){
 int marker::action(){
     static int value_return;
     static int res;
-    //    
-    //send_tranfrom(x_set,y_set,z_set,w_set,mvibot_seri+"/odom",mvibot_seri+"/base_marker");
     //
     if(status==0){
         cout<<"Collect data..."<<endl;
@@ -283,7 +297,8 @@ int marker::action(){
         }
     }
     else if(status==1){
-        if(active_step>0) send_tranfrom(x_set,y_set,z_set,w_set,mvibot_seri+"/odom",mvibot_seri+"/base_marker");
+        if(active_step>1) send_tranfrom(x_set,y_set,z_set,w_set,mvibot_seri+"/odom",mvibot_seri+"/base_marker");
+        //
         if(active_step==0){
             if(marker_type=="none_marker_dis" |  marker_type=="none_marker_angle"){
                 active_step=1;

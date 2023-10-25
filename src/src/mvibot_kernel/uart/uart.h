@@ -103,12 +103,14 @@ void uart_read(){
         system_command=system_command+"robot shutdown at: `date` "+">> "+define_path+"history/startup.log";
         system(system_command.c_str());
         //
-        system("pkill roslaunch");
+        system("systemctl stop ros_startup1.service");
+        system("systemctl stop ros_startup.service");       
+        //system("pkill roslaunch");
         sleep(2);
-        if(send_command_shutdown==1)
-        system("echo 1 | sudo -S shutdown -h now");
-        else if(send_command_shutdown==2)
-        system("echo 1 | sudo -S reboot");
+        if(send_command_shutdown==1) system("systemctl poweroff -i");
+        //system("shutdown -h now");
+        else if(send_command_shutdown==2) system("systemctl reboot -i");
+        //system("reboot");
         exit(0);
     }
     // check frame data

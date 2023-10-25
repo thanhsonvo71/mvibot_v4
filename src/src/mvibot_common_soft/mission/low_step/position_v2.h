@@ -171,13 +171,14 @@ int action_goal(int mode){
                 if(action_goal.getState().toString()=="ABORTED"){
                     action_goal.cancelGoal();
                     action_goal.waitForResult();
-                    msg.target_pose.pose.position.x=position_robot[0];
-                    msg.target_pose.pose.position.y=position_robot[1];
-                    msg.target_pose.pose.orientation.z=position_robot[2];
-                    msg.target_pose.pose.orientation.w=position_robot[3];
-                    action_goal.sendGoal(msg);
-                    action_goal.waitForResult();            
-                    return Active_;
+                    // msg.target_pose.pose.position.x=position_robot[0];
+                    // msg.target_pose.pose.position.y=position_robot[1];
+                    // msg.target_pose.pose.orientation.z=position_robot[2];
+                    // msg.target_pose.pose.orientation.w=position_robot[3];
+                    // action_goal.sendGoal(msg);
+                    // action_goal.waitForResult();            
+                    // return Active_;
+                    return Finish_;
                 }else return Finish_;
             }
         }
@@ -374,7 +375,7 @@ int position_::action(int action){
         //
         if(dis<=0.35){
             complete_position=1;
-            if(fabs(sin(angle2)-sin(angle1))<=0.05) {
+            if(fabs(sin(angle2)-sin(angle1))<=0.1 & fabs(cos(angle2)-cos(angle1))<=0.1) { //0.08 only sin
                 complete_position=2;
             }
         }else complete_position=0;

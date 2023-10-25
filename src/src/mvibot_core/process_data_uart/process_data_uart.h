@@ -89,7 +89,7 @@ void process_data_uart_read(){
             battery_live_status=1;
             //
             battery_soc=(float)(data_receive[battery_soc_re]);
-            battery_soc=((battery_soc-20)/80)*100;
+            //battery_soc=((battery_soc-20)/80)*100;
             if(battery_soc<0) battery_soc=0;
             //
             battery_vol=(float)(data_receive[battery_vol_H_re]*100+data_receive[battery_vol_L_re])/100;

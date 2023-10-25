@@ -1,31 +1,21 @@
 base_frame: /$(arg mvibot_seri)/base_footprint
 map_frame: /map
 odom_frame: /$(arg mvibot_seri)/odom
-#minimumScore: 300.0 
-#iterations: 5.0
-#srr: 0.05
-#srt: 0.05
-#str: 0.05
-#stt: 0.05
-#linearUpdate: 0.5
-#angularUpdate: 0.628
 srr: 0.05
 srt: 0.05
-str: 0.1
-stt: 0.1
+str: 0.05
+stt: 0.05
 linearUpdate: 0.2
 angularUpdate: 0.26179938779
 resampleThreshold: 0.5
 #particles: 500 
-particles: 1000
-map_update_interval: 1.0
-#2.0 
-#5.0
+particles: 100
+map_update_interval: 5.0
 xmin: -10.0
 xmax: 10.0
 ymin: -10.0
 ymax: 10.0
 transform_publish_period: 0.1
 #maxUrange: 5.0
-maxUrange: 10.0
+maxUrange: 5.0
 maxRange: 16.0

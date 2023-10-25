@@ -570,6 +570,25 @@ void pub_path_infor(){
         pub.publish(msg);
     } else creat_fun=1;
 }
+//
+std::string load_file(string name_file){
+    //
+    static string value_return;
+    try
+    {
+	    std::ifstream file(define_path+"config/"+name_file);
+	    std::string str; 
+	    std::string data;
+        std::getline(file, str);
+        value_return=str;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        value_return="-1";
+    }
+    return value_return;
+}
 int  main(int argc, char** argv){
     ros::init(argc, argv, "mvibot_conmmon_soft_v2");
     ros::NodeHandle nh("~");
@@ -587,7 +606,8 @@ int  main(int argc, char** argv){
     action_recovery(0);
     action_getpath(0);
     action_exepath(0);
-    //
+    // load battery soc set for charge 
+    battery_soc_set_mission=stof_f(load_file("robot_low_battery"));
     // load file mission
     ifstream file;
     string str,data;
@@ -738,10 +758,10 @@ void function2(){
 }
 void function3(){
     lock();
-        // update gpio
         if(motor_left_ready == 0 | motor_right_ready==0){
             if(action_mission==Active_) action_mission=Cancel_;
         }
+        // update gpio
         input_user_status_2=input_user_status_1;
         input_user_status_1=input_user_status;
         for(int i=0;i<my_module.size();i++){

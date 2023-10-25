@@ -1,0 +1,40 @@
+Line_follow with OB:
+	// 7.0/10 điểm
+	path bias : 20
+	goal bias : 48
+	simtime   :8
+	// 9.0/10 điểm => Chốt test ngày 20_10_2023
+	path bias : 20
+	goal bias : 48
+	simtime   : 5	
+line_follow no OB:
+	// 2/10 điểm
+	path_bias:28
+	goal bias:20
+	sim_time:2.0
+	// 2/10
+	path_bias:28
+	goal bias:12
+	sim_time:5.0
+	// 5/10
+	path_bias:42
+	goal bias:12
+	sim_time:5.0
+	// 4.0
+	path_bias:42
+	goal bias:12
+	sim_time:5.0
+	obdist_Scale: 0.2
+	stop time buffe: 30.0
+	// 7/10
+	32
+	8
+	3
+	// 8/10 chốt test ngày 20_10_2023 chưa fixx 
+	20
+	10
+	5
+	// 
+	32
+	12
+	5
