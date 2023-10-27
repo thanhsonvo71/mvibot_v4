@@ -86,9 +86,9 @@ int if_else_step::action(int action){
 void if_else_step::reset(){
     status=0;
     //
-    condition_step->reset();
-    if_step->reset();
-    else_step->reset();
+    if(condition_step!=nullptr) condition_step->reset();
+    if(if_step!=nullptr)        if_step->reset();
+    if(else_step!=nullptr)      else_step->reset();
 }
 int if_else_step::set_id(int n){
     static int value_return;

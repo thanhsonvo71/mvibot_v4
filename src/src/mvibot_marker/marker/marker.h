@@ -11,7 +11,7 @@ float getyaw2(float data3, float data4){
 	quat_msg.w=data4;
 	return tf::getYaw(quat_msg);
 }
-int marker::tranform_offset(){
+int marker::caculate_transforms_ofset(){
     static int value_return;
     value_return=0;
     if(marker_type=="none_marker_dis" | marker_type=="none_marker_angle" ){
@@ -78,18 +78,14 @@ int marker::tranform_offset(){
     }
     return value_return;
 }
-int marker::send_tranfrom_marker(){
+int marker::check_send_transforms_tf_frame(){
     static int value_return;
     // check tranfrom is true
     robot_position_get=get_position(mvibot_seri+"/odom",mvibot_seri+"/base_marker");
-    if(fabs(x_set-robot_position_get[0])<=0.001 & fabs(y_set-robot_position_get[1])<=0.001){
+    if(fabs(x_set-robot_position_get[0])<=0.005 & fabs(y_set-robot_position_get[1])<=0.005){
         static float angle1,angle2;
         angle1=getyaw2(z_set,w_set);
         angle2=getyaw2(robot_position_get[2],robot_position_get[3]);
-        //
-        // if(fabs(z_set-robot_position_get[2])<=0.001 | fabs(w_set-robot_position_get[3])<=0.001){            
-        //     value_return=1;
-        // }else value_return=0;
         //
         if(fabs(sin(angle2)-sin(angle1))<=0.01 & fabs(sin(angle2)-sin(angle1))<=0.01) {
                 value_return=1;
@@ -144,6 +140,7 @@ int marker::check_first_tranfrom_pose_marker(){
     yo2=pose_o_robot.pose.position.y;
     yawo2=getyaw(pose_o_robot.pose.orientation);
     // fabs(yawo1-yawo2)<=0.005
+    //
     if(fabs(xo1-xo2)<=0.005 & fabs(yo1-yo2)<=0.005 & fabs(sin(yawo2)-sin(yawo1))<=0.01 & fabs(cos(yawo2)-cos(yawo1))<=0.01){
         value_return=1;
     }else value_return=0;     
@@ -202,10 +199,6 @@ int marker::move_to_postion_pose_n(){
             if(angle>0) k2=1;
             if(angle<0) k2=-1;
             //
-            // if(fabs(angle)>=M_PI/180*5) w=k2*M_PI/180*3;
-            // else if( fabs(angle)<M_PI/180*5 &  fabs(angle)>=M_PI/180*3) w=k2*M_PI/180*1;
-            // else if( fabs(angle)<M_PI/180*3 &  fabs(angle)>=M_PI/180/2) w=k2*M_PI/180*1;
-            // else if( fabs(angle)<M_PI/180/2) w=k2*M_PI/180/2;
             if(fabs(angle)>=M_PI/180*15) w=k2*M_PI/180*10;	    
             else if( fabs(angle)<M_PI/180*15 &  fabs(angle)>=M_PI/180*10) w=k2*M_PI/180*5;	    
             else if( fabs(angle)<M_PI/180*10 &  fabs(angle)>=M_PI/180*5) w=k2*M_PI/180*5;	    
@@ -252,11 +245,6 @@ int marker::move_to_orientation_pose_n(){
                 if(angle>0) k2=1;
                 if(angle<0) k2=-1;
                 //
-                // if(fabs(angle)>=M_PI/180*5) w=k2*M_PI/180*3;
-                // else if( fabs(angle)<M_PI/180*5 &  fabs(angle)>=M_PI/180*3) w=k2*M_PI/180*1;
-                // else if( fabs(angle)<M_PI/180*3 &  fabs(angle)>=M_PI/180/2) w=k2*M_PI/180*1;
-                // else if( fabs(angle)<M_PI/180/2) w=k2*M_PI/180*1;
-                //
                 if(fabs(angle)>=M_PI/180*15) w=k2*M_PI/180*10;	    
                 else if( fabs(angle)<M_PI/180*15 &  fabs(angle)>=M_PI/180*10) w=k2*M_PI/180*5;	    
                 else if( fabs(angle)<M_PI/180*10 &  fabs(angle)>=M_PI/180*5) w=k2*M_PI/180*5;	    
@@ -266,9 +254,7 @@ int marker::move_to_orientation_pose_n(){
             } 
     }
     else{
-            // if(angle>0) w=M_PI/180*10;
-            // else w=-M_PI/180*10;
-            if(angle>0) w=M_PI/10;//180*10;
+            if(angle>0) w=M_PI/10;
             else w=-M_PI/10;
     }
     cout<<"v:"<<v<<"|w"<<w<<endl;
@@ -287,76 +273,96 @@ int marker::action(){
         cout<<"Collect data..."<<endl;
         if(marker_type=="none_marker_dis" |  marker_type=="none_marker_angle"){
             status=1;
-            active_step=0;
+            cout<<"Finsish collect data..."<<endl;
         }
         else{
             if(my_data.process_data(marker_dir)){
                 status=1;
-                active_step=0;
+                cout<<"Finsish collect data..."<<endl;
             }
         }
     }
     else if(status==1){
-        if(active_step>1) send_tranfrom(x_set,y_set,z_set,w_set,mvibot_seri+"/odom",mvibot_seri+"/base_marker");
-        //
-        if(active_step==0){
-            if(marker_type=="none_marker_dis" |  marker_type=="none_marker_angle"){
-                active_step=1;
-                cout<<"don 't near detect so skip"<<endl;
-            }else{
-                // detect maker
-                if(marker_type=="vl_marker")    res=detect_vl();
-                if(marker_type=="bar_marker")   res=detect_bar(0.785);
-                if(marker_type=="l_marker")     res=detect_l();
-                //
-                if(res==1) {
-                    cout<<"\t Detect finsh"<<endl;
-                    cout<<"\t Continue tranform offset...."<<endl;
-                    active_step=1;
-                }
-                else{
-                    my_data.reset();
-                    status=0;
-                    active_step=0; 
-                    cout<<"Can't detect. Retry collet laser msg...."<<endl;
-                }
+        if(marker_type=="none_marker_dis" |  marker_type=="none_marker_angle"){
+            status=2;
+            cout<<"don 't near detect so skip"<<endl;
+        }else{
+            // detect maker
+            res=1;
+            if(marker_type=="vl_marker")    res=detect_vl();
+            if(marker_type=="bar_marker")   res=detect_bar(0.785);
+            if(marker_type=="l_marker")     res=detect_l();
+            //
+            if(res==1) {
+                cout<<"\t Detect finsh"<<endl;
+                cout<<"\t Continue caculate tranform offset...."<<endl;
+                status=2;
             }
-        }else if(active_step==1){
-            res=tranform_offset();
-            if(res==1) active_step=2;
-            cout<<"Tranfrom offset"<<endl;
-        }else if(active_step==2){
-            cout<<"Send frame to tf2 and get footprint"<<endl;
-            if(send_tranfrom_marker()){
-                if(tranfrom_pose_marker(1)){
+            else{
+                my_data.reset();
+                status=0;
+                cout<<"Can't detect. Retry collet laser msg...."<<endl;
+            }
+        }
+    }
+    else if(status==2){
+        res=caculate_transforms_ofset();
+        if(res==1) status=3;
+        cout<<"Cacluate transfrom offset finish"<<endl;
+    }
+    else if(status>=3){
+        send_tranfrom(x_set,y_set,z_set,w_set,mvibot_seri+"/odom",mvibot_seri+"/base_marker");
+        //
+        if(status==3){
+            cout<<"Check is send transform odom->base_marker"<<endl;
+            res=check_send_transforms_tf_frame();
+            if(res==1) status=4;
+        }
+        else if(status>=4){
+            static int status_transfrom_pose;
+            status_transfrom_pose=tranfrom_pose_marker(1);
+            if(status==4){
+                cout<<"Check first pose is match with position robot!"<<endl;
+                if(status_transfrom_pose==1){
                     if(check_first_tranfrom_pose_marker()){
-                        if(get_footprint()) active_step=3;
+                        cout<<"First pose is match with postion robot"<<endl;
+                        status=5;
                     }
                 }
-            }else active_step=1;    
-        }else if(active_step>=3){
-            cout<<"action"<<endl;
-            if(tranfrom_pose_marker(1)){
-                // safe
-                if(safe==0) {
-                if(check_safe()==1)  safe=30;
+            }
+            else if(status==5){
+                cout<<"Get footprint robot!"<<endl;
+                if(get_footprint()) {
+                    cout<<"Finish get footprint robot!"<<endl;                  
+                    status=6;
+                    active_step=0;
                 }
-                else{
-                if(check_safe()==0) safe--;
-                if(safe<0) safe=0;
-                }
-                //
-                if(active_step==3) res=move_to_postion_pose_n();
-                if(active_step==4) res=move_to_orientation_pose_n();
-                //
-                if(res==1){
-                    active_step++;
-                    if(active_step>=5){
-                        active_step=0;
-                        status=0;
-                        reset(0);
-                        start=2;
-                        cout<<"Finish marker"<<endl;
+            }
+            else if(status==6){
+                cout<<"Action move!"<<endl;
+                if(status_transfrom_pose){
+                    // safe
+                    if(safe==0) {
+                        if(check_safe()==1)  safe=30;
+                    }
+                    else{
+                        if(check_safe()==0) safe--;
+                        if(safe<0) safe=0;
+                    }
+                    //
+                    if(active_step==0) res=move_to_postion_pose_n();
+                    if(active_step==1) res=move_to_orientation_pose_n();
+                    //
+                    if(res==1){
+                        active_step++;
+                        if(active_step>=3){
+                            active_step=0;
+                            status=0;
+                            active_step=0;
+                            reset(0);
+                            start=2;
+                            cout<<"Finish marker"<<endl;
+                        }
                     }
                 }
             }

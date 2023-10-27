@@ -31,6 +31,7 @@ int normal_step::action(int action){
     
 }
 void normal_step::reset(){
+    if(normal_step!=nullptr)
     normal_step->reset();
 }
 int normal_step::set_id(int n){

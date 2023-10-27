@@ -111,7 +111,7 @@
     // data for robot
     class data{
         public:
-            int num_msg=5;
+            int num_msg=5; //5
             // data
             vector<sensor_msgs::LaserScan> my_scan;
             vector<point>   my_points;
@@ -156,9 +156,9 @@
             float off_set_y=0.0;
             float off_set_dis=0;
             float off_set_angle=0;
-            int  tranform_offset();
+            int  caculate_transforms_ofset();
             // send tranfrom
-            int send_tranfrom_marker();
+            int check_send_transforms_tf_frame();
             int tranfrom_pose_marker(int mode);
             int check_first_tranfrom_pose_marker();
             // action maker

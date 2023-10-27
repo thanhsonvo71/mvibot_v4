@@ -5,11 +5,11 @@ void mission::process_data(){
     //
     data1.detect(data,"","*","");
     if(data1.data1.size()==1){
+        my_configuration= new multiple_step_I;
         my_multiple_step_II= new multiple_step_II;
         my_multiple_step_II->data=data;
         my_multiple_step_II->process_data();
         my_multiple_step_II->set_id(0);
-        my_configuration->process_data();
     }else if(data1.data1.size()==2 & data1.data1[1]!="" ){
         //
         my_multiple_step_II= new multiple_step_II;
@@ -36,9 +36,9 @@ void mission::print(int n){
     cout<<BOLDGREEN<<"Mission id: "<<id_mission<<RESET<<endl;
     cout<<BOLDGREEN<<"Mission total step: "<<my_multiple_step_II->num_small_step_action<<" steps"<<RESET<<endl;
     cout<<BOLDGREEN<<"Mission config:"<<RESET<<endl;
-    my_configuration->print(n+1);
+    if(my_configuration!=nullptr)    my_configuration->print(n+1);
     cout<<BOLDGREEN<<"Mission action:"<<RESET<<endl;
-    if(my_multiple_step_II->data!="")my_multiple_step_II->print(n+1);
+    if(my_multiple_step_II!=nullptr) my_multiple_step_II->print(n+1);
     cout<<BOLDYELLOW<<"************************************************************************************************************"<<RESET<<endl;
 }
 int mission::action(int action){
@@ -96,7 +96,6 @@ int mission::action(int action){
             }
         }
         if(stop_true==0){
-            // value_return=my_multiple_step_II->action(Active_);
             if(my_multiple_step_II->data!=""){
                 if(action==Active_){
                     cout<<"---------------------------------------------------------------------------------------------------------------------------------------------------------"<<endl;
@@ -106,10 +105,6 @@ int mission::action(int action){
                 if(value_return==Finish_ | value_return==True_ | value_return==False_ | value_return==Break_){
                     cout<<BOLDMAGENTA;
                     reset();
-                    //my_vars_local.reset();
-                    //
-                    //infor_action_step="";
-                    //step_action_information="0";
                     //
                     if(action_mission==Error_){
                         step_action_information3="0";
@@ -165,6 +160,9 @@ void mission::reset(){
     //
 }
 void mission::delete_free(){
+    data="";
+    name_mission="";
+    id_mission=0;
    if(my_configuration!=nullptr){
         delete my_configuration;
         my_configuration=nullptr;

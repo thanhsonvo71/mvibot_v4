@@ -119,7 +119,11 @@ void set_sound(){
         sound_f=1;
     }else{
         if(action_mission!=Finish_){
-            if(action_mission==Error_) pub_sound(1);
+            if(action_mission==Error_){
+                //pub_sound(sound);
+                pub_sound(0);// ?
+                sound_f=1;
+            }
             else {
                 if(sound_f==1) {
                     pub_sound(0);
@@ -796,15 +800,19 @@ void function3(){
             //
             if(action_mission!=Active_){
                 res=my_multiple_mission.action(Cancel_);
-                if(res==Wake_up_) {
-                    if(action_mission!=Error_) action_mission=Active_;
-                    else action_mission=Cancel_;
-                }
-                if(res==Continue_){
-                    if(my_multiple_mission.num_mission_action!=-1){
+                //
+                if(motor_left_ready != 0 & motor_right_ready!=0){
+                    if(res==Wake_up_) {
                         if(action_mission!=Error_) action_mission=Active_;
                         else action_mission=Cancel_;
                     }
+                    if(res==Continue_){
+                        if(my_multiple_mission.num_mission_action!=-1){
+                            if(action_mission!=Error_) action_mission=Active_;
+                            else action_mission=Cancel_;
+                        }
+                    }
+                    //
                 }
             }else{
                 res=my_multiple_mission.action(Active_);
@@ -812,6 +820,10 @@ void function3(){
             }
             // change to battery mission
             if(action_mission!=Active_ & action_mission!=Error_ & motor_left_ready == 1 & motor_right_ready== 1  & my_multiple_mission.num_mission_action==-1){
+                // scan start mission battery
+                res=my_mission_charge_battery.action(Cancel_);
+                if(res==Wake_up_) want_to_charge=1;
+                //
                 if(want_to_charge==1){
                     action_mode_mission=Mission_charge_battery_;
                     action_mission=Active_;
@@ -830,9 +842,10 @@ void function3(){
                 }
                 action_mission=res;
             }else{
-                if(action_mission==Error_){
-                    my_mission_charge_battery.action(Error_);
-                }
+                // if(action_mission==Error_){
+                //     my_mission_charge_battery.action(Error_);
+                // }
+                my_mission_charge_battery.action(Cancel_);
             }
         }
         action_mode_mission_f=action_mode_mission;

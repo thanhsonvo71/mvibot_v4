@@ -1,7 +1,7 @@
 <launch>
   <arg name="mvibot_seri" default=""/>
   <node pkg="slam_toolbox" type="async_slam_toolbox_node" name="slam_toolbox" output="screen">
-    <rosparam subst_value="True" command="load" file="$(find mvibot)/param/mapper_params_online_async.yaml" />
+    <rosparam subst_value="True" command="load" file="$(find mvibot_v4)/param/mapper_params_online_sync.yaml" />
     <param name="mvibot_seri" value="$(arg mvibot_seri)"/>
     <remap from="/map" to="/$(arg mvibot_seri)/map"/>
   </node>

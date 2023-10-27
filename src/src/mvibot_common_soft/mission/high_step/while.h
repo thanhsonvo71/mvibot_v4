@@ -87,8 +87,8 @@ int while_step::action(int action){
 void while_step::reset(){
     status=0;
     //
-    condition_step->reset();
-    do_step->reset();
+    if(condition_step!=nullptr) condition_step->reset();
+    if(do_step!=nullptr)        do_step->reset();
     //
 }
 int while_step::set_id(int n){

@@ -87,8 +87,8 @@ void logic_and_step::reset(){
     status_A=0;
     status_B=0;
     //
-    logic_A->reset();
-    logic_B->reset();
+    if(logic_A!=nullptr) logic_A->reset();
+    if(logic_B!=nullptr) logic_B->reset();
 }
 int logic_and_step::set_id(int n){
     static int value_return;

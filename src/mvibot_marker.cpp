@@ -137,7 +137,7 @@ int main(int argc, char** argv){
     nh.getParam("mvibot_seri", mvibot_seri);
     //
     while(my_marker.tranfrom_pose_marker(0)==-1){
-        my_marker.send_tranfrom_marker();
+        my_marker.check_send_transforms_tf_frame();
         usleep(1e5);
     }
     //

@@ -9,6 +9,9 @@ void process_data(string data){
     static string_Iv2 data_I;
     data_I.detect(data,"~","=","~");
     safe_x1=0.01; safe_x2=0.01; safe_y1=0.01; safe_y2=0.01;
+    //
+    my_marker.marker_dir="";
+    my_marker.marker_type="";
     for(int i=0;i<data_I.data1.size();i++){
         //
         if(data_I.data1[i]=="marker_type")      my_marker.marker_type=data_I.data2[i];

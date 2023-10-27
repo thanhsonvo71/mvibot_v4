@@ -29,7 +29,7 @@ using namespace mn::CppLinuxSerial;
         int send_command_shutdown=0;
         int request_backup=0,robot_backup_reboot=0;
         float button_hold=0,button_hold_backup=0;
-        float ts_button_hold;
+        float ts_button_hold=0.05;
         // view data
         void view_data(string name, std::vector<uint8_t> data){
             cout<<name;

@@ -22,7 +22,5 @@
 				<remap from="scan" to="/$(arg mvibot_seri)/laser/scan" />
 				<remap from="scan_filtered" to="/$(arg mvibot_seri)/laser/scan_m5"/>
 		</node>
-
-
 </launch>
 

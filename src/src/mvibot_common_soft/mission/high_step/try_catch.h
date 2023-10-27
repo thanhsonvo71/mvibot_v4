@@ -66,8 +66,8 @@ int try_catch_step::action(int action){
 void try_catch_step::reset(){
     status=0;
     //
-    try_step->reset();
-    catch_step->reset();
+    if(try_step!=nullptr)       try_step->reset();
+    if(catch_step!=nullptr)     catch_step->reset();
 }
 int try_catch_step::set_id(int n){
     static int value_return;
