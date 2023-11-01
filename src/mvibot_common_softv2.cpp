@@ -121,7 +121,7 @@ void set_sound(){
         if(action_mission!=Finish_){
             if(action_mission==Error_){
                 //pub_sound(sound);
-                pub_sound(0);// ?
+                pub_sound(sound2);// ?
                 sound_f=1;
             }
             else {
@@ -622,8 +622,8 @@ int  main(int argc, char** argv){
             // Process str
             data=data+str;
 	    }
-        my_multiple_mission.data=data;
         my_multiple_mission.delete_free();
+        my_multiple_mission.data=data;
         my_multiple_mission.process_data();
         my_multiple_mission.print(0);
     file.close();
@@ -634,8 +634,8 @@ int  main(int argc, char** argv){
             // Process str
             data=data+str;
 	    }
-        my_mission_error.data=data;
         my_mission_error.delete_free();
+        my_mission_error.data=data;        
         my_mission_error.process_data();
         my_mission_error.print(0);
     file.close();
@@ -646,8 +646,8 @@ int  main(int argc, char** argv){
             // Process str
             data=data+str;
 	    }
-        my_mission_charge_battery.data=data;
         my_mission_charge_battery.delete_free();
+        my_mission_charge_battery.data=data;
         my_mission_charge_battery.process_data();
         my_mission_charge_battery.print(0);
     file.close();

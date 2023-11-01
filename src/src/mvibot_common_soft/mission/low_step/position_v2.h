@@ -62,7 +62,7 @@ void check_pose_costmap(){
             srv.request.pose.pose.orientation.w=1.0;
             srv.request.pose.header.frame_id=mvibot_seri+"/base_footprint";
             srv.request.current_pose=false;
-            client.call(srv);
+            //client.call(srv);
             if((srv.response.state)==0 | (srv.response.state)==1) free_space_robot=1;
             else free_space_robot=1; //0
             // cout<<free_space_robot<<endl;
@@ -401,11 +401,23 @@ int position_::action(int action){
             else if(status==1){
                 cout<<"Step"<<status<<endl;
                 // clear costmap
+                clear_costmap();
                 action_recovery(0);
                 status=2;
+                sleep=0;
                 return Active_;
             }
             else if(status==2){
+                cout<<"Step"<<status<<endl;
+                // sleep 1s wait for move base get action goal
+                sleep+=ts_mission_step_scan;
+                if(sleep>=1.0){
+                    sleep=0;
+                    status=3;
+                }
+                return Active_;
+            }
+            else if(status==3){
                 //send goal
                 cout<<"Step"<<status<<endl;
                 if(complete_position==1){
@@ -436,29 +448,29 @@ int position_::action(int action){
                 }
                 //
                 if(action_goal(1)==Finish_){
-                    status=3;
+                    status=4;
                     sleep=0;
                 }
                 return Active_;
             }
-            else if(status==3){
+            else if(status==4){
                 cout<<"Step"<<status<<endl;
                 // sleep 1s wait for move base get action goal
                 sleep+=ts_mission_step_scan;
                 if(sleep>=1.0){
                     sleep=0;
-                    status=4;
+                    status=5;
                 }
                 return Active_;
             }
-            else if(status==4){
+            else if(status==5){
                 cout<<"Step"<<status<<endl;
                 // check move base get goal ? 
                 if(movebase_goal_id>target_goal_id){
                     //
                     for(int j=0;j<num_tab;j++) cout<<"\t";
                     cout<<"Move base receive goal"<<endl;
-                    status=5;
+                    status=6;
                 }else{
                     //
                     for(int j=0;j<num_tab;j++) cout<<"\t";
@@ -467,7 +479,7 @@ int position_::action(int action){
                 }
                 return Active_;
             }
-            else if(status==5){
+            else if(status==6){
                 cout<<"Step"<<status<<endl;
                 static int get_action_goal_status;
                 get_action_goal_status=action_goal(2);
@@ -523,9 +535,20 @@ int position_::action(int action){
                 clear_costmap();
                 action_recovery(0);
                 status=2;
+                sleep=0;
                 return Active_;
             }
             else if(status==2){
+                cout<<"Step"<<status<<endl;
+                // sleep 1s wait for move base get action goal
+                sleep+=ts_mission_step_scan;
+                if(sleep>=1.0){
+                    sleep=0;
+                    status=3;
+                }
+                return Active_;
+            }
+            else if(status==3){
                 //send goal
                 if(complete_position==1){
                     if(is_error){
@@ -564,27 +587,27 @@ int position_::action(int action){
                 }
                 //
                 if(action_exepath(1)==Finish_){
-                    status=3;
+                    status=4;
                     sleep=0;
                 }
                 return Active_;
             }
-            else if(status==3){
+            else if(status==4){
                 // sleep 1s wait for move base get action goal
                 sleep+=ts_mission_step_scan;
                 if(sleep>=1.0){
                     sleep=0;
-                    status=4;
+                    status=5;
                 }
                 return Active_;               
             }
-            else if(status==4){
+            else if(status==5){
                 // check exepath_id 
                 if(exepath_goal_id>target_goal_id){
                     //
                     for(int j=0;j<num_tab;j++) cout<<"\t";
                     cout<<"Exe path receive goal"<<endl;
-                    status=5;
+                    status=6;
                 }else{
                     //
                     for(int j=0;j<num_tab;j++) cout<<"\t";
@@ -593,7 +616,7 @@ int position_::action(int action){
                 }
                 return Active_;
             }
-            else if(status==5){
+            else if(status==6){
                 static int get_action_goal_status;
                 get_action_goal_status=action_exepath(2);
                 if(get_action_goal_status==Finish_){
@@ -634,8 +657,8 @@ int position_::action(int action){
         status=0;
         sleep=0;
         is_error=0;
-        action_goal(0);
-        action_exepath(0);
+        if(mode=="normal") action_goal(0);
+        if(mode=="line_follow") action_exepath(0);
         //
         position_goal[0]=-1;
         position_goal[1]=-1;

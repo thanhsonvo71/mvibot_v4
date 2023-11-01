@@ -43,9 +43,17 @@ int sound_::action(int action){
     if(action==Active_){
         for(int j=0;j<num_tab;j++) cout<<"\t";
         cout<<"Action sound"<<endl;
-        if(music_start==0) sound=0;
-        else{
-            sound=music_mode;
+        //
+        if(action_mission==Error_){
+            if(music_start==0) sound2=0;
+            else{
+                sound2=music_mode;
+            }
+        }else{
+            if(music_start==0) sound=0;
+            else{
+                sound=music_mode;
+            }
         }
         return Finish_;
     } else  return action;

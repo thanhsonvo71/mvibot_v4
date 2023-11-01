@@ -40,7 +40,7 @@ float ts_mission_step_scan=0.05;
 // global var for robot
 int action_mission=0;
 int action_mode_mission;
-int sound=0;
+int sound=0; int sound2=0;
 int status_action_marker=0;
 // class for variable mision
 // function support

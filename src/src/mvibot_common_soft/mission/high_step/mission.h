@@ -155,8 +155,8 @@ int mission::action(int action){
 void mission::reset(){
     //
     cout<<"Reset Mission"<<endl;
-    my_configuration->reset();
-    my_multiple_step_II->reset();
+    if(my_configuration!=nullptr) my_configuration->reset();
+    if(my_multiple_step_II!=nullptr) my_multiple_step_II->reset();
     //
 }
 void mission::delete_free(){
@@ -187,7 +187,7 @@ string mission::get_infor(int mode_get){
         }else if(mode_get==1){
             value_return+="(now_step:"+step_action_information2+")";
             value_return+="(infor_action_step:"+infor_action_step2+")";
-        }else if(mode_get==3){
+        }else if(mode_get==2){
             value_return+="(now_step:"+step_action_information3+")";
             value_return+="(infor_action_step:"+infor_action_step3+")";
         }
