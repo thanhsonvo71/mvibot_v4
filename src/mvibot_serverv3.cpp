@@ -13,7 +13,7 @@
 using namespace std;
 // settime process
 long double ts_process1=0.5; //time set for process1
-long double ts_process2=0.05; //time set for process2
+long double ts_process2=1.0; //time set for process2
 long double ts_process3=0.05; //time set for process3
 long double ts_process4=0.05; //time set for process4
 long double ts_process5=0.05; //time set for process5
@@ -73,6 +73,64 @@ void pub_master_check(){
             msg.data="1";
             pub.publish(msg);
     }else creat_fun=1;
+}
+//
+string data_output_set_zip;
+void pub_input_zip(string data){
+    static ros::NodeHandle n;
+    static ros::Publisher pub = n.advertise<std_msgs::String>("/input_user_status_string_zip",100);
+    static float creat_fun=0;
+    static std_msgs::String msg;
+    if(creat_fun==1){
+            msg.data=data;
+            pub.publish(msg);
+    }else creat_fun=1;
+}
+void pub_output_zip(string data){
+    static ros::NodeHandle n;
+    static ros::Publisher pub = n.advertise<std_msgs::String>("/output_user_status_string_zip",100);
+    static float creat_fun=0;
+    static std_msgs::String msg;
+    if(creat_fun==1){
+            msg.data=data;
+            pub.publish(msg);
+    }else creat_fun=1;
+}
+void pub_output_set_zip(string data){
+    static ros::NodeHandle n;
+    static ros::Publisher pub = n.advertise<std_msgs::String>("/output_user_set_string_zip",100);
+    static float creat_fun=0;
+    static std_msgs::String msg;
+    if(creat_fun==1){
+            msg.data=data;
+            pub.publish(msg);
+    }else creat_fun=1;
+}
+void pub_zip(){
+    static string data;
+    //input
+    data="";
+    for(int i=0;i<my_robots.size();i++){
+        data=data+"<"+my_robots[i].input_user_status+">";
+    }
+    for(int i=0;i<my_module_gpio_v2s.size();i++){
+        //data=data+"<"+my_module_gpio_v2s[i].my_node->input_user_status_string+">";
+    }
+    pub_input_zip(data);
+    // output
+    data="";
+    for(int i=0;i<my_robots.size();i++){
+        data=data+"<"+my_robots[i].output_user_status+">";
+    }
+    for(int i=0;i<my_module_gpio_v2s.size();i++){
+        //data=data+"<"+my_module_gpio_v2s[i].my_node->output_user_status_string+">";
+    }
+    pub_output_zip(data);   
+    // output_set
+    if(data_output_set_zip!=""){
+        pub_output_set_zip(data_output_set_zip);
+        data_output_set_zip="";
+    }
 }
 //
 void IAMf(const std_msgs::String& msg){
@@ -307,6 +365,8 @@ void output_user_set_stringf(const std_msgs::String & msg){
                 }
             }
         }
+        //
+        data_output_set_zip=data_output_set_zip+"<"+msg.data+">";
    unlock();
 }
 void reset_serverf(const std_msgs::String & msg){
@@ -348,8 +408,12 @@ int main(int argc, char** argv){
     get_robots_frist();
     ros::init(argc, argv, "mvibot_serverv3");
     //
+    pub_input_user_status_string("");
+    pub_output_user_status_string("");
+    pub_output_set_zip("");
     static int res;
     res=pthread_create(&p_process1,NULL,process1,NULL);
+    res=pthread_create(&p_process2,NULL,process2,NULL);
     //
     ros::NodeHandle n0,n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n13,n14,n15,n16;
     ros::Subscriber sub0 = n0.subscribe("/IAM", 100, IAMf);    
@@ -408,7 +472,13 @@ void function1(){
     unlock();
 }
 void function2(){
-       
+    lock();
+        pub_zip();
+        // for(int i=0;i<my_module_gpio_v2s.size();i++){
+        //     my_module_gpio_v2s[i].my_node->pub_test_pub();
+        //     cout<<"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa"<<endl;
+        // }
+    unlock();
 }
 void function3(){
       

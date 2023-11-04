@@ -18,9 +18,9 @@ void pub_output_user_status(){
                 pub_output_user_status.publish(output_user);
                 msg.data=mvibot_seri+"|";
                 for(int i=0;i<output_user.data.size()-1;i++){
-                    msg.data=msg.data+"out"+to_string(i+1)+":"+to_string(output_user.data[i])+"|";
+                    msg.data=msg.data+"out"+to_string(i+1)+":"+to_string((int)output_user.data[i])+"|";
                 }
-                msg.data=msg.data+"out"+to_string(output_user.data.size())+":"+to_string(output_user.data[output_user.data.size()-1]);
+                msg.data=msg.data+"out"+to_string(output_user.data.size())+":"+to_string((int)output_user.data[output_user.data.size()-1]);
                 //pub_output_user_status_string.publish(msg);
         }else creat_fun=1;
 }
@@ -32,9 +32,9 @@ void pub_output_user_string_status(){
         if(creat_fun==1){
                 msg.data=mvibot_seri+"|";
                 for(int i=0;i<output_user.data.size()-1;i++){
-                    msg.data=msg.data+"out"+to_string(i+1)+":"+to_string(output_user.data[i])+"|";
+                    msg.data=msg.data+"out"+to_string(i+1)+":"+to_string((int)output_user.data[i])+"|";
                 }
-                msg.data=msg.data+"out"+to_string(output_user.data.size())+":"+to_string(output_user.data[output_user.data.size()-1]);
+                msg.data=msg.data+"out"+to_string(output_user.data.size())+":"+to_string((int)output_user.data[output_user.data.size()-1]);
                 pub_output_user_status_string.publish(msg);
         }else creat_fun=1;
 }
@@ -48,9 +48,9 @@ void pub_input_user_status(){
                 pub_input_user_status.publish(input_user);
                 msg.data=mvibot_seri+"|";
                 for(int i=0;i<input_user.data.size()-1;i++){
-                    msg.data=msg.data+"in"+to_string(i+1)+":"+to_string(input_user.data[i])+"|";
+                    msg.data=msg.data+"in"+to_string(i+1)+":"+to_string((int)input_user.data[i])+"|";
                 }
-                msg.data=msg.data+"in"+to_string(input_user.data.size())+":"+to_string(input_user.data[input_user.data.size()-1]);
+                msg.data=msg.data+"in"+to_string(input_user.data.size())+":"+to_string((int)input_user.data[input_user.data.size()-1]);
                 //pub_input_user_status_string.publish(msg);
         }else creat_fun=1;
 }
@@ -62,9 +62,9 @@ void pub_input_user_string_status(){
         if(creat_fun==1){
                 msg.data=mvibot_seri+"|";
                 for(int i=0;i<input_user.data.size()-1;i++){
-                    msg.data=msg.data+"in"+to_string(i+1)+":"+to_string(input_user.data[i])+"|";
+                    msg.data=msg.data+"in"+to_string(i+1)+":"+to_string((int)input_user.data[i])+"|";
                 }
-                msg.data=msg.data+"in"+to_string(input_user.data.size())+":"+to_string(input_user.data[input_user.data.size()-1]);
+                msg.data=msg.data+"in"+to_string(input_user.data.size())+":"+to_string((int)input_user.data[input_user.data.size()-1]);
                 pub_input_user_status_string.publish(msg);
         }else creat_fun=1;
 }

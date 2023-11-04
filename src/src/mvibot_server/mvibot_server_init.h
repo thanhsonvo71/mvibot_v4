@@ -111,8 +111,9 @@ using namespace sql;
             std::string input_user_status_string;
             std::string name_node;
             //
-            ros::NodeHandle n,n2;
+            ros::NodeHandle n,n2,n3;
             ros::Subscriber sub,sub2;
+            ros::Publisher pub;
             void output_user_set(const std_msgs::String & msg){
                 // cout<<msg.data<<endl;
                 // cout<<name_node<<endl;
@@ -124,9 +125,18 @@ using namespace sql;
                 else mission_normal=msg.data;
                 //cout<<mission_normal<<endl;
             }
+            void pub_test_pub(){
+                static float creat_fun=0;
+                static std_msgs::String msg;
+                if(creat_fun==1){
+                        msg.data=name_node;
+                        pub.publish(msg);
+                }else creat_fun=1;
+            }
             void init(){
                 sub = n.subscribe("/"+name_node+"/output_user_set", 100,&node::output_user_set,this);
                 sub2 = n.subscribe("/"+name_node+"/mission_normal", 100,&node::mission_normalf,this);
+                pub = n.advertise<std_msgs::String>("/"+this->name_node+"/test_pub",100);
             }
     };
     class module_gpio_v2_information{
