@@ -19,7 +19,7 @@
 		<arg name="filters"           value="pointcloud"/>
 		<arg name="tf_prefix"         value="$(arg mvibot_seri)_camera2"/>
 		<arg name="initial_reset"     value="true"/>
-		<arg name="clip_distance"     value="5.0"/> 
+		<arg name="clip_distance"     value="3.0"/> 
 		
 		<arg name="enable_gyro"	value="true"/>
 		<arg name="enable_accel" 	value="true"/>

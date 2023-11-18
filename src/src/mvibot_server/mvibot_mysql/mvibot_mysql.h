@@ -76,6 +76,20 @@ void table_init(){
     battery_status.add_colume("temperature","float(3,1)");    
     battery_status.init_table();
     //
+    battery_small_status.table_name="battery_small_status";
+    battery_small_status.add_colume("id","bigint");
+    battery_small_status.add_colume("name_seri","varchar(255)");
+    battery_small_status.add_colume("soc","int");
+    battery_small_status.add_colume("vol","float(4,2)");
+    battery_small_status.add_colume("cycle","int");
+    battery_small_status.add_colume("capacity_now","float(6,3)");
+    battery_small_status.add_colume("capacity_max","float(6,3)");    
+    battery_small_status.add_colume("charge","int");    
+    battery_small_status.add_colume("current","float(5,2)");    
+    battery_small_status.add_colume("num_cell","int");    
+    battery_small_status.add_colume("temperature","float(3,1)");    
+    battery_small_status.init_table(); 
+    //
     battery_cell_status.table_name="battery_cell_status";
     battery_cell_status.add_colume("id","bigint");
     battery_cell_status.add_colume("name_seri","varchar(255)");
@@ -178,6 +192,13 @@ void table_init(){
     my_module_gpio_v2.add_colume("battery","varchar(255)");
     my_module_gpio_v2.add_colume("output_user_set_string_fesp","varchar(255)");
     my_module_gpio_v2.init_table();
+    //
+    my_robot_backup_mission.table_name="my_robot_backup_mission";
+    my_robot_backup_mission.add_colume("name_seri","varchar(255)");
+    my_robot_backup_mission.add_colume("mission_normal_backup","TEXT");
+    my_robot_backup_mission.add_colume("mission_battery_backup","TEXT");
+    my_robot_backup_mission.add_colume("mission_error_backup","TEXT");
+    my_robot_backup_mission.init_table();
 }
 void table_:: add_colume(string name, string type){
     table_colume.resize(table_colume.size()+1);

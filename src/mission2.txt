@@ -49,3 +49,33 @@ rostopic pub /IB05_916b/mission_normal std_msgs/String "data: '
 @
 '
 "
+
+
+
+
+rostopic pub /WATCH_1/mission_normal std_msgs/String "data: '
+&/name_mission>mission1//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~out_set=0,1~~not_set_out=1~)/
+*
+{
+    {
+        (name:sleep|time_out:-1|mode:sleep|data:~time_sleep=10~)
+        (name:reset|time_out:-1|mode:gpio|data:~out_reset=0,1~~not_set_out=0~)
+    }
+}
+@
+'
+"
+rostopic pub /WATCH_1/mission_normal std_msgs/String "data: '
+&/name_mission>mission1//id_mission>/
+/data_configuration>(name:wake_up|time_out:-1|mode:gpio|data:~out_set=0,1~~not_set_out=1~)/
+*
+{
+    {
+        (name:reset|time_out:-1|mode:gpio|data:~out_reset=0,1~~not_set_out=0~)
+        (name:reset|time_out:2|mode:gpio|data:~out_set=0,1~~not_set_out=1~)
+    }
+}
+@
+'
+"

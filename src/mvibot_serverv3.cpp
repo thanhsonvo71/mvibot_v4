@@ -151,6 +151,9 @@ void IAMf(const std_msgs::String& msg){
                 my_robots[my_robots.size()-1].name_seri=data.data1[0];
                 my_robots[my_robots.size()-1].type=data.data1[1];
                 my_robots[my_robots.size()-1].update_database=0;
+                my_robots[my_robots.size()-1].node=new node_v2_3;
+                my_robots[my_robots.size()-1].node->name_seri=my_robots[my_robots.size()-1].name_seri;   
+                my_robots[my_robots.size()-1].node->init();
                 printf("Add new: %s \n" , my_robots[my_robots.size()-1].name_seri.c_str());
             }
         }       
@@ -187,6 +190,18 @@ void battery_statusf(const std_msgs::String& msg){
         for(int i=0;i<my_robots.size();i++){
             if(my_robots[i].name_seri==data.data1[0]){
                 my_robots[i].battery_status=msg.data;
+                break;
+            }
+        }
+    unlock();
+}
+void battery_small_status_stringf(const std_msgs::String& msg){
+    lock();
+        static string_Iv2 data;
+        data.detect(msg.data,"","|","");
+        for(int i=0;i<my_robots.size();i++){
+            if(my_robots[i].name_seri==data.data1[0]){
+                my_robots[i].battery_small_status=msg.data;
                 break;
             }
         }
@@ -405,8 +420,8 @@ int main(int argc, char** argv){
     data_base_init();
     table_init();
     //
-    get_robots_frist();
     ros::init(argc, argv, "mvibot_serverv3");
+    get_robots_frist();
     //
     pub_input_user_status_string("");
     pub_output_user_status_string("");
@@ -415,13 +430,14 @@ int main(int argc, char** argv){
     res=pthread_create(&p_process1,NULL,process1,NULL);
     res=pthread_create(&p_process2,NULL,process2,NULL);
     //
-    ros::NodeHandle n0,n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n13,n14,n15,n16;
+    ros::NodeHandle n0,n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n13,n14,n15,n16,n17;
     ros::Subscriber sub0 = n0.subscribe("/IAM", 100, IAMf);    
     ros::Subscriber sub1 = n1.subscribe("/robot_status_string", 100, robot_statusf);
     // sensor 
     ros::Subscriber sub2 = n2.subscribe("/sensor_status_string", 100, sensor_statusf);
     // battery
     ros::Subscriber sub3 = n3.subscribe("/battery_status_string", 100, battery_statusf);
+    ros::Subscriber sub17 = n17.subscribe("/battery_small_status_string", 100, battery_small_status_stringf);
     ros::Subscriber sub4 = n4.subscribe("/battery_cell_status_string", 100, battery_cell_statusf);
     // motor
     ros::Subscriber sub5 = n5.subscribe("/motor_right_status_string", 100, motor_right_statusf);
@@ -474,10 +490,7 @@ void function1(){
 void function2(){
     lock();
         pub_zip();
-        // for(int i=0;i<my_module_gpio_v2s.size();i++){
-        //     my_module_gpio_v2s[i].my_node->pub_test_pub();
-        //     cout<<"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa"<<endl;
-        // }
+        
     unlock();
 }
 void function3(){

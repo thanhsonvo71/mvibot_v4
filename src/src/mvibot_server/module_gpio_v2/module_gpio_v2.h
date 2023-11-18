@@ -43,6 +43,10 @@ void get_module_gpio_v2_list(){
                 my_robots[my_robots.size()-1].name_seri=res->getString("name_seri");
                 my_robots[my_robots.size()-1].type="module_gpio";
                 my_robots[my_robots.size()-1].update_database=0;
+                //
+                my_robots[my_robots.size()-1].node=new node_v2_3;
+                my_robots[my_robots.size()-1].node->name_seri=my_robots[my_robots.size()-1].name_seri;   
+                my_robots[my_robots.size()-1].node->init();
                 printf("Add new: %s \n" , my_robots[my_robots.size()-1].name_seri.c_str());
             }
             //

@@ -40,6 +40,7 @@ using namespace sql;
     table_ robot_status;
     table_ sensor_status;
     table_ battery_status;
+    table_ battery_small_status;
     table_ battery_cell_status;
     table_ motor_right_status;
     table_ motor_left_status;
@@ -49,7 +50,34 @@ using namespace sql;
     table_ map_active;
     table_ robot_config_status;
     table_ my_module_gpio_v2;
+    table_ my_robot_backup_mission;
     //
+    class node_v2_3{
+        public:
+            string name_seri;
+            // new for module v2.3
+            int update_mision;
+            string mission_normal;
+            ros::NodeHandle n;
+            ros::Subscriber sub,sub2;
+            ros::Publisher pub;
+            void get_memory_missionf(const std_msgs::String & msg){
+                if(msg.data=="1"){
+                    std_msgs::String data;
+                    data.data=mission_normal;
+                    pub.publish(data);
+                }
+            }
+            void mission_normalf(const std_msgs::String & msg){
+                mission_normal=msg.data;
+                update_mision=1;
+            }        
+            void init(){
+                sub =   n.subscribe("/"+name_seri+"/get_memory_mission", 1,&node_v2_3::get_memory_missionf,this);
+                sub2 =  n.subscribe("/"+name_seri+"/mission_normal", 1,&node_v2_3::mission_normalf,this);
+                pub =   n.advertise<std_msgs::String>("/"+this->name_seri+"/mission_normal",1);
+            }
+    };
     class robot_information{
         public:
             //
@@ -68,13 +96,14 @@ using namespace sql;
             string motor_left_status;
             string motor_right_status;
             string robot_config_status;
+            string battery_small_status;
             //
             std::vector<string>     cmd_update_database();
             std::vector<string>     cmd_insert_database();
             string                  get_cmd_update_database(string data1_,string data2_);
             void                    update_status_robot(int n);
             void                    send_cmd_to_msyql(string cmd);
-            //
+            node_v2_3 * node;
     };
     vector<robot_information> my_robots;
     float ts_my_robots;

@@ -46,6 +46,12 @@ std::vector<string>  robot_information::cmd_update_database(){
         send_cmd_to_msyql(string_return[string_return.size()-1]);
 
     }
+    if(battery_small_status!=""){
+        string_return.resize(string_return.size()+1);
+        string_return[string_return.size()-1]=get_cmd_update_database("battery_small_status",battery_small_status);
+        send_cmd_to_msyql(string_return[string_return.size()-1]);
+
+    }
     //
     if(battery_cell_status!=""){
         string_return.resize(string_return.size()+1);
@@ -82,12 +88,20 @@ std::vector<string>  robot_information::cmd_update_database(){
         string_return[string_return.size()-1]=get_cmd_update_database("robot_config_status",robot_config_status);
         send_cmd_to_msyql(string_return[string_return.size()-1]);
     }
+    //
+
+    if(node->update_mision==1){
+        string_return.resize(string_return.size()+1);
+        string_return[string_return.size()-1]="update `my_robot_backup_mission` set mission_normal_backup='"+node->mission_normal+"' where name_seri='"+name_seri+"'";
+        send_cmd_to_msyql(string_return[string_return.size()-1]);
+        node->update_mision=0;
+    }
     return string_return;
 }
 std::vector<string>  robot_information::cmd_insert_database(){
     static vector<string> string_return;
     //
-    string_return.resize(10);
+    string_return.resize(12);
     string_return[0]="INSERT INTO my_robot (name_seri,type)  VALUES('"+name_seri+"','"+type+"')";
     string_return[1]="INSERT INTO robot_status (name_seri)  VALUES('"+name_seri+"')";
     string_return[2]="INSERT INTO sensor_status (name_seri)  VALUES('"+name_seri+"')";
@@ -98,6 +112,8 @@ std::vector<string>  robot_information::cmd_insert_database(){
     string_return[7]="INSERT INTO input_user_status (name_seri)  VALUES('"+name_seri+"')";
     string_return[8]="INSERT INTO output_user_status (name_seri)  VALUES('"+name_seri+"')";
     string_return[9]="INSERT INTO robot_config_status (name_seri)  VALUES('"+name_seri+"')";
+    string_return[10]="INSERT INTO my_robot_backup_mission (name_seri)  VALUES('"+name_seri+"')";
+    string_return[11]="INSERT INTO battery_small_status (name_seri)  VALUES('"+name_seri+"')";  
     return string_return;
 }
 void get_robots_frist(){
@@ -105,6 +121,7 @@ void get_robots_frist(){
     my_robots.resize(0);
     //
     try{
+        // 
         free_res();
         res=stmt->executeQuery("SELECT * from `my_robot`");
         while (res->next()) {
@@ -114,7 +131,22 @@ void get_robots_frist(){
             my_robots[my_robots.size()-1].type=res->getString("type");
             my_robots[my_robots.size()-1].update_database=1;
             //
+            my_robots[my_robots.size()-1].node= new node_v2_3;
+            my_robots[my_robots.size()-1].node->name_seri=my_robots[my_robots.size()-1].name_seri;   
+            my_robots[my_robots.size()-1].node->init();
         }
+        // get mission backup
+        free_res();
+        res=stmt->executeQuery("SELECT * from `my_robot_backup_mission`");
+        while (res->next()) {
+            for(int i=0;i<my_robots.size();i++){
+                if(res->getString("name_seri")==my_robots[i].name_seri){
+                    my_robots[i].node->mission_normal=res->getString("mission_normal_backup");
+                    break;
+                }
+            }
+        }
+      
     }catch(sql::SQLException &e){
         cout << "# ERR: " << e.what();
         cout << " (MySQL error code: " << e.getErrorCode();
