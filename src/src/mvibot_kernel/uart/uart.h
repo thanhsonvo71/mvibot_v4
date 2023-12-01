@@ -45,8 +45,8 @@ void uart_write(){
     //
     data_tran_local=data_tran_uart;
     if(button_hold >6 ) {
-        data_tran_local[robot_shutdow]=0x01;
-        send_command_shutdown=1;
+        // data_tran_local[robot_shutdow]=1;
+        // send_command_shutdown=1;
     }
     //
     if(button_hold_backup >= 12 ) {
@@ -166,6 +166,13 @@ void uart_timeout(){
             }
         }else{
             data_tran_socket=data_receive_uart;
+            //
+            if(data_tran_socket.size()==num_byte_stm_pc){
+                data_tran_socket[other_action]=0;
+                if(button_hold_backup >= 12) data_tran_socket[other_action]=2;
+                if(button_hold >=6 )  data_tran_socket[other_action]=1;
+            }
+          
         }
 }
 //

@@ -86,10 +86,12 @@ void detect_qr(){
         }
         // Vẽ đường viền xung quanh mã QR code
         cv::polylines(image, points, true, cv::Scalar(0, 255, 0), 2);
+        cv::polylines(depth_image, points, true, cv::Scalar(0, 255, 0), 2);
         static float sx,sy;
         sx=0; sy=0;
         for(int i=0;i<points.size();i++){
             cv::circle(image, points[i], 5, cv::Scalar(255, 0 , 0), -1);
+            cv::circle(depth_image, points[i], 5, cv::Scalar(255, 0 , 0), -1);
             sx+=(float)points[i].x;
             sy+=(float)points[i].y;
         }
@@ -97,6 +99,7 @@ void detect_qr(){
         center.x=(uint16_t)(sx/4);
         center.y=(uint16_t)(sy/4);
         cv::circle(image, center, 5, cv::Scalar(0, 0 ,255), -1);
+        cv::circle(depth_image, center, 5, cv::Scalar(0, 0 ,255), -1);
         //
         if(get_depth_image){
             //calculator X,Y,Z
@@ -114,7 +117,7 @@ void detect_qr(){
     }
     get_depth_image=0;
     //
-    //imshow("ROS Depth",depth_image);
+    imshow("ROS Depth",depth_image);
     imshow("ROS Image",image);  
 }
 //
@@ -131,14 +134,14 @@ int main(int argc, char** argv){
     my_thread1.start(thread1);
     my_thread2.start(thread2);
     //
-    //namedWindow("ROS Image", cv::WINDOW_NORMAL);
-    //namedWindow("ROS Depth", cv::WINDOW_NORMAL);
+    namedWindow("ROS Image", cv::WINDOW_NORMAL);
+    namedWindow("ROS Depth", cv::WINDOW_NORMAL);
     //
     ros::NodeHandle n1,n2,n3;
     // sensor check topic
     ros::Subscriber sub1 = n1.subscribe("/camera/camera/color/image_raw", 1, image_callback);
-    ros::Subscriber sub2 = n2.subscribe("/camera/camera/depth/image_rect_raw", 1, depth_callback);
-    ros::Subscriber sub3 = n3.subscribe("/camera/camera/depth/camera_info", 1, depth_infor_callback);
+    ros::Subscriber sub2 = n2.subscribe("/camera/camera/aligned_depth_to_color/image_raw", 1, depth_callback);
+    ros::Subscriber sub3 = n3.subscribe("/camera/camera/aligned_depth_to_color/camera_info", 1, depth_infor_callback);
     ros::spin();
     return 0;
 }

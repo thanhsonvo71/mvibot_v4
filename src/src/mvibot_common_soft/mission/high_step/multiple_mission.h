@@ -7,11 +7,13 @@ class multiple_mission{
         void process_data();
         int action(int action);
         int num_mission_action=-1;
+        int num_mission_action_f=-1;
         void print(int n);
         void reset();
         void delete_free();
         string get_infor(int mode_get);
         string get_list_mission_name();
+        string get_name_mission_active();
 };
 void multiple_mission::process_data(){
     static string_Iv2 data1;
@@ -45,6 +47,7 @@ int multiple_mission::action(int action){
                 if(res==Wake_up_){
                     cout<<BOLDYELLOW<<"Mission "<<multiple_mission[i]->name_mission<<" is wake_up ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<RESET<<endl;
                     num_mission_action=i;
+                    num_mission_action_f=num_mission_action;
                     value_return=Wake_up_;
                     break;
                 }
@@ -116,6 +119,15 @@ string multiple_mission::get_list_mission_name(){
         for(int i=1;i<multiple_mission.size();i++){
             value_return=value_return+","+multiple_mission[i]->name_mission;
         }
+    }
+    return value_return;
+}
+string multiple_mission::get_name_mission_active(){
+    static string value_return;
+    //
+    value_return="";
+    if(multiple_mission.size() & num_mission_action_f!=-1){
+       value_return=multiple_mission[num_mission_action_f]->name_mission;
     }
     return value_return;
 }

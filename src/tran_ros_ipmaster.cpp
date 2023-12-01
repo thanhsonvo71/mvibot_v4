@@ -459,6 +459,18 @@ void pub_path(string data){
         creat_fun=1;
     }
 }
+void pub_history(string data){
+    static ros::NodeHandle n;
+    static ros::Publisher pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/history",1);
+    static float creat_fun=0;
+    if(creat_fun==1){
+            static std_msgs::String msg;
+            msg.data=data;
+            pub.publish(msg);
+    }else {
+        creat_fun=1;
+    }
+}
 //
 void cmd_velf(const geometry_msgs::Twist& msg){
     lock();
@@ -714,6 +726,7 @@ int main(int argc, char** argv)
     pub_mission_memory("");
     pub_footprint("");
     pub_path("");
+    pub_history("");
     //
     while(modify_socket()==-1){
         sleep(2);
@@ -892,6 +905,7 @@ void process_data(string data){
                 if(name_topic=="mission_memory")              pub_mission_memory(data2);
                 if(name_topic=="footprint")                   pub_footprint(data2);
                 if(name_topic=="path")                        pub_path(data2);
+                if(name_topic=="history")                     pub_history(data2);
             }
         }
     }

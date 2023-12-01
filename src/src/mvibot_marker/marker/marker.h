@@ -358,7 +358,6 @@ int marker::action(){
                         if(active_step>=3){
                             active_step=0;
                             status=0;
-                            active_step=0;
                             reset(0);
                             start=2;
                             cout<<"Finish marker"<<endl;

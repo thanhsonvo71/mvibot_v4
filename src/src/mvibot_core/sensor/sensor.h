@@ -11,6 +11,7 @@ extern int camera1_live_status;
 extern int camera2_live_status;
 extern int battery_live_status;
 extern int battery_small_live_status;
+extern void pub_history(string data);
 //
 int start_software_launch=0;
 // radar1 status
@@ -53,7 +54,6 @@ void pub_sensor_status(){
                 msg_sensor_status.data=msg_sensor_status.data+"battery:"+to_string((int)battery_status)+"|";
                 msg_sensor_status.data=msg_sensor_status.data+"battery_small:"+to_string((int)battery_small_status);
                 pub_sensor_status.publish(msg_sensor_status);
-                //aas
                 pub_sensor_status_string.publish(msg_sensor_status);
         }else creat_fun=1;
 }
@@ -75,7 +75,10 @@ void check_sensor(){
             if(time_live_radar1<=-30.0) time_live_radar1=-30.0;
         }
         radar1_live_status=0;
-        if(time_live_radar1>=2.0) radar1_live=1;
+        if(time_live_radar1>=2.0){
+            if(radar1_live!=1) send_history("normal","Radar1 is available");
+            radar1_live=1;
+        }
         else{
             if(radar1_live==1){
                 // time to restartup sensor when sensor is live before
@@ -84,6 +87,7 @@ void check_sensor(){
                     radar1_live=0;
                     time_live_radar1=0;
                     reset_radar1=1;
+                    send_history("error","Restart radar1 because no signal");
                 }
             }else{
                 // time to restartup sensor
@@ -91,6 +95,7 @@ void check_sensor(){
                     radar1_live=0;
                     time_live_radar1=0;
                     reset_radar1=1;
+                    send_history("error","Restart radar1 because no signal");
                 }
             }
         }
@@ -105,7 +110,10 @@ void check_sensor(){
             if(time_live_radar2<=-30.0) time_live_radar2=-30.0;
         }
         radar2_live_status=0;
-        if(time_live_radar2>=2.0) radar2_live=1;
+        if(time_live_radar2>=2.0){
+            if(radar2_live!=1) send_history("normal","Radar2 is available");
+            radar2_live=1;
+        }
         else{
             if(radar2_live==1){
                 // time to restartup sensor when sensor is live before
@@ -114,6 +122,7 @@ void check_sensor(){
                     radar2_live=0;
                     time_live_radar2=0;
                     reset_radar2=1;
+                    send_history("error","Restart radar2 because no signal");
                 }
             }else{
                 // time to restartup sensor
@@ -121,6 +130,7 @@ void check_sensor(){
                     radar2_live=0;
                     time_live_radar2=0;
                     reset_radar2=1;
+                    send_history("error","Restart radar2 because no signal");
                 }
             }
         }
@@ -137,6 +147,7 @@ void check_sensor(){
         camera1_live_status=0;
         if(time_live_camera1>=3.0){
             if(camera1_live==0){
+                send_history("normal","Camera1 is available");
                 camera1_live=1;
                 dym_set_camera1=1;
             }
@@ -149,6 +160,7 @@ void check_sensor(){
                     camera1_live=0;
                     time_live_camera1=0;
                     reset_camera1=1;
+                    send_history("error","Restart camera1 because no signal");
                 }
             }else{
                 // time to restartup sensor
@@ -156,6 +168,7 @@ void check_sensor(){
                     camera1_live=0;
                     time_live_camera1=0;
                     reset_camera1=1;
+                    send_history("error","Restart camera1 because no signal");
                 }
             }
         }
@@ -172,6 +185,7 @@ void check_sensor(){
         camera2_live_status=0;
         if(time_live_camera2>=3.0) {
             if(camera2_live==0){
+                send_history("normal","Camera2 is available");
                 camera2_live=1;
                 dym_set_camera2=1;
             }
@@ -184,6 +198,7 @@ void check_sensor(){
                     camera2_live=0;
                     time_live_camera2=0;
                     reset_camera2=1;
+                    send_history("error","Restart camera2 because no signal");
                 }
             }else{
                 // time to restartup sensor
@@ -191,6 +206,7 @@ void check_sensor(){
                     camera2_live=0;
                     time_live_camera2=0;
                     reset_camera2=1;
+                    send_history("error","Restart camera2 because no signal");
                 }
             }
         }
@@ -198,6 +214,9 @@ void check_sensor(){
         else mvibot_sensor_ready=0;
         // first time ready -> start launch mvibot software
         if(start_software_launch==0 & mvibot_sensor_ready==1){
+            //
+            send_history("normal","Sensor startup success. Start up mode: "+mode);
+            //
             static string command;
             start_software_launch=1;
             command="";
@@ -205,7 +224,7 @@ void check_sensor(){
             system(command.c_str());
         }
         // battery check
-        if(battery_live_status==1){
+        if(battery_live_status==1 & uart_live==1){
             if(time_live_batterry<0) time_live_batterry=0;
             else{
                 time_live_batterry+=(float)ts_scan_sensor;
@@ -219,15 +238,16 @@ void check_sensor(){
             }
         }
         battery_live_status=0;
-        if(uart_live==1){
-            if(time_live_batterry>=3.0) battery_status=1;
-            if(time_live_batterry<=-2.0) battery_status=0;
-        }else{
-            time_live_batterry=0;
+        if(time_live_batterry>=3.0){
+            if(battery_status!=1) send_history("normal","Battery is aviable");
+            battery_status=1;
+        }
+        if(time_live_batterry<=-2.0){
+            if(battery_status!=0) send_history("error","Battery no signal");
             battery_status=0;
         }
         // battery small check
-        if(battery_small_live_status==1){
+        if(battery_small_live_status==1 & uart_live==1){
             if(time_live_batterry<0) time_live_batterry=0;
             else{
                 time_live_batterry+=(float)ts_scan_sensor;
@@ -241,13 +261,15 @@ void check_sensor(){
             }
         }
         battery_small_live_status=0;
-        if(uart_live==1){
-            if(time_live_batterry>=3.0) battery_small_status=1;
-            if(time_live_batterry<=-2.0) battery_small_status=0;
-        }else{
-            time_live_batterry=0;
+        if(time_live_batterry>=3.0)
+        {
+            if(battery_small_status!=1) send_history("normal","Battery small is aviable");
+            battery_small_status=1;
+        }
+        if(time_live_batterry<=-2.0){
+            if(battery_small_status!=1) send_history("error","Battery small no signal");
             battery_small_status=0;
-        }  
+        }
         //
         pub_sensor_status();
 }   

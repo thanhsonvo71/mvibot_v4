@@ -58,8 +58,9 @@ using namespace sql;
             // new for module v2.3
             int update_mision;
             string mission_normal;
+            std::string history;
             ros::NodeHandle n;
-            ros::Subscriber sub,sub2;
+            ros::Subscriber sub,sub2,sub3;
             ros::Publisher pub;
             void get_memory_missionf(const std_msgs::String & msg){
                 if(msg.data=="1"){
@@ -71,10 +72,14 @@ using namespace sql;
             void mission_normalf(const std_msgs::String & msg){
                 mission_normal=msg.data;
                 update_mision=1;
-            }        
+            }       
+            void historyf(const std_msgs::String & msg){
+                history=msg.data;
+            }
             void init(){
                 sub =   n.subscribe("/"+name_seri+"/get_memory_mission", 1,&node_v2_3::get_memory_missionf,this);
                 sub2 =  n.subscribe("/"+name_seri+"/mission_normal", 1,&node_v2_3::mission_normalf,this);
+                sub3 =  n.subscribe("/"+name_seri+"/history", 100,&node_v2_3::historyf,this);
                 pub =   n.advertise<std_msgs::String>("/"+this->name_seri+"/mission_normal",1);
             }
     };
@@ -139,9 +144,10 @@ using namespace sql;
             std::string output_user_status_string;
             std::string input_user_status_string;
             std::string name_node;
+            std::string history;
             //
             ros::NodeHandle n,n2,n3;
-            ros::Subscriber sub,sub2;
+            ros::Subscriber sub,sub2,sub3;
             ros::Publisher pub;
             void output_user_set(const std_msgs::String & msg){
                 // cout<<msg.data<<endl;
@@ -163,9 +169,9 @@ using namespace sql;
                 }else creat_fun=1;
             }
             void init(){
-                sub = n.subscribe("/"+name_node+"/output_user_set", 100,&node::output_user_set,this);
+                sub  = n.subscribe("/"+name_node+"/output_user_set", 100,&node::output_user_set,this);
                 sub2 = n.subscribe("/"+name_node+"/mission_normal", 100,&node::mission_normalf,this);
-                pub = n.advertise<std_msgs::String>("/"+this->name_node+"/test_pub",100);
+                pub  = n.advertise<std_msgs::String>("/"+this->name_node+"/test_pub",100);
             }
     };
     class module_gpio_v2_information{

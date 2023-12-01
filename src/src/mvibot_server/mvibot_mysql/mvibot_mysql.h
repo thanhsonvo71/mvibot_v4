@@ -37,6 +37,7 @@ void table_init(){
     my_robot.add_colume("id","bigint");
     my_robot.add_colume("name_seri","varchar(255)");
     my_robot.add_colume("type","varchar(255)");
+    my_robot.add_colume("history","LONGTEXT");
     my_robot.init_table();
     //
     robot_status.table_name="robot_status";
@@ -221,7 +222,7 @@ void table_::init_table(){
                     stmt->getResultSet();
                 }catch(sql::SQLException &e){
                     cout<<"add colume:"<<table_colume[i].colume_name<<endl;
-                    stmt->execute("ALTER TABLE `"+table_name+"` ADD COLUMN `"+table_colume[i].colume_name+"` "+table_colume[i].colume_type);
+                    stmt->execute("ALTER TABLE `"+table_name+"` ADD COLUMN `"+table_colume[i].colume_name+"` "+table_colume[i].colume_type+" NOT NULL");
                 }
             }
             //
@@ -273,4 +274,25 @@ void free_res(){
         delete res;
         res=nullptr;
     }
+}
+void database_execmd(string cmd){
+    try{
+        stmt->execute(cmd);
+    }catch (sql::SQLException &e) {
+        cout << "# ERR: " << e.what();
+        cout << " (MySQL error code: " << e.getErrorCode();
+        cout << ", SQLState: " << e.getSQLState() << " )" << endl;
+    }
+}
+void database_update(string table,string coloum,string data,string name_seri){
+    string cmd;
+    if(name_seri!="") cmd="update `"+table+"` set "+coloum+"='"+data+"' where name_seri='"+name_seri+"'";
+    else cmd="update `"+table+"` set "+coloum+"='"+data+"'";
+    database_execmd(cmd);
+}
+void database_combined(string table,string coloum,string data,string name_seri){
+    string cmd;
+    if(name_seri!="") cmd="update `"+table+"` set "+coloum+"=concat("+coloum+",'"+data+"')"+" where name_seri='"+name_seri+"'";
+    else cmd="update `"+table+"` set "+coloum+"=concat("+coloum+",'"+data+"')";
+    database_execmd(cmd);    
 }

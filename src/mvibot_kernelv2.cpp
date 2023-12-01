@@ -157,7 +157,7 @@ int main(int argc, char** argv){
     get_list_monitor();
     // history startup
     system_command="echo ";
-    system_command=system_command+"robot shutdown at: `date` "+">> "+define_path+"history/startup.log";
+    system_command=system_command+"robot startup at: `date` "+">> "+define_path+"history/startup.log";
     system(system_command.c_str());
     // send mail other
     system_command="scp /home/mvibot/catkin_ws/src/mvibot/history/battery.log /home/mvibot/catkin_ws/src/mvibot/history/battery_send.log";

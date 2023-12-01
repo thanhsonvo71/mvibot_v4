@@ -24,6 +24,7 @@ extern int robot_emg;
 extern float v_set1,v_set2,v_set3,w_set1,w_set2,w_set3;
 extern float ts_speed_control;
 extern float time_out_cmd_vel;
+extern void  send_history(string type,string data);
 //
 void pub_motor_right_status(){
     static ros::NodeHandle n,n1;
@@ -39,6 +40,36 @@ void pub_motor_right_status(){
                 msg.data=msg.data+"brake:"+to_string((int)motor_right_break);
                 pub_motor_status.publish(msg);
                 pub_motor_status_string.publish(msg);
+                //
+                static int live=-1,live_f=-1,brake=-1,brake_f=-1,enable=-1,enable_f=-1,error=-1,error_f=-1;
+                live=motor_right_state_live;
+                error=motor_right_state_error;
+                enable=motor_right_disable;
+                brake=motor_right_break;
+                //
+                if(live_f==-1 | (live!=live_f)){
+                    if(live==0)  send_history("warning","Motor right turn off");
+                    else send_history("warning","Motor right turn on");
+                    live_f=live;
+                }else{
+                    if(live==1){
+                        if(error_f!=error){
+                            error_f=error;
+                            if(error!=0) send_history("error","Motor right error id:"+to_string(error));
+                            else send_history("normal","Motor right no error");
+                        }
+                        if(enable_f!=enable){
+                            enable_f=enable;
+                            if(enable!=0) send_history("normal","Motor right change to mode automation control");
+                            else send_history("normal","Motor right change to mode manual handle");
+                        }
+                        if(brake_f!=brake){
+                            brake_f=brake;
+                            if(brake!=0) send_history("normal","Motor right disable brake");
+                            else send_history("normal","Motor right  enable brake");
+                        }
+                    }
+                }
         }else creat_fun=1;
 }
 void pub_motor_left_status(){
@@ -55,6 +86,36 @@ void pub_motor_left_status(){
                 msg.data=msg.data+"brake:"+to_string((int)motor_left_break);
                 pub_motor_status.publish(msg);
                 pub_motor_status_string.publish(msg);
+                //
+                static int live=-1,live_f=-1,brake=-1,brake_f=-1,enable=-1,enable_f=-1,error=-1,error_f=-1;
+                live=motor_left_state_live;
+                error=motor_left_state_error;
+                enable=motor_left_disable;
+                brake=motor_left_break;
+                if(live_f==-1 | (live!=live_f)){
+                    if(live==0)  send_history("warning","Motor left turn off");
+                    else send_history("warning","Motor left turn on");
+                    live_f=live;
+                }else{
+                    if(live==1){
+                        if(error_f!=error){
+                            error_f=error;
+                            if(error!=0) send_history("error","Motor left error id:"+to_string(error));
+                            else send_history("normal","Motor left no error");
+                        }
+                        if(enable_f!=enable){
+                            enable_f=enable;
+                            if(enable!=0) send_history("normal","Motor left change to mode automation control");
+                            else send_history("normal","Motor left change to mode manual handle");
+                        }
+                        if(brake_f!=brake){
+                            brake_f=brake;
+                            if(brake!=0) send_history("normal","Motor left disable brake");
+                            else send_history("normal","Motor left  enable brake");
+                        }
+                    }
+                }
+                //
         }else creat_fun=1;
 }
 void pid_motor(){

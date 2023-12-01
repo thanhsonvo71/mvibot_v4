@@ -1,5 +1,8 @@
 #include "../mvibot_server_init.h"
 using namespace std;
+extern void database_update(string table,string coloum,string data,string name_seri);
+extern void database_combined(string table,string coloum,string data,string name_seri);
+//
 string robot_information::get_cmd_update_database(string data1_,string data2_){
     static string string_return;
     //
@@ -89,12 +92,15 @@ std::vector<string>  robot_information::cmd_update_database(){
         send_cmd_to_msyql(string_return[string_return.size()-1]);
     }
     //
-
     if(node->update_mision==1){
         string_return.resize(string_return.size()+1);
         string_return[string_return.size()-1]="update `my_robot_backup_mission` set mission_normal_backup='"+node->mission_normal+"' where name_seri='"+name_seri+"'";
         send_cmd_to_msyql(string_return[string_return.size()-1]);
         node->update_mision=0;
+    }
+    if(node->history!=""){
+        database_combined("my_robot","history",node->history,node->name_seri);
+        node->history="";
     }
     return string_return;
 }

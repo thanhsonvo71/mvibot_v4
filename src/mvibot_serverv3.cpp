@@ -416,9 +416,12 @@ int main(int argc, char** argv){
     {
         std::cerr << e.what() << '\n';
     }
-    //
+    // database init
     data_base_init();
     table_init();
+    // update map_active
+    database_execmd("DELETE FROM `map_active`");
+    database_execmd("INSERT INTO map_active (name_map_active)  VALUES('"+name_map_active+"')");
     //
     ros::init(argc, argv, "mvibot_serverv3");
     get_robots_frist();

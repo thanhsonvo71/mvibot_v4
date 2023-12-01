@@ -10,6 +10,7 @@
 #include "src/common/get_position/get_position.h"
 #include "src/common/set_get_param/set_get_param.h"
 #include "src/common/read_file/read_file.h"
+#include "src/common/history/history.h"
 using namespace std;
 // var for action
 multiple_mission my_multiple_mission;
@@ -190,6 +191,8 @@ void mission_normalf(const std_msgs::String& msg){
             my_multiple_mission.process_data();
             my_multiple_mission.print(0);
             save_mission_class(data,"mission");
+            if(my_multiple_mission.get_list_mission_name()=="") send_history("warning","Robot reset mission normal");
+            else send_history("normal","Robot recevice multiple mission normal: "+my_multiple_mission.get_list_mission_name());
         }
 	unlock();
 }
@@ -208,6 +211,8 @@ void mission_errorf(const std_msgs::String& msg){
             my_mission_error.process_data();
             my_mission_error.print(0);
             save_mission_class(data,"mission_error");
+            if(my_mission_error.name_mission=="") send_history("warning","Robot reset mission error");
+            else send_history("normal","Robot recevice mission error: "+my_mission_error.name_mission);
         }
 	unlock();
 }
@@ -226,15 +231,25 @@ void mission_charge_batteryf(const std_msgs::String& msg){
             my_mission_charge_battery.process_data();
             my_mission_charge_battery.print(0);
             save_mission_class(data,"mission_charge_battery");
+            //
+            if(my_mission_charge_battery.name_mission=="") send_history("warning","Robot reset mission charge battery");
+            else send_history("normal","Robot recevice mission charge battery: "+my_mission_charge_battery.name_mission);
+            //
         }
 	unlock();
 }
 void mission_actionf(const std_msgs::String& msg){
 	lock();
-        if(msg.data=="0") 
-        action_mission=Cancel_;
+        if(msg.data=="0"){
+           if(action_mission==Active_) send_history("normal","Stop action mission via web");
+           if(action_mission==Error_)  send_history("normal","Reset error mission via web");
+           action_mission=Cancel_;
+        }
         else if(msg.data=="1")
-        action_mission=Active_;
+        {
+            send_history("normal","Try continue mission via web");
+            action_mission=Active_;
+        }
         else if(msg.data=="2")
         action_mission=Skip_;
 	unlock();
@@ -282,6 +297,7 @@ void input_user_status_stringf(const std_msgs::String& msg){
         //
         if(is_have==0){
             cout<<"Have_new_moudle:"<<data.data1[0]<<endl;
+            send_history("normal","Find new module "+data.data1[0]);
             my_module.resize(my_module.size()+1);
             //
             my_module[my_module.size()-1].name=data.data1[0];
@@ -316,6 +332,7 @@ void output_user_status_stringf(const std_msgs::String& msg){
         //
         if(is_have==0){
             cout<<"Have_new_moudle:"<<data.data1[0]<<endl;
+            send_history("normal","Find new module "+data.data1[0]);
             my_module.resize(my_module.size()+1);
             //
             my_module[my_module.size()-1].name=data.data1[0];
@@ -386,25 +403,38 @@ void initialpose_web(const std_msgs::String &msg)
 			}	
 		}
 		set_amcl(data[0],data[1],data[2],data[3]);
+        send_history("normal","Set position for robot");
 	unlock();
 }
 void motor_right_statusf(const std_msgs::String &msg)
 {
 	lock();
 		static string_Iv2 data;
+        static int live=-1,live_f=-1,brake=-1,brake_f=-1,enable=-1,enable_f=-1,error=-1,error_f=-1;
         static int is_ready;
         is_ready=1;
         data.detect(msg.data,"","|","");
         for(int i=0;i<data.data1.size();i++){
-            static string_Iv2 data2;
-            data2.detect(data.data1[i],"",":","");
-            if(data2.data1.size()==2){
-                if(data2.data1[0]=="live" & data2.data1[1]== "0")       is_ready=0;
-                if(data2.data1[0]=="enable" & data2.data1[1]== "0")     is_ready=0;
-                if(data2.data1[0]=="brake" & data2.data1[1]== "0")      is_ready=0;
+                static string_Iv2 data2;
+                data2.detect(data.data1[i],"",":","");
+                if(data2.data1.size()==2){
+                    // if(data2.data1[0]=="live" & data2.data1[1]== "0")       is_ready=0;
+                    // if(data2.data1[0]=="enable" & data2.data1[1]== "0")     is_ready=0;
+                    // if(data2.data1[0]=="brake" & data2.data1[1]== "0")      is_ready=0;
+                    if(data2.data1[0]=="live")      live=stoi_f(data2.data1[1]);
+                    if(data2.data1[0]=="enable")    enable=stoi_f(data2.data1[1]);
+                    if(data2.data1[0]=="brake")     brake=stoi_f(data2.data1[1]);
+                    if(data2.data1[0]=="error")     error=stoi_f(data2.data1[1]);
+                }
             }
-        }
-        motor_right_ready=is_ready;
+            //
+            if(live==0) is_ready=0;
+            else{
+                if(enable==0) is_ready=0;
+                if(brake==0)  is_ready=0;
+            }
+            motor_right_ready=is_ready;
+            //
 	unlock();
 }
 void motor_left_statusf(const std_msgs::String &msg)
@@ -412,19 +442,30 @@ void motor_left_statusf(const std_msgs::String &msg)
 	lock();
 		static string_Iv2 data;
         static int is_ready;
+        static int live=-1,live_f=-1,brake=-1,brake_f=-1,enable=-1,enable_f=-1,error=-1,error_f=-1;
         is_ready=1;
         data.detect(msg.data,"","|","");
         for(int i=0;i<data.data1.size();i++){
             static string_Iv2 data2;
             data2.detect(data.data1[i],"",":","");
             if(data2.data1.size()==2){
-                if(data2.data1[0]=="live" & data2.data1[1]== "0")       is_ready=0;
-                if(data2.data1[0]=="enable" & data2.data1[1]== "0")     is_ready=0;
-                if(data2.data1[0]=="brake" & data2.data1[1]== "0")      is_ready=0;
+                // if(data2.data1[0]=="live" & data2.data1[1]== "0")       is_ready=0;
+                // if(data2.data1[0]=="enable" & data2.data1[1]== "0")     is_ready=0;
+                // if(data2.data1[0]=="brake" & data2.data1[1]== "0")      is_ready=0;
+                if(data2.data1[0]=="live")      live=stoi_f(data2.data1[1]);
+                if(data2.data1[0]=="enable")    enable=stoi_f(data2.data1[1]);
+                if(data2.data1[0]=="brake")     brake=stoi_f(data2.data1[1]);
+                if(data2.data1[0]=="error")     error=stoi_f(data2.data1[1]);
             }
         }
+        //
+        if(live==0) is_ready=0;
+        else{
+            if(enable==0) is_ready=0;
+            if(brake==0)  is_ready=0;
+        }
         motor_left_ready=is_ready;
-	unlock();
+    unlock();
 }
 void move_base_statusf(const actionlib_msgs::GoalStatusArray & msg){
     lock();
@@ -432,7 +473,6 @@ void move_base_statusf(const actionlib_msgs::GoalStatusArray & msg){
         if(msg.status_list.size()>0){
             data.detect(msg.status_list[msg.status_list.size()-1].goal_id.id,"","-","");
             movebase_goal_id=stoll(data.data1[1]);
-            //data.print();
         }
     unlock();
 }
@@ -442,7 +482,6 @@ void exe_path_statusf(const actionlib_msgs::GoalStatusArray & msg){
         if(msg.status_list.size()>0){
             data.detect(msg.status_list[msg.status_list.size()-1].goal_id.id,"","-","");
             exepath_goal_id=stoll(data.data1[1]);
-            //data.print();
         }
     unlock();
 }
@@ -606,6 +645,9 @@ int  main(int argc, char** argv){
     //
     ts_mission_step_scan=(float)ts_process3;
     user_path.header.frame_id="map";
+    //
+    pub_history("");
+    //
     action_goal(0);
     action_recovery(0);
     action_getpath(0);
@@ -626,6 +668,10 @@ int  main(int argc, char** argv){
         my_multiple_mission.data=data;
         my_multiple_mission.process_data();
         my_multiple_mission.print(0);
+        //
+        if(my_multiple_mission.get_list_mission_name()=="") send_history("warning","Robot load mission normal: empty");
+        else send_history("normal","Robot load mission normal: "+my_multiple_mission.get_list_mission_name());
+        //
     file.close();
     file.open(define_path+"param/mission_error.yaml");
         data="";
@@ -638,6 +684,10 @@ int  main(int argc, char** argv){
         my_mission_error.data=data;        
         my_mission_error.process_data();
         my_mission_error.print(0);
+        //
+        if(my_mission_error.name_mission=="") send_history("warning","Robot load mission error: empty");
+        else send_history("warning","Robot load mission error: "+my_mission_error.name_mission);
+        //
     file.close();
     file.open(define_path+"param/mission_charge_battery.yaml");
         data="";
@@ -650,6 +700,10 @@ int  main(int argc, char** argv){
         my_mission_charge_battery.data=data;
         my_mission_charge_battery.process_data();
         my_mission_charge_battery.print(0);
+        //
+        if(my_mission_charge_battery.name_mission=="") send_history("warning","Robot load mission charge battery: empty");
+        else send_history("warning","Robot load mission charge battery: "+my_mission_charge_battery.name_mission);
+        //
     file.close();
     //
     pub_sound(0);
@@ -763,7 +817,10 @@ void function2(){
 void function3(){
     lock();
         if(motor_left_ready == 0 | motor_right_ready==0){
-            if(action_mission==Active_) action_mission=Cancel_;
+            if(action_mission==Active_){
+                action_mission=Cancel_;
+                send_history("error","EMG 2 motor so stop action mission");
+            }
         }
         // update gpio
         input_user_status_2=input_user_status_1;
@@ -785,13 +842,13 @@ void function3(){
         if(battery_soc1!=-1 & battery_soc2 != -1 & battery_soc_set_mission!=-1){
             if(battery_soc1<=battery_soc_set_mission & battery_soc2>battery_soc_set_mission){
                 want_to_charge=1;
+                send_history("warning","Baterry lower than target charge, wait change to mode mission battery charge");
             }
         }
         //
         static int res;
         //
         my_vars_local.print();
-        //
         //
         static int action_mode_mission_f;
         if(action_mode_mission==Mission_normal_){
@@ -802,14 +859,26 @@ void function3(){
                 res=my_multiple_mission.action(Cancel_);
                 //
                 if(motor_left_ready != 0 & motor_right_ready!=0){
-                    if(res==Wake_up_) {
-                        if(action_mission!=Error_) action_mission=Active_;
-                        else action_mission=Cancel_;
+                    if(res==Wake_up_){
+                        if(action_mission!=Error_){
+                            action_mission=Active_;
+                            send_history("normal","Start mission action normal by condition wake up. Name mission: "+my_multiple_mission.get_name_mission_active());
+                        }
+                        else{
+                            action_mission=Cancel_;
+                            send_history("normal","Reset error mission action normal by condition wake up. Name mission: "+my_multiple_mission.get_name_mission_active());
+                        }
                     }
                     if(res==Continue_){
                         if(my_multiple_mission.num_mission_action!=-1){
-                            if(action_mission!=Error_) action_mission=Active_;
-                            else action_mission=Cancel_;
+                            if(action_mission!=Error_){
+                                action_mission=Active_;
+                                send_history("normal","Start mission action normal by condition continue. Name misison: "+my_multiple_mission.get_name_mission_active());
+                            }
+                            else{
+                                action_mission=Cancel_;
+                                send_history("normal","Reset error mission action normal by condition continue. Name mission: "+my_multiple_mission.get_name_mission_active());
+                            }
                         }
                     }
                     //
@@ -817,6 +886,8 @@ void function3(){
             }else{
                 res=my_multiple_mission.action(Active_);
                 action_mission=res;
+                if(res==Finish_) send_history("normal","Finish mission action normal"+my_multiple_mission.get_name_mission_active());   
+                if(res==Error_)  send_history("error","Error mission normal, more detail: "+my_multiple_mission.get_infor(0));
             }
             // change to battery mission
             if(action_mission!=Active_ & action_mission!=Error_ & motor_left_ready == 1 & motor_right_ready== 1  & my_multiple_mission.num_mission_action==-1){
@@ -825,6 +896,8 @@ void function3(){
                 if(res==Wake_up_) want_to_charge=1;
                 //
                 if(want_to_charge==1){
+                    if(res!=Wake_up_) send_history("normal","Start mission action charge battery by target charge. Name mission:"+my_mission_charge_battery.name_mission);         
+                    else send_history("normal","Start mission action charge battery by condition wake up. Name mission: "+my_mission_charge_battery.name_mission);
                     action_mode_mission=Mission_charge_battery_;
                     action_mission=Active_;
                     my_mission_charge_battery.reset();
@@ -839,13 +912,29 @@ void function3(){
                     action_mode_mission=Mission_normal_;
                     want_to_charge=0;
                     my_mission_charge_battery.reset();
+                    send_history("normal","Finish  action mission charge battery. Name mission: "+my_mission_charge_battery.name_mission);
+                    send_history("normal","Change to mode action mission normal");      
+                }else if(res==Cancel_){
+                    send_history("normal","Pause mission action charge battery by condition stop. More detail: "+my_mission_charge_battery.get_infor(1));
+                }else if(res==Error_){
+                    send_history("error","Error mission action charge battery. More detail: "+my_mission_charge_battery.get_infor(1));
+
                 }
                 action_mission=res;
             }else{
-                // if(action_mission==Error_){
-                //     my_mission_charge_battery.action(Error_);
-                // }
-                my_mission_charge_battery.action(Cancel_);
+                res=my_mission_charge_battery.action(Cancel_);
+                if(res==Wake_up_ | res==Continue_){
+                    if(action_mission!=Error_){
+                        action_mission=Active_;
+                        if(res==Wake_up_)  send_history("normal","Start mission action charge battery by condition wake up. Name mission: "+my_mission_charge_battery.name_mission);
+                        if(res==Continue_) send_history("normal","Start mission action charge battery by condition continue. Name mission: "+my_mission_charge_battery.name_mission);
+                    }
+                    else{
+                        action_mission=Cancel_;
+                        if(res==Wake_up_)  send_history("normal","Reset error  mission action charge battery by condition wake up. Name mission: "+my_mission_charge_battery.name_mission);
+                        if(res==Continue_) send_history("normal","Reset error  mission action charge battery by condition continue. Name mission: "+my_mission_charge_battery.name_mission);
+                    }
+                }
             }
         }
         action_mode_mission_f=action_mode_mission;

@@ -4,6 +4,7 @@
 #include "src/common/libary/libary_ros.h"
 #include "src/common/string_Iv2/string_Iv2.h"
 #include "src/common/thread_v2/thread_v2.h"
+#include "src/common/history/history.h"
 // lib function
 #include "src/mvibot_core/led/led.h"
 #include "src/mvibot_core/battery/battery.h"
@@ -207,8 +208,14 @@ void output_user_set_stringf(const std_msgs::String& msg){
 }
 void robot_shutdownf(const std_msgs::String& msg){
     lock();
-        if(msg.data[0]=='1') robot_shutdown=1;
-        if(msg.data[0]=='2') robot_shutdown=2;
+        if(msg.data[0]=='1'){
+            robot_shutdown=1;
+            send_history("normal","Robot shutdown");
+        }
+        if(msg.data[0]=='2'){
+            robot_shutdown=2;
+            send_history("normal","Robot restart");
+        }
     unlock();
 }
 void battery_big_chargef(const std_msgs::String& msg){
@@ -253,7 +260,9 @@ int main(int argc, char** argv){
     while(modify_socket()==-1){
         sleep(1);
     }
+    pub_history("");
     sleep(2);
+    send_history("normal","Robot start up...");
     //
     input_user.data.resize(num_in_put_user+3);
     output_user.data.resize(num_out_put_user+5);

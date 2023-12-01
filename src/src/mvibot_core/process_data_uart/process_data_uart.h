@@ -42,6 +42,8 @@ extern int hook_switch;
 // robot cmd
 extern float robot_shutdown;
 //
+int robot_backup=0;
+extern void send_history(string type,string data);
 void process_data_uart_read(){
     if(data_receive.size()==num_byte_stm_pc){
         // read status live motor
@@ -141,6 +143,18 @@ void process_data_uart_read(){
         if(fabs((fabs(encoder)-360))<fabs(encoder)) encoder=fabs((fabs(encoder)-360))*encoder_dir;
         // hook 
         hook_switch=(float)data_receive[mode_switch_hook];
+        // other action
+        if(data_receive[other_action]==1) 
+        {
+            if(robot_shutdown!=1) send_history("normal","Robot shutdown");
+            robot_shutdown=1;
+        }
+        if(data_receive[other_action]==2) 
+        {
+            if(robot_backup!=1) send_history("warning","Robot backup software");
+            robot_backup=1;
+        }
+        //
     }
 }
 void process_data_uart_write(){

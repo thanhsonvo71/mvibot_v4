@@ -16,12 +16,11 @@ int check_security(){
     cout<<match_security<<endl;
     string_return=exec("sudo dmidecode -s baseboard-version");
     if(string_return!=board_version+"\n") match_security=0;
-        cout<<match_security<<endl;
+    cout<<match_security<<endl;
 
     string_return=exec("sudo dmidecode -s baseboard-serial-number");
     if(string_return!=board_serial+"\n") match_security=0;
-        cout<<match_security<<endl;
-
+    cout<<match_security<<endl;
     //
     return match_security;
 }

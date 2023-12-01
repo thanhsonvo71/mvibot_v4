@@ -152,6 +152,6 @@
         #define io11_re                     84
         #define io12_re                     85
         //
-
+        #define other_action                86
     #define data_uart_define 1
 #endif
