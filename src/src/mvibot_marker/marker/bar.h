@@ -185,14 +185,14 @@ int marker::detect_bar(float bar_distance){
             static  geometry_msgs::Quaternion quat;
             quat=tf::createQuaternionMsgFromYaw(theta);
             my_pose.resize(3);
-            my_pose[0].position.x=x;
-            my_pose[0].position.y=y;
+            my_pose[0].position.x=(double)x;
+            my_pose[0].position.y=(double)y;
             my_pose[0].orientation=quat;
-            my_pose[1].position.x=point_1s.x;
-            my_pose[1].position.y=point_1s.y;
+            my_pose[1].position.x=(double)point_1s.x;
+            my_pose[1].position.y=(double)point_1s.y;
             my_pose[1].orientation=quat;
-            my_pose[2].position.x=point_2s.x;
-            my_pose[2].position.y=point_2s.y;
+            my_pose[2].position.x=(double)point_2s.x;
+            my_pose[2].position.y=(double)point_2s.y;
             my_pose[2].orientation=quat;
             //
             my_data.my_lines2.resize(1);

@@ -175,7 +175,7 @@ void time_now(string name){
 }
 void function1(){
     lock();
-        robot_position=get_position(mvibot_seri+"/odom",mvibot_seri+"/base_footprint");
+        robot_position=get_position2(mvibot_seri+"/odom",mvibot_seri+"/base_footprint");
         if(start==1){
             my_marker.action();
         }

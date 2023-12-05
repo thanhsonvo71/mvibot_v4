@@ -16,10 +16,10 @@ void process_data(string data){
         //
         if(data_I.data1[i]=="marker_type")      my_marker.marker_type=data_I.data2[i];
         if(data_I.data1[i]=="marker_dir")       my_marker.marker_dir=data_I.data2[i];
-        if(data_I.data1[i]=="off_set_x1")       my_marker.off_set_x=stof_f(data_I.data2[i]);
-        if(data_I.data1[i]=="off_set_y1")       my_marker.off_set_y=stof_f(data_I.data2[i]);
-        if(data_I.data1[i]=="off_set_dis")      my_marker.off_set_dis=stof_f(data_I.data2[i]);
-        if(data_I.data1[i]=="off_set_angle")    my_marker.off_set_angle=stof_f(data_I.data2[i]);
+        if(data_I.data1[i]=="off_set_x1")       my_marker.off_set_x=stod_f(data_I.data2[i]);
+        if(data_I.data1[i]=="off_set_y1")       my_marker.off_set_y=stod_f(data_I.data2[i]);
+        if(data_I.data1[i]=="off_set_dis")      my_marker.off_set_dis=stod_f(data_I.data2[i]);
+        if(data_I.data1[i]=="off_set_angle")    my_marker.off_set_angle=stod_f(data_I.data2[i]);
         //
         if(data_I.data1[i]=="sx1") safe_x1=stof_f(data_I.data2[i]);
         if(data_I.data1[i]=="sx2") safe_x2=stof_f(data_I.data2[i]);

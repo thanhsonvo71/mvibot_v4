@@ -98,9 +98,11 @@ std::vector<string>  robot_information::cmd_update_database(){
         send_cmd_to_msyql(string_return[string_return.size()-1]);
         node->update_mision=0;
     }
-    if(node->history!=""){
-        database_combined("my_robot","history",node->history,node->name_seri);
-        node->history="";
+    if(node->history.size()!=0){
+        for(int i=0;i<node->history.size();i++){
+          database_combined("my_robot","history",node->history[i],node->name_seri);
+        }
+        node->history.resize(0);
     }
     return string_return;
 }

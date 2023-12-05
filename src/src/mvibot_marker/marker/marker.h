@@ -2,15 +2,6 @@
 #include "../../common/send_tranfrom/send_tranfrom.h"
 #include "../../common/get_position/get_position.h"
 using namespace  std;
-//
-float getyaw2(float data3, float data4){
-  	static geometry_msgs::Quaternion quat_msg;
-	quat_msg.x=0;
-	quat_msg.y=0;
-	quat_msg.z=data3;
-	quat_msg.w=data4;
-	return tf::getYaw(quat_msg);
-}
 int marker::caculate_transforms_ofset(){
     static int value_return;
     value_return=0;
@@ -18,7 +9,7 @@ int marker::caculate_transforms_ofset(){
         // creat pose for marker dis or angle
         my_pose.resize(1);
         if(marker_type=="none_marker_dis"){
-            my_pose[0].position.x=0+off_set_dis;
+            my_pose[0].position.x=off_set_dis;
             my_pose[0].position.y=0;
             my_pose[0].position.z=0;
             //
@@ -36,7 +27,7 @@ int marker::caculate_transforms_ofset(){
             my_pose[0].orientation=quat;
         }
         // caculator tranfom
-        static float theta;
+        static double theta;
         my_pose2.resize(2);
         theta=getyaw(my_pose[0].orientation);
         // origin pose (pose o)
@@ -45,14 +36,14 @@ int marker::caculate_transforms_ofset(){
         my_pose2[1]=my_pose[0];
         //        
     }else{
-        static float theta0, theta1;
+        static double theta0, theta1;
         my_pose2.resize(2);
         theta0=getyaw(my_pose[0].orientation);
         if(theta0>M_PI/2) theta0=theta0-M_PI;
         if(theta0<-M_PI/2) theta0=theta0+M_PI;
         // caculator tranfom
         my_pose2[0]=my_pose[0];
-        float x0,y0,x1,y1,xn,yn;
+        double x0,y0,x1,y1,xn,yn;
         x0=my_pose2[0].position.x;
         y0=my_pose2[0].position.y;
         x1=x0+off_set_x*sin(M_PI/2-theta0);
@@ -64,6 +55,7 @@ int marker::caculate_transforms_ofset(){
         my_pose2[1].position.x=xn;
         my_pose2[1].position.y=yn;
     }
+    // check position robot with frame odom
     if(robot_position[0]!=-1 | robot_position[1]!=-1 | robot_position[2]!=-1 | robot_position[3]!=-1){
         value_return=1;
         x_set=robot_position[0];
@@ -71,6 +63,8 @@ int marker::caculate_transforms_ofset(){
         z_set=robot_position[2];
         w_set=robot_position[3];
         cout<<x_set<<"|"<<y_set<<"|"<<z_set<<"|"<<w_set<<endl;
+        //
+        new_update=1;
     }
     else{
         value_return=0;
@@ -81,17 +75,16 @@ int marker::caculate_transforms_ofset(){
 int marker::check_send_transforms_tf_frame(){
     static int value_return;
     // check tranfrom is true
-    robot_position_get=get_position(mvibot_seri+"/odom",mvibot_seri+"/base_marker");
-    if(fabs(x_set-robot_position_get[0])<=0.005 & fabs(y_set-robot_position_get[1])<=0.005){
-        static float angle1,angle2;
-        angle1=getyaw2(z_set,w_set);
-        angle2=getyaw2(robot_position_get[2],robot_position_get[3]);
-        //
-        if(fabs(sin(angle2)-sin(angle1))<=0.01 & fabs(sin(angle2)-sin(angle1))<=0.01) {
-                value_return=1;
-        }else value_return=0;
-
-    }else value_return=0;
+    robot_position_get=get_position2(mvibot_seri+"/odom",mvibot_seri+"/base_marker");
+    // update time get time
+    t_get.sec=(uint32_t)robot_position_get[4];
+    t_get.nsec=(uint32_t)robot_position_get[5];
+    //
+    value_return=0;
+    if(t_get>t_send+ros::Duration(0.1)){
+        if(compare_pose(x_set,y_set,z_set,w_set,robot_position_get[0],robot_position_get[1],robot_position_get[2],robot_position_get[3],0.001,0.001)) 
+        value_return=1;
+    }
     return value_return;
 }
 int marker::tranfrom_pose_marker(int mode){
@@ -127,23 +120,58 @@ int marker::tranfrom_pose_marker(int mode){
     }
     return value_return;
 }
+int marker::tranfrom_pose_marker2(int mode){
+    static int value_return;
+    static tf2_ros::Buffer tfBuffer;
+    static tf2_ros::TransformListener tfListener(tfBuffer);
+    static geometry_msgs::TransformStamped target;
+    value_return=0;
+    try{
+        try {             
+            target=tfBuffer.lookupTransform(mvibot_seri+"/base_footprint", mvibot_seri+"/base_marker", ros::Time(0), ros::Duration(0.1));
+            if(mode==1){
+                pose_o.header.stamp=target.header.stamp;
+                pose_n.header.stamp=target.header.stamp;
+                //
+                pose_o.pose=my_pose2[0];
+                pose_n.pose=my_pose2[1];
+                //
+                pose_o.header.frame_id=mvibot_seri+"/base_marker";
+                pose_n.header.frame_id=mvibot_seri+"/base_marker";
+                //
+                tf2::doTransform(pose_o, pose_o_robot, target);
+                tf2::doTransform(pose_n, pose_n_robot, target);
+            }
+            value_return=1;
+        } catch(ros::Exception &e){
+            ROS_ERROR("Error occured1: %s ", e.what());
+            value_return=0;
+        }
+    }catch(const std::exception& e){
+            ROS_ERROR("Error occured2: %s ", e.what());
+            value_return=0;
+    }
+    return value_return;
+}
+//
 int marker::check_first_tranfrom_pose_marker(){
     static int value_return;
-    static float xo1,yo1,xo2,yo2;
-    static float yawo1,yawo2;
+    static double xo1,yo1,xo2,yo2;
+    static double zo1,wo1,zo2,wo2;
     //
     xo1=pose_o.pose.position.x;
     yo1=pose_o.pose.position.y;
-    yawo1=getyaw(pose_o.pose.orientation);
+    zo1=pose_o.pose.orientation.z;
+    wo1=pose_o.pose.orientation.w;
     //
     xo2=pose_o_robot.pose.position.x;
     yo2=pose_o_robot.pose.position.y;
-    yawo2=getyaw(pose_o_robot.pose.orientation);
-    // fabs(yawo1-yawo2)<=0.005
+    zo2=pose_o_robot.pose.orientation.z;
+    wo2=pose_o_robot.pose.orientation.w;   
     //
-    if(fabs(xo1-xo2)<=0.005 & fabs(yo1-yo2)<=0.005 & fabs(sin(yawo2)-sin(yawo1))<=0.01 & fabs(cos(yawo2)-cos(yawo1))<=0.01){
-        value_return=1;
-    }else value_return=0;     
+    value_return=0;
+    if(compare_pose(xo1,yo1,zo1,wo1,xo2,yo2,zo2,wo2,0.001,0.001)) value_return=1;
+    else value_return=0;
     return value_return;
 }
 int marker::move_to_postion_pose_n(){
@@ -154,8 +182,8 @@ int marker::move_to_postion_pose_n(){
     cout<<"|_y:"<<pose_n_robot.pose.position.y;
     cout<<"|_theta:"<<atan2(pose_n_robot.pose.position.y,pose_n_robot.pose.position.x)/M_PI*180<<endl;
     //
-    static float dis,angle;
-    static float x,y;
+    static double dis,angle;
+    static double x,y;
     x=pose_n_robot.pose.position.x;
     y=pose_n_robot.pose.position.y;
     if(marker_type=="none_marker_dis"){
@@ -172,7 +200,6 @@ int marker::move_to_postion_pose_n(){
     if(angle<-M_PI_2*1/2) angle=angle+M_PI;
     //
     static float v,w;
-    static float dis_f=0;
     v=0;
     w=0;
     //
@@ -226,8 +253,8 @@ int marker::move_to_orientation_pose_n(){
     cout<<"move to orientation pose_n:"<<endl;
     cout<<"_theta:"<<getyaw(pose_n_robot.pose.orientation)/M_PI*180<<endl;
     //
-    static float dis,angle;
-    static float x,y;
+    static double dis,angle;
+    static double x,y;
     angle=getyaw(pose_n_robot.pose.orientation);
     //
     if(marker_type=="none_marker_angle") off_set_angle=angle/M_PI*180;
@@ -311,7 +338,11 @@ int marker::action(){
         cout<<"Cacluate transfrom offset finish"<<endl;
     }
     else if(status>=3){
-        send_tranfrom(x_set,y_set,z_set,w_set,mvibot_seri+"/odom",mvibot_seri+"/base_marker");
+        send_tranfrom2(x_set,y_set,z_set,w_set,mvibot_seri+"/odom",mvibot_seri+"/base_marker");
+        if(new_update==1){
+            new_update=0;
+            t_send=ros::Time::now();
+        }
         //
         if(status==3){
             cout<<"Check is send transform odom->base_marker"<<endl;
@@ -320,7 +351,7 @@ int marker::action(){
         }
         else if(status>=4){
             static int status_transfrom_pose;
-            status_transfrom_pose=tranfrom_pose_marker(1);
+            status_transfrom_pose=tranfrom_pose_marker2(1);
             if(status==4){
                 cout<<"Check first pose is match with position robot!"<<endl;
                 if(status_transfrom_pose==1){
@@ -375,10 +406,12 @@ void marker::reset(int mode){
         process_data(marker_data);
         status=0;
         active_step=0;
+        new_update=0;
     }else if(mode==1){
         my_data.reset();
         status=0;
         active_step=0;
+        new_update=0;
     }
    
 }

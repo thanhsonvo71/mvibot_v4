@@ -14,6 +14,19 @@ using namespace std;
         }
         return value_return;  
     }
+    double stod_f(string data){
+        static double value_return;
+        try
+        {
+            value_return=stod(data);
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+            value_return=-1;
+        }
+        return value_return;  
+    }
     #define stof_define 1
 #endif
 

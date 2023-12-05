@@ -58,7 +58,7 @@ using namespace sql;
             // new for module v2.3
             int update_mision;
             string mission_normal;
-            std::string history;
+            vector<std::string> history;
             ros::NodeHandle n;
             ros::Subscriber sub,sub2,sub3;
             ros::Publisher pub;
@@ -74,7 +74,9 @@ using namespace sql;
                 update_mision=1;
             }       
             void historyf(const std_msgs::String & msg){
-                history=msg.data;
+                history.resize(history.size()+1);
+                history[history.size()-1]=msg.data;
+                //history=msg.data;
             }
             void init(){
                 sub =   n.subscribe("/"+name_seri+"/get_memory_mission", 1,&node_v2_3::get_memory_missionf,this);

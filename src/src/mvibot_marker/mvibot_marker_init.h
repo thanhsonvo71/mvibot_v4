@@ -5,8 +5,28 @@
 #if !defined(mvibot_marker_define)
     string mvibot_seri;
     // support get yaw
-    float getyaw(geometry_msgs::Quaternion quat){
+    double getyaw(geometry_msgs::Quaternion quat){
         return tf::getYaw(quat);
+    }
+    double getyaw2(double data3, double data4){
+        geometry_msgs::Quaternion quat_msg;
+        quat_msg.x=0;
+        quat_msg.y=0;
+        quat_msg.z=data3;
+        quat_msg.w=data4;
+        return tf::getYaw(quat_msg);
+    }
+    int compare_pose(double x1, double y1, double z1, double w1, double x2, double y2, double z2, double w2, double thresold_position, double thresold_angle){
+        geometry_msgs::Pose pose_1,pose_2;
+        //
+        cout<<x1<<"|"<<y1<<"|"<<z1<<"|"<<w1<<endl;
+        cout<<x2<<"|"<<y2<<"|"<<z2<<"|"<<w2<<endl;       
+        if(sqrt(pow(x2-x1,2)+pow(y2-y1,2))<=thresold_position){
+            if(sqrt(pow(z2-z1,2)+pow(w2-w1,2))<=thresold_angle){
+                return 1;
+            }   
+        }
+        return 0;
     }
     // define point
     class point{
@@ -128,8 +148,8 @@
             void reset();
     };
     //postion and pose robot
-    float *robot_position;
-    float *robot_position_get;
+    double *robot_position;
+    double *robot_position_get;
     geometry_msgs::PoseStamped pose_o,pose_n,pose_m;
     geometry_msgs::PoseStamped pose_o_robot,pose_n_robot,pose_m_robot; 
     // marker for robot
@@ -141,10 +161,10 @@
             string marker_data;
             void reset(int mode);
             // pose to save posstion
-            float x_set=0;
-            float y_set=0;
-            float z_set=0;
-            float w_set=1;
+            double x_set=0;
+            double y_set=0;
+            double z_set=0;
+            double w_set=1;
             vector<geometry_msgs::Pose> my_pose;
             vector<geometry_msgs::Pose> my_pose2;
             // detect
@@ -152,21 +172,25 @@
             int detect_bar(float bar_distance);
             int detect_l();
             // offset transfrom
-            float off_set_x=0.0;
-            float off_set_y=0.0;
-            float off_set_dis=0;
-            float off_set_angle=0;
+            double off_set_x=0.0;
+            double off_set_y=0.0;
+            double off_set_dis=0;
+            double off_set_angle=0;
             int  caculate_transforms_ofset();
             // send tranfrom
             int check_send_transforms_tf_frame();
             int tranfrom_pose_marker(int mode);
             int check_first_tranfrom_pose_marker();
+            int tranfrom_pose_marker2(int mode);
             // action maker
             int status=0;         // 0 nothing 1 collect & detect 2 active
             int active_step=0;
             int move_to_postion_pose_n();
             int move_to_orientation_pose_n();
             int action();
+            // 
+            int new_update=0;
+            ros::Time t_send,t_get;
     };
     marker my_marker;
     // action robot
@@ -176,7 +200,7 @@
     void pub_cmd_vel(float v, float w);
     int get_footprint();
     int safe;
-    float x1_footprint,y1_footprint,x2_footprint,y2_footprint;
+    float  x1_footprint,y1_footprint,x2_footprint,y2_footprint;
     float  safe_x1=0.01,safe_x2=0.01,safe_y1=0.01,safe_y2=0.01;
     sensor_msgs::LaserScan scan_safe;
     int check_safe();

@@ -449,9 +449,6 @@ void motor_left_statusf(const std_msgs::String &msg)
             static string_Iv2 data2;
             data2.detect(data.data1[i],"",":","");
             if(data2.data1.size()==2){
-                // if(data2.data1[0]=="live" & data2.data1[1]== "0")       is_ready=0;
-                // if(data2.data1[0]=="enable" & data2.data1[1]== "0")     is_ready=0;
-                // if(data2.data1[0]=="brake" & data2.data1[1]== "0")      is_ready=0;
                 if(data2.data1[0]=="live")      live=stoi_f(data2.data1[1]);
                 if(data2.data1[0]=="enable")    enable=stoi_f(data2.data1[1]);
                 if(data2.data1[0]=="brake")     brake=stoi_f(data2.data1[1]);
@@ -886,7 +883,7 @@ void function3(){
             }else{
                 res=my_multiple_mission.action(Active_);
                 action_mission=res;
-                if(res==Finish_) send_history("normal","Finish mission action normal"+my_multiple_mission.get_name_mission_active());   
+                if(res==Finish_) send_history("normal","Finish mission action normal: "+my_multiple_mission.get_name_mission_active());   
                 if(res==Error_)  send_history("error","Error mission normal, more detail: "+my_multiple_mission.get_infor(0));
             }
             // change to battery mission

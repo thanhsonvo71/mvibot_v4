@@ -121,8 +121,9 @@ int marker::detect_vl(){
         cout<<dis_1_2<<"|"<<dis_3_2<<endl;
         if(fabs(dis_1_2-0.15)<=0.03){
                 my_pose.resize(1);
-                my_pose[0].position.x=point_o.x;
-                my_pose[0].position.y=point_o.y;
+                my_pose[0].position.x=(double)point_o.x;
+                my_pose[0].position.y=(double)point_o.y;
+                //
                 ampha1=line1_2.caculate_atan2();
                 static  geometry_msgs::Quaternion quat;
                 if(ampha1>M_PI_2) ampha1=ampha1-M_PI;

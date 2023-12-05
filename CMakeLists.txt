@@ -257,3 +257,7 @@ add_dependencies(mvibot_marker ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPO
 add_executable(mvibot_opencv env_test/mvibot_opencv.cpp)
 target_link_libraries(mvibot_opencv ${catkin_LIBRARIES} zbar -lpthread )
 add_dependencies(mvibot_opencv ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+add_executable(mvibot_test env_test/mvibot_test.cpp)
+target_link_libraries(mvibot_test ${catkin_LIBRARIES} -lpthread )
+add_dependencies(mvibot_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

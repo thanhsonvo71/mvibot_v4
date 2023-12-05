@@ -79,3 +79,8 @@ rostopic pub /WATCH_1/mission_normal std_msgs/String "data: '
 @
 '
 "
+
+rostopic pub /MB22_916b/start_marker std_msgs/String "data: '
+~marker_type=none_marker_dis~~marker_dir=front_ward~~off_set_dis=0.5~
+'
+"

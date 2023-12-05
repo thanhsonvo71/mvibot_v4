@@ -113,17 +113,11 @@ void pub_zip(){
     for(int i=0;i<my_robots.size();i++){
         data=data+"<"+my_robots[i].input_user_status+">";
     }
-    for(int i=0;i<my_module_gpio_v2s.size();i++){
-        //data=data+"<"+my_module_gpio_v2s[i].my_node->input_user_status_string+">";
-    }
     pub_input_zip(data);
     // output
     data="";
     for(int i=0;i<my_robots.size();i++){
         data=data+"<"+my_robots[i].output_user_status+">";
-    }
-    for(int i=0;i<my_module_gpio_v2s.size();i++){
-        //data=data+"<"+my_module_gpio_v2s[i].my_node->output_user_status_string+">";
     }
     pub_output_zip(data);   
     // output_set
@@ -493,7 +487,6 @@ void function1(){
 void function2(){
     lock();
         pub_zip();
-        
     unlock();
 }
 void function3(){
