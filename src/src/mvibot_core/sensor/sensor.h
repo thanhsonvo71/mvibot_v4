@@ -1,5 +1,7 @@
 #include"../../common/libary/libary_ros.h"
 #include"../../common/libary/libary_basic.h"
+#include"../../common/set_get_param/set_get_param.h"
+#include"../../common/stoi/stoi.h"
 using namespace std;
 //
 extern string mvibot_seri,mode;
@@ -288,20 +290,30 @@ void action_sensor(){
             reset_sensor("camera1/camera/realsense2_camera");
             reset_camera1=0;
         }
-        if(reset_camera2==1){
+        if(reset_camera2==1){   
             reset_sensor("camera2/camera/realsense2_camera");
             reset_camera2=0;
         }
         if(dym_set_camera1==1){
             command="";
-		    command=command+"rosrun dynamic_reconfigure dynparam set /"+mvibot_seri+"/camera1/camera/stereo_module visual_preset 3 &";
-		    system(command.c_str());
+		    //command=command+"rosrun dynamic_reconfigure dynparam set /"+mvibot_seri+"/camera1/camera/stereo_module visual_preset 3 &";
+		    //system(command.c_str());
+            static int mode=0,exposure=0;
+            mode=0; exposure=0;
+            mode=stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","visual_preset","int","3"));
+            exposure=30000;//stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","exposure","int","30000"));
+            //if(mode==3 & exposure==30000)
             dym_set_camera1=0;
         }
         if(dym_set_camera2==1){
-            command="";
-		    command=command+"rosrun dynamic_reconfigure dynparam set /"+mvibot_seri+"/camera2/camera/stereo_module visual_preset 3 &";
-		    system(command.c_str());
+            //command="";
+		    //command=command+"rosrun dynamic_reconfigure dynparam set /"+mvibot_seri+"/camera2/camera/stereo_module visual_preset 3 &";
+		    //system(command.c_str());
+            static int mode=0,exposure=0;
+            mode=0; exposure=0;
+            mode=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","visual_preset","int","3"));
+            //exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","exposure","int","30000"));
+            //if(mode==3 & exposure==30000)
             dym_set_camera2=0;
         }
 }

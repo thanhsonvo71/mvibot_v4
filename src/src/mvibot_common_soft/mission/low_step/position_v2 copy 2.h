@@ -131,8 +131,7 @@ void check_cost_path_v1(){
         error_AMCL=0;
         free_space_robot=0;
         // check 1st
-        free1=check_pose_costmap_v2(0.25,0,0,1,0.0,mvibot_seri+"/base_footprint");
-        //free1=1;
+        free1=check_pose_costmap_v2(0.5,0,0,1,0.0,mvibot_seri+"/base_footprint");
         if(free1==1){
             //
             for(int i=0;i<goal_path.poses.size();i++){
@@ -145,26 +144,26 @@ void check_cost_path_v1(){
                         x_path2=goal_path.poses[j].pose.position.x;
                         y_path2=goal_path.poses[j].pose.position.y;
                         dis2=sqrt((x_path2-x_path)*(x_path2-x_path)+(y_path2-y_path)*(y_path2-y_path));
-                        if(dis2>1.0){
+                        if(dis2>0.5){
                             check_1=1;
-                            // for(int k=j;k<goal_path.poses.size();k++){
-                            //     x_path3=goal_path.poses[k].pose.position.x;
-                            //     y_path3=goal_path.poses[k].pose.position.y;
-                            //     dis3=sqrt((x_path3-x_path2)*(x_path3-x_path2)+(y_path3-y_path2)*(y_path3-y_path2));
-                            //     if(dis3>=0.5){
-                            //         check_2=1;
-                            //         for(int m=k;m<goal_path.poses.size();m++){
-                            //             x_path4=goal_path.poses[m].pose.position.x;
-                            //             y_path4=goal_path.poses[m].pose.position.y;
-                            //             dis4=sqrt((x_path4-x_path3)*(x_path4-x_path3)+(y_path4-y_path3)*(y_path4-y_path3));
-                            //             if(dis4>=0.5){
-                            //                 check_3=1;
-                            //                 break;
-                            //             }
-                            //         }
-                            //         break;
-                            //     }
-                            // }
+                            for(int k=j;k<goal_path.poses.size();k++){
+                                x_path3=goal_path.poses[k].pose.position.x;
+                                y_path3=goal_path.poses[k].pose.position.y;
+                                dis3=sqrt((x_path3-x_path2)*(x_path3-x_path2)+(y_path3-y_path2)*(y_path3-y_path2));
+                                if(dis3>=0.5){
+                                    check_2=1;
+                                    for(int m=k;m<goal_path.poses.size();m++){
+                                        x_path4=goal_path.poses[m].pose.position.x;
+                                        y_path4=goal_path.poses[m].pose.position.y;
+                                        dis4=sqrt((x_path4-x_path3)*(x_path4-x_path3)+(y_path4-y_path3)*(y_path4-y_path3));
+                                        if(dis4>=0.5){
+                                            check_3=1;
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
                             break;
                         }
                     }

@@ -35,9 +35,15 @@ void pub_cmd_vel(float v,float w){
     static float creat_fun=0;
 	if(creat_fun==1)
 	{
-        cmd_msg.linear.x=v;
-        cmd_msg.angular.z=w;
-		pub.publish(cmd_msg);;
+        //
+        if(start!=1){
+            v=0;
+            w=0;
+        } 
+        cmd_msg.linear.x=(double)v;
+        cmd_msg.angular.z=(double)w;
+		//
+        pub.publish(cmd_msg);
 	} else creat_fun=1;
 }
 void robot_emg(){

@@ -8,6 +8,7 @@ class config_{
         string footprint_padding="none";
 		//
         string max_vel_x="none";
+        string min_vel_x="none";
 		string acc_lim_x="none";
         string max_vel_theta="none";
         string acc_lim_theta="none";
@@ -29,6 +30,7 @@ void config_::process_data(){
         if(data_return.data1[i]=="max_vel_theta")           max_vel_theta=data_return.data2[i];
         if(data_return.data1[i]=="acc_lim_theta")           acc_lim_theta=data_return.data2[i];
         if(data_return.data1[i]=="inflation_radius")        inflation_radius=data_return.data2[i];
+        if(data_return.data1[i]=="min_vel_x")               min_vel_x=data_return.data2[i];
     }
 }
 void config_::print(int n){
@@ -55,53 +57,60 @@ int config_::action(int action){
         value_return=Finish_;
         // footprint padding
         if(footprint_padding!="none"){
-            if(stof_f(footprint_padding)>=0){
+            if(stod_f(footprint_padding)>=0){
                 // set local
                 config_return=set_get_param("/"+mvibot_seri+"/move_base_flex/local_costmap/set_parameters","footprint_padding","double",footprint_padding);
-                if(fabs(stof_f(footprint_padding)-stof_f(config_return))>0.001) value_return=Active_;
+                if(fabs(stod_f(footprint_padding)-stod_f(config_return))>0.001) value_return=Active_;
                 // set global
                 config_return=set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/set_parameters","footprint_padding","double",footprint_padding);
-                if(fabs(stof_f(footprint_padding)-stof_f(config_return))>0.001) value_return=Active_;
+                if(fabs(stod_f(footprint_padding)-stod_f(config_return))>0.001) value_return=Active_;
             }
             // 
         }
         // max_vel_x
         if(max_vel_x!="none"){
-            if(stof_f(max_vel_x)>0){
+            if(stod_f(max_vel_x)>0){
                 config_return=set_get_param("/"+mvibot_seri+"/move_base_flex/DWAPlannerROS/set_parameters","max_vel_x","double",max_vel_x);              
-                if(fabs(stof_f(max_vel_x)-stof_f(config_return))>0.001) value_return=Active_;
+                if(fabs(stod_f(max_vel_x)-stod_f(config_return))>0.001) value_return=Active_;
             }
         }
         // acc_lim_x
         if(acc_lim_x!="none"){
-            if(stof_f(acc_lim_x)>0){
+            if(stod_f(acc_lim_x)>0){
                 config_return=set_get_param("/"+mvibot_seri+"/move_base_flex/DWAPlannerROS/set_parameters","acc_lim_x","double",acc_lim_x);              
-                if(fabs(stof_f(acc_lim_x)-stof_f(config_return))>0.001) value_return=Active_;
+                if(fabs(stod_f(acc_lim_x)-stod_f(config_return))>0.001) value_return=Active_;
             }
         }
         // max_vel_theta
         if(max_vel_theta!="none"){
-            if(stof_f(max_vel_theta)>0){
+            if(stod_f(max_vel_theta)>0){
                 config_return=set_get_param("/"+mvibot_seri+"/move_base_flex/DWAPlannerROS/set_parameters","max_vel_theta","double",max_vel_theta);              
-                if(fabs(stof_f(max_vel_theta)-stof_f(config_return))>0.001) value_return=Active_;
+                if(fabs(stod_f(max_vel_theta)-stod_f(config_return))>0.001) value_return=Active_;
+            }
+        }
+        // min_vel_theta
+        if(min_vel_x!="none"){
+            if(stod_f(min_vel_x)>=-0.3){
+                config_return=set_get_param("/"+mvibot_seri+"/move_base_flex/DWAPlannerROS/set_parameters","min_vel_x","double",min_vel_x);              
+                if(fabs(stod_f(min_vel_x)-stod_f(config_return))>0.001) value_return=Active_;
             }
         }
         // acc_lim_theta
         if(acc_lim_theta!="none"){
-            if(stof_f(acc_lim_theta)>0){
+            if(stod_f(acc_lim_theta)>0){
                 config_return=set_get_param("/"+mvibot_seri+"/move_base_flex/DWAPlannerROS/set_parameters","acc_lim_theta","double",acc_lim_theta);              
-                if(fabs(stof_f(acc_lim_theta)-stof_f(config_return))>0.001) value_return=Active_;
+                if(fabs(stod_f(acc_lim_theta)-stod_f(config_return))>0.001) value_return=Active_;
             }
         }
         // inflation_radius
         if(inflation_radius!="none"){
-            if(stof_f(inflation_radius)>=0){
+            if(stod_f(inflation_radius)>=0){
                 // set local
                 config_return=set_get_param("/"+mvibot_seri+"/move_base_flex/local_costmap/set_parameters","inflation_radius","double",inflation_radius);
-                if(fabs(stof_f(inflation_radius)-stof_f(config_return))>0.001) value_return=Active_;
+                if(fabs(stod_f(inflation_radius)-stod_f(config_return))>0.001) value_return=Active_;
                 // set global
                 config_return=set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/set_parameters","inflation_radius","double",inflation_radius);
-                if(fabs(stof_f(inflation_radius)-stof_f(config_return))>0.001) value_return=Active_;
+                if(fabs(stod_f(inflation_radius)-stod_f(config_return))>0.001) value_return=Active_;
             }
             // 
         }

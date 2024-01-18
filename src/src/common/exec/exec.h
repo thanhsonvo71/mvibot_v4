@@ -1,7 +1,7 @@
 #include"../libary/libary_basic.h"
 using namespace std;
 #if !defined(exec_define)
-        std::string exec(string cmd) {
+    std::string exec(string cmd) {
         static FILE *fp;
         static int status;
         static char path[999];
@@ -18,7 +18,7 @@ using namespace std;
             }
         }
         pclose(fp);
-    return string_return;
-}
+        return string_return;
+    }
     #define exec_define 1
 #endif

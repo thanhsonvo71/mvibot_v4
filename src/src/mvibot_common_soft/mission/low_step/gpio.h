@@ -79,7 +79,7 @@ int gpio_::action(int action){
         static vector<int> data;
         static int output_set_true;
         output_set_true=1;
-        if(out_set!="") {
+        if(out_set!=""){
             data=process_data2(out_set);
             for(int i=0;i<data.size();i++){
                 if(data[i]<output_user_status.data.size()){
@@ -175,13 +175,13 @@ int gpio_::action(int action){
             if(in_pullup_string !="") data2=process_data2(in_pullup_string);
             else data2.resize(0);
             if(data2.size()!=data.size()) value_return=Active_; 
-        }
+        }else in_pullup_string="";
         for(int i=0;i<num_tab;i++) cout<<"\t ";
         cout<<"in_pullup_set:"<<in_pullup<<endl;
         for(int i=0;i<num_tab;i++) cout<<"\t ";
         cout<<"in_pullup_read:"<<in_pullup_string<<endl;
         // in pulldown
-        if(in_pulldown!="") {
+        if(in_pulldown!=""){
             data=process_data2(in_pulldown);
             for(int i=0;i<data.size();i++){
                 if(data[i]<input_user_status_1.data.size() & data[i]<input_user_status_2.data.size()){
@@ -202,7 +202,7 @@ int gpio_::action(int action){
             if(in_pulldown_string !="") data2=process_data2(in_pulldown_string);
             else data2.resize(0);
             if(data2.size()!=data.size()) value_return=Active_; 
-        }
+        }else in_pulldown_string="";
         for(int i=0;i<num_tab;i++) cout<<"\t ";
         cout<<"in_pulldown_set:"<<in_pulldown<<endl;
         for(int i=0;i<num_tab;i++) cout<<"\t ";

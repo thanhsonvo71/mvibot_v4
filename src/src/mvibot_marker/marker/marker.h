@@ -82,7 +82,7 @@ int marker::check_send_transforms_tf_frame(){
     //
     value_return=0;
     if(t_get>t_send+ros::Duration(0.1)){
-        if(compare_pose(x_set,y_set,z_set,w_set,robot_position_get[0],robot_position_get[1],robot_position_get[2],robot_position_get[3],0.001,0.001)) 
+        if(compare_pose(x_set,y_set,z_set,w_set,robot_position_get[0],robot_position_get[1],robot_position_get[2],robot_position_get[3],0.05000,0.05000)) 
         value_return=1;
     }
     return value_return;
@@ -170,7 +170,7 @@ int marker::check_first_tranfrom_pose_marker(){
     wo2=pose_o_robot.pose.orientation.w;   
     //
     value_return=0;
-    if(compare_pose(xo1,yo1,zo1,wo1,xo2,yo2,zo2,wo2,0.001,0.001)) value_return=1;
+    if(compare_pose(xo1,yo1,zo1,wo1,xo2,yo2,zo2,wo2,0.05000,0.05000)) value_return=1;
     else value_return=0;
     return value_return;
 }
@@ -207,6 +207,7 @@ int marker::move_to_postion_pose_n(){
         value_return=1;
         v=0;
         w=0;
+        pub_cmd_vel(0,0);
         robot_emg();
     }else{
         if(fabs(angle)<=M_PI/180*30){
@@ -267,6 +268,7 @@ int marker::move_to_orientation_pose_n(){
                 v=0;
                 w=0;
                 robot_emg();
+                pub_cmd_vel(0,0);
             }else{
                 static int k2;
                 if(angle>0) k2=1;
@@ -386,11 +388,20 @@ int marker::action(){
                     //
                     if(res==1){
                         active_step++;
-                        if(active_step>=3){
+                        if(active_step>=2){
                             active_step=0;
                             status=0;
                             reset(0);
                             start=2;
+                            pub_cmd_vel(0,0);
+                            robot_emg();
+                            //
+                            off_set_x=0.0;
+                            off_set_y=0.0;
+                            off_set_dis=0.0;
+                            off_set_angle=0.0;
+                            marker_data="";
+                            //
                             cout<<"Finish marker"<<endl;
                         }
                     }

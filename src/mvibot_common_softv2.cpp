@@ -3,14 +3,16 @@
 #include "src/common/libary/libary_ros.h"
 #include "src/common/hardware/hardware.h"
 #include "src/common/thread/thread.h"
-//
-#include "src/mvibot_common_soft/mvibot_common_soft_init.h"
-#include "src/mvibot_common_soft/mission/mission_init.h"
-//
+#include "src/common/consolog/consolog.h"
 #include "src/common/get_position/get_position.h"
 #include "src/common/set_get_param/set_get_param.h"
 #include "src/common/read_file/read_file.h"
 #include "src/common/history/history.h"
+#include "src/common/send_tranfrom/send_tranfrom.h"
+//
+#include "src/mvibot_common_soft/mvibot_common_soft_init.h"
+#include "src/mvibot_common_soft/mission/mission_init.h"
+//
 using namespace std;
 // var for action
 multiple_mission my_multiple_mission;
@@ -27,7 +29,7 @@ int enable_ecoder_global_costmap=-1;
 float v_backward=-1;
 float switch_for_hook=0;
 // settime process
-long double ts_process1=1.0; //time set for process1
+long double ts_process1=0.2; //time set for process1
 long double ts_process2=0.1; //time set for process2
 long double ts_process3=0.05; //time set for process3
 static pthread_mutex_t process_mutex=PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
@@ -368,7 +370,7 @@ void mission_mode_resetf(const std_msgs::String& msg){
 }
 void hook_switchf(const std_msgs::Float32 & msg){
     lock();
-        // swicth_for_hook=msg.data;
+        //swicth_for_hook=msg.data;
     unlock();
 }
 void status_markerf(const std_msgs::String & msg){
@@ -610,6 +612,17 @@ void pub_path_infor(){
         pub.publish(msg);
     } else creat_fun=1;
 }
+void robot_emg(){
+    static ros::NodeHandle n;
+    static ros::Publisher  pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/robot_emg", 1);
+	static float creat_fun=0;
+    std_msgs::String msg;
+    msg.data="1";
+	if(creat_fun==1)
+	{
+		pub.publish(msg);
+	} else creat_fun=1;
+}
 //
 std::string load_file(string name_file){
     //
@@ -707,6 +720,7 @@ int  main(int argc, char** argv){
     pub_user_path(user_path);
     pub_led(0,0,0,0,0,0,0);
     set_amcl(0,0,0,1);
+    pub_cmd_vel(0.0,0.0);
     //
     pub_gpio_set("");
     pub_gpio_msg_common("");
@@ -776,9 +790,16 @@ void function1(){
             enable_ecoder_global_costmap=stof_f(set_get_param("/"+mvibot_seri+"/move_base_flex/global_costmap/obstacles3/set_parameters","enabled","bool","1"));
         }
         // add negative speed ....
-        check_pose_costmap();
+        //check_pose_costmap();
         pub_footprint_infor();
         pub_path_infor();
+        //
+        static ros::Time t;
+        t=ros::Time::now();
+        pub_consolog("A|"+to_string((long double)t.sec+(long double)t.nsec*1e-9));
+        check_cost_path_v1();
+        t=ros::Time::now();
+        pub_consolog("B|"+to_string((long double)t.sec+(long double)t.nsec*1e-9));
         // save the mission
     unlock();
 }
@@ -945,6 +966,33 @@ void function3(){
             }
         }
         action_mission_f=action_mission;
+        // check cancellation marker and position
+        if(action_mission!=Active_){
+            // stop marker
+            static std_msgs::String stop;
+            stop.data="0";
+            pub_action_makrer(stop);
+            // 
+            action_goal(0);
+            action_exepath(0);
+            if(action_mission==Error_)  robot_emg();
+        }else{
+            if(type_action_step!="marker" & type_action_step!="position"){
+                robot_emg();
+            }else{
+                if(type_action_step!="marker") 
+                {
+                    static std_msgs::String stop;
+                    stop.data="0";
+                    pub_action_makrer(stop);
+                }
+                if(type_action_step!="position") 
+                {
+                    action_goal(0);
+                    action_exepath(0);
+                }
+            }
+        }
         // control led
         set_led();
         // control sound

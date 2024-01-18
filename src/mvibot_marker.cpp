@@ -79,13 +79,18 @@ void scan(const sensor_msgs::LaserScan &msg){
 void start_markerf(const std_msgs::String& msg){
     lock();
         if(msg.data=="0"){
-            robot_emg();
-            pub_cmd_vel(0,0);
+            if(start==1){
+                start=0;
+                robot_emg();
+                pub_cmd_vel(0,0);
+            }
             start=0;
         }else if (msg.data=="1"){
             if(start==0){
-                start=1;
-                my_marker.reset(1);
+                if(my_marker.marker_data!=""){
+                    start=1;
+                    my_marker.reset(1);
+                }
             } 
         }else{
             if(start==0){

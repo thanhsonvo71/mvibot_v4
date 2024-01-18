@@ -126,7 +126,7 @@ string multiple_mission::get_name_mission_active(){
     static string value_return;
     //
     value_return="";
-    if(multiple_mission.size() & num_mission_action_f!=-1){
+    if(multiple_mission.size() >0 & num_mission_action_f!=-1){
        value_return=multiple_mission[num_mission_action_f]->name_mission;
     }
     return value_return;
