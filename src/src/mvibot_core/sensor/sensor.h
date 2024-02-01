@@ -24,9 +24,11 @@ int radar2_live=0;
 float time_live_radar2=0;
 // camera1 status
 int camera1_live=0;
+int camera1_config=0;
 float time_live_camera1=0;
 // camera2 status
 int camera2_live=0;
+int camera2_config=0;
 float time_live_camera2=0;
 // uart
 int uart_live=0;
@@ -37,7 +39,7 @@ float time_live_batterry=0;
 int battery_small_status=0;
 float time_live_batterry_small=0;
 // ready sensor when radar 1 2 camera 1 2 is ready
-int dym_set_camera1,dym_set_camera2;
+int dym_set_camera1=0,dym_set_camera2=0;
 int reset_radar1,reset_radar2,reset_camera1,reset_camera2;
 //
 void pub_sensor_status(){
@@ -147,7 +149,7 @@ void check_sensor(){
             if(time_live_camera1<=-30.0) time_live_camera1=-30.0;
         }
         camera1_live_status=0;
-        if(time_live_camera1>=3.0){
+        if(time_live_camera1>=5.0){
             if(camera1_live==0){
                 send_history("normal","Camera1 is available");
                 camera1_live=1;
@@ -185,7 +187,7 @@ void check_sensor(){
             if(time_live_camera2<=-30.0) time_live_camera2=-30.0;
         }
         camera2_live_status=0;
-        if(time_live_camera2>=3.0) {
+        if(time_live_camera2>=5.0) {
             if(camera2_live==0){
                 send_history("normal","Camera2 is available");
                 camera2_live=1;
@@ -212,7 +214,7 @@ void check_sensor(){
                 }
             }
         }
-        if(radar1_live==1 & radar2_live==1 & camera1_live==1 & camera2_live==1 & uart_live==1) mvibot_sensor_ready=1;
+        if(radar1_live==1 & radar2_live==1 & (camera1_live==1 & camera1_config==1) & (camera2_live==1 & camera2_config==1) & uart_live==1) mvibot_sensor_ready=1;
         else mvibot_sensor_ready=0;
         // first time ready -> start launch mvibot software
         if(start_software_launch==0 & mvibot_sensor_ready==1){
@@ -278,42 +280,73 @@ void check_sensor(){
 void action_sensor(){
     static string command;
     command="";
-    if(reset_radar1==1){
-            reset_sensor("rplidarNode1");
-            reset_radar1=0;
-        }
-        if(reset_radar2==1){
-            reset_sensor("rplidarNode2");
-            reset_radar2=0;
-        }
-        if(reset_camera1==1){
-            reset_sensor("camera1/camera/realsense2_camera");
-            reset_camera1=0;
-        }
-        if(reset_camera2==1){   
-            reset_sensor("camera2/camera/realsense2_camera");
-            reset_camera2=0;
-        }
-        if(dym_set_camera1==1){
-            command="";
-		    //command=command+"rosrun dynamic_reconfigure dynparam set /"+mvibot_seri+"/camera1/camera/stereo_module visual_preset 3 &";
-		    //system(command.c_str());
-            static int mode=0,exposure=0;
-            mode=0; exposure=0;
-            mode=stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","visual_preset","int","3"));
-            exposure=30000;//stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","exposure","int","30000"));
-            //if(mode==3 & exposure==30000)
+    // check and config camera
+    static int n_dym_set_camera1=0,n_dym_set_camera2=0;
+    if(dym_set_camera1==1){
+        n_dym_set_camera1++;
+        if(n_dym_set_camera1>=5){
+            //
+            static int visual=0,exposure=0,enable_auto_exposure=0;
+            visual=-1; exposure=-1; enable_auto_exposure=-1;
+            //
+            visual=stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","visual_preset","int","3"));
+            exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","exposure","int","500"));
+            enable_auto_exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","enable_auto_exposure","bool","0"));
             dym_set_camera1=0;
+            //
+            if(visual==3 && exposure==500 && enable_auto_exposure==0){
+                camera1_config=1;
+                send_history("normal","Camera1 is config available");
+            }
+            else{
+                camera1_live=0;
+                time_live_camera1=0;
+                reset_camera1=1;
+                send_history("error","Restart camera1 because can't config");
+            }
         }
-        if(dym_set_camera2==1){
-            //command="";
-		    //command=command+"rosrun dynamic_reconfigure dynparam set /"+mvibot_seri+"/camera2/camera/stereo_module visual_preset 3 &";
-		    //system(command.c_str());
-            static int mode=0,exposure=0;
-            mode=0; exposure=0;
-            mode=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","visual_preset","int","3"));
-            //exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","exposure","int","30000"));
-            //if(mode==3 & exposure==30000)
+    }else n_dym_set_camera1=0;
+    if(dym_set_camera2==1){
+        n_dym_set_camera2++;
+        if(n_dym_set_camera2>=5){
+            //
+            static int visual=0,exposure=0,enable_auto_exposure=0;
+            visual=-1; exposure=-1; enable_auto_exposure=-1;
+            //
+            visual=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","visual_preset","int","3"));
+            exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","exposure","int","500"));
+            enable_auto_exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","enable_auto_exposure","bool","0"));
             dym_set_camera2=0;
+            //
+            if(visual==3 && exposure==500 && enable_auto_exposure==0){
+                camera2_config=1;
+                send_history("normal","Camera2 is config available");
+            }
+            else{
+                camera2_live=0;
+                time_live_camera2=0;
+                reset_camera2=1;
+                send_history("error","Restart camera2 because can't config");
+            }
         }
+    }else n_dym_set_camera2=0;
+    //
+    if(reset_radar1==1){
+        reset_sensor("rplidarNode1");
+        reset_radar1=0;
+    }
+    if(reset_radar2==1){
+        reset_sensor("rplidarNode2");
+        reset_radar2=0;
+    }
+    if(reset_camera1==1){
+        reset_sensor("camera1/camera/realsense2_camera");
+        reset_camera1=0;
+        camera1_config=0;
+    }
+    if(reset_camera2==1){   
+        reset_sensor("camera2/camera/realsense2_camera");
+        reset_camera2=0;
+        camera2_config=0;
+    }
 }

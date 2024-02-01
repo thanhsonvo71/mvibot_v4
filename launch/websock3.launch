@@ -5,7 +5,7 @@
      <arg name="bson_only_mode" default="false" />
 
 
-     <node pkg="rosbridge_server" type="rosbridge_websocket" name="rosbridge_server" output="screen" respawn="true">
+     <node pkg="rosbridge_server" type="rosbridge_websocket" name="rosbridge_server" output="screen" required="true">
           <param name="websocket_port" value="9090"/>
           <param name="advertise_service" value="true"/>
           <param name="fragment_timeout" value="600"/>
@@ -14,15 +14,14 @@
           <param name="websocket_ping_timeout" value="60"/>
      </node>
 
-     <node name="rosapi" pkg="rosapi" type="rosapi_node" output="screen" respawn="true">
+     <node name="rosapi" pkg="rosapi" type="rosapi_node" output="screen" required="true">
           <param name="topics_glob" value="$(arg topics_glob)"/>
           <param name="services_glob" value="$(arg services_glob)"/>
           <param name="params_glob" value="$(arg params_glob)"/>
      </node>
 
-     <node pkg="tf2_web_republisher" type="tf2_web_republisher" name="tf2_web_republisher" output="screen" respawn="true">
+     <node pkg="tf2_web_republisher" type="tf2_web_republisher" name="tf2_web_republisher" output="screen" required="true">
           <param  name="publish_frequency" value="5" />
      </node>	
      
-     <node name="mvibot_serverv3" pkg="mvibot_v4" type="mvibot_serverv3" respawn="true"/>
 </launch>	

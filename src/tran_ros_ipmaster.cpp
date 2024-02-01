@@ -240,6 +240,34 @@ void pub_laser_scan(string data){
         virtual_laser.time_increment=0.0;
     }
 }
+void pub_camera_scan(string data){
+    static ros::NodeHandle n;
+    static ros::Publisher pub = n.advertise<sensor_msgs::LaserScan>("/"+mvibot_seri+"/camera/scan",1);
+    static float creat_fun=0;
+    static sensor_msgs::LaserScan virtual_laser;
+    if(creat_fun==1){
+            virtual_laser.header.stamp=ros_timenow();         
+            static string_Iv2 data_Iv2;
+            data_Iv2.detect(data,"",";","");
+            virtual_laser.ranges.resize(data_Iv2.data1.size()-1);
+            for(int i=0;i<data_Iv2.data1.size()-1;i++){
+                   if(data_Iv2.data1[i]!="nan") virtual_laser.ranges[i]=stof(data_Iv2.data1[i]);
+                   else virtual_laser.ranges[i]=6.0;
+            }
+            pub.publish(virtual_laser);
+    }else {
+        creat_fun=1;
+        virtual_laser.header.frame_id=mvibot_seri+"/base_footprint";
+        virtual_laser.angle_increment=0.01745329238474369;
+        virtual_laser.angle_max=0.5799999833106995;
+        virtual_laser.angle_min=-0.5799999833106995;
+        virtual_laser.range_min=0;
+        virtual_laser.range_max=5.0;
+        virtual_laser.scan_time=0.03333330154418945;
+        virtual_laser.intensities.resize(0);
+        virtual_laser.time_increment=0.0;
+    }
+}
 void pub_tf(string data){
     static string_Iv2 data1;
     //data1.detect(data,"","|","");
@@ -727,6 +755,7 @@ int main(int argc, char** argv)
     pub_footprint("");
     pub_path("");
     pub_history("");
+    pub_camera_scan("");
     //
     while(modify_socket()==-1){
         sleep(2);
@@ -906,6 +935,7 @@ void process_data(string data){
                 if(name_topic=="footprint")                   pub_footprint(data2);
                 if(name_topic=="path")                        pub_path(data2);
                 if(name_topic=="history")                     pub_history(data2);
+                if(name_topic=="camera_scan")                 pub_camera_scan(data2);
             }
         }
     }

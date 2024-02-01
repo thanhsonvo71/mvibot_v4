@@ -8,6 +8,7 @@ int check_free_space_robot=0;
 int get_user_path=0;
 int enable_ob1=-1;
 int enable_ob2=-1;
+int repub_cmd_vel=0;
 //
 long long movebase_goal_id=0;
 long long exepath_goal_id=0; 
@@ -328,13 +329,7 @@ int action_goal(int mode){
             }  
             else{
                 if(action_goal.getState().toString()=="ABORTED"){
-                    // action_goal.cancelAllGoals();
-                    // action_goal.waitForResult();
-                    msg.target_pose.pose.position.x=position_robot[0];
-                    msg.target_pose.pose.position.y=position_robot[1];
-                    msg.target_pose.pose.orientation.z=position_robot[2];
-                    msg.target_pose.pose.orientation.w=position_robot[3];
-                    action_goal.sendGoal(msg);
+                    action_goal.cancelAllGoals();
                     action_goal.waitForResult();
                     return Finish_;
                 }else{
@@ -354,6 +349,7 @@ int action_goal(int mode){
                 return Finish_;
             }
             else{
+                //action_goal.cancelGoal();
                 action_goal.cancelAllGoals();
                 action_goal.waitForResult();
                 return Active_;
@@ -368,15 +364,7 @@ int action_goal(int mode){
             else return Error_;
         }
         else if(mode==3){
-            // add from 1/2/2024
-            msg.target_pose.pose.position.x=position_robot[0];
-            msg.target_pose.pose.position.y=position_robot[1];
-            msg.target_pose.pose.orientation.z=position_robot[2];
-            msg.target_pose.pose.orientation.w=position_robot[3];
-            msg.target_pose.header.stamp=ros::Time::now();
-            action_goal.sendGoal(msg);
-            action_goal.waitForResult();
-            return Finish_;
+            
         }
     }
     return 0;
@@ -598,7 +586,7 @@ int position_::action(int action){
                 cout<<"Step"<<status<<endl;
                 if(complete_position==1){
                     if(is_error){
-                        position_goal[0]=position_robot[0];//+0.35;
+                        position_goal[0]=position_robot[0]+0.35;
                         position_goal[1]=position_robot[1];
                         position_goal[2]=z;
                         position_goal[3]=w;
@@ -690,14 +678,12 @@ int position_::action(int action){
                         // reset variable
                         status=0;
                         my_path.poses.resize(0);
-                        action_goal(3);
                         return Finish_;
                     }else{
                         for(int j=0;j<num_tab;j++) cout<<"\t";
                         cout<<"mbf error!"<<endl;
                         status=0;
                         is_error=1;
-                        action_goal(3);
                         return Active_;
                     }
                 }

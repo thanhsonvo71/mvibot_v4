@@ -32,6 +32,8 @@ void function3();
 void function4();
 void function5();
 void time_now(string data);
+//
+long time_reset=0;
 // creat thread
 void * process1(void * nothing){
     void *value_return;
@@ -71,6 +73,16 @@ void pub_master_check(){
     static std_msgs::String msg;
     if(creat_fun==1){
             msg.data="1";
+            pub.publish(msg);
+    }else creat_fun=1;
+}
+void pub_time_run_server(){
+     static ros::NodeHandle n;
+    static ros::Publisher pub = n.advertise<std_msgs::String>("/time_reset",1);
+    static float creat_fun=0;
+    static std_msgs::String msg;
+    if(creat_fun==1){
+            msg.data=to_string(time_reset);
             pub.publish(msg);
     }else creat_fun=1;
 }
@@ -386,6 +398,10 @@ void reset_serverf(const std_msgs::String & msg){
             system(cmd.c_str());
             cmd="rosnode kill /rosbridge_server &";
             system(cmd.c_str());
+            cmd="rosnode kill /rosapi &";
+            system(cmd.c_str());
+            sleep(1);
+            exit(0);
         }
    unlock();
 }
@@ -418,6 +434,8 @@ int main(int argc, char** argv){
     database_execmd("INSERT INTO map_active (name_map_active)  VALUES('"+name_map_active+"')");
     //
     ros::init(argc, argv, "mvibot_serverv3");
+    system("rm -r /root/.ros/");
+    system("roslaunch mvibot_v4 websock3.launch & ");
     get_robots_frist();
     //
     pub_input_user_status_string("");
@@ -487,6 +505,21 @@ void function1(){
 void function2(){
     lock();
         pub_zip();
+        //
+        time_reset+=(long)ts_process2;
+        pub_time_run_server();
+        //
+        if(time_reset>=3600*8){
+            cout<<"Reset"<<endl;
+            string cmd;
+            cmd="rosnode kill /tf2_web_republisher &";
+            system(cmd.c_str());
+            cmd="rosnode kill /rosbridge_server &";
+            system(cmd.c_str());
+            cmd="rosnode kill /rosapi &";
+            system(cmd.c_str());
+            exit(0);
+        }
     unlock();
 }
 void function3(){

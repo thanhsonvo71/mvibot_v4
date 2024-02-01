@@ -31,8 +31,6 @@ class position_{
         //
         int non_avoid=0;
         int stop_non_avoid=0;
-        int count_ob=0;
-        int count_non_ob=0;
         //
         void print(int n);
         void process_data();
@@ -133,7 +131,7 @@ void check_cost_path_v1(){
         error_AMCL=0;
         free_space_robot=0;
         // check 1st
-        free1=check_pose_costmap_v2(0.75,0,0,1,0.02,mvibot_seri+"/base_footprint"); // 0.050.1
+        free1=check_pose_costmap_v2(0.25,0,0,1,0.0,mvibot_seri+"/base_footprint");
         //free1=1;
         if(free1==1){
             //
@@ -147,26 +145,26 @@ void check_cost_path_v1(){
                         x_path2=goal_path.poses[j].pose.position.x;
                         y_path2=goal_path.poses[j].pose.position.y;
                         dis2=sqrt((x_path2-x_path)*(x_path2-x_path)+(y_path2-y_path)*(y_path2-y_path));
-                        if(dis2>=0.7){
+                        if(dis2>1.0){
                             check_1=1;
-                            for(int k=j;k<goal_path.poses.size();k++){
-                                x_path3=goal_path.poses[k].pose.position.x;
-                                y_path3=goal_path.poses[k].pose.position.y;
-                                dis3=sqrt((x_path3-x_path2)*(x_path3-x_path2)+(y_path3-y_path2)*(y_path3-y_path2));
-                                if(dis3>=0.7){
-                                    check_2=1;
-                                    for(int m=k;m<goal_path.poses.size();m++){
-                                        x_path4=goal_path.poses[m].pose.position.x;
-                                        y_path4=goal_path.poses[m].pose.position.y;
-                                        dis4=sqrt((x_path4-x_path3)*(x_path4-x_path3)+(y_path4-y_path3)*(y_path4-y_path3));
-                                        if(dis4>=0.6){
-                                            check_3=1;
-                                            break;
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
+                            // for(int k=j;k<goal_path.poses.size();k++){
+                            //     x_path3=goal_path.poses[k].pose.position.x;
+                            //     y_path3=goal_path.poses[k].pose.position.y;
+                            //     dis3=sqrt((x_path3-x_path2)*(x_path3-x_path2)+(y_path3-y_path2)*(y_path3-y_path2));
+                            //     if(dis3>=0.5){
+                            //         check_2=1;
+                            //         for(int m=k;m<goal_path.poses.size();m++){
+                            //             x_path4=goal_path.poses[m].pose.position.x;
+                            //             y_path4=goal_path.poses[m].pose.position.y;
+                            //             dis4=sqrt((x_path4-x_path3)*(x_path4-x_path3)+(y_path4-y_path3)*(y_path4-y_path3));
+                            //             if(dis4>=0.5){
+                            //                 check_3=1;
+                            //                 break;
+                            //             }
+                            //         }
+                            //         break;
+                            //     }
+                            // }
                             break;
                         }
                     }
@@ -175,7 +173,6 @@ void check_cost_path_v1(){
             }
             //
             if(error_AMCL==0){
-                // 0.05 ->0.02
                 static geometry_msgs::Quaternion quaternion;
                 static tf2::Quaternion quaternion_tf2;
                 if(check_1==1){
@@ -183,24 +180,24 @@ void check_cost_path_v1(){
                     yaw1=atan2(y_path2-y_path,x_path2-x_path);
                     quaternion_tf2.setRPY(0, 0, yaw1);
                     quaternion=tf2::toMsg(quaternion_tf2);
-                    free2=check_pose_costmap_v2(x_path2,y_path2,quaternion.z,quaternion.w,0.02,"map");
-                    //send_tranfrom2(x_path2,y_path2,quaternion.z,quaternion.w,"map","ABC1");
+                    free2=check_pose_costmap_v2(x_path2,y_path2,quaternion.z,quaternion.w,0.0,"map");
+                    send_tranfrom2(x_path2,y_path2,quaternion.z,quaternion.w,"map","ABC1");
                 }
                 if(check_2==1){
                     static float yaw2;
                     yaw2=atan2(y_path3-y_path2,x_path3-x_path2);
                     quaternion_tf2.setRPY(0, 0, yaw2);
                     quaternion=tf2::toMsg(quaternion_tf2);
-                    free3=check_pose_costmap_v2(x_path3,y_path3,quaternion.z,quaternion.w,0.02,"map");
-                    //send_tranfrom2(x_path3,y_path3,quaternion.z,quaternion.w,"map","ABC2");
+                    free3=check_pose_costmap_v2(x_path3,y_path3,quaternion.z,quaternion.w,0.0,"map");
+                    send_tranfrom2(x_path3,y_path3,quaternion.z,quaternion.w,"map","ABC2");
                 }
                 if(check_3==1){
                     static float yaw3;
                     yaw3=atan2(y_path4-y_path3,x_path4-x_path3);
                     quaternion_tf2.setRPY(0, 0, yaw3);
                     quaternion=tf2::toMsg(quaternion_tf2);
-                    free4=check_pose_costmap_v2(x_path4,y_path4,quaternion.z,quaternion.w,0.02,"map");
-                    //send_tranfrom2(x_path4,y_path4,quaternion.z,quaternion.w,"map","ABC3");
+                    free4=check_pose_costmap_v2(x_path4,y_path4,quaternion.z,quaternion.w,0.0,"map");
+                    send_tranfrom2(x_path4,y_path4,quaternion.z,quaternion.w,"map","ABC3");
                 }
             }
         }
@@ -322,25 +319,16 @@ int action_goal(int mode){
     }else {
         if(mode==0) {
             if(action_goal.getState().toString()=="ACTIVE") {
-                action_goal.cancelAllGoals();
+                action_goal.cancelGoal();
                 action_goal.waitForResult();
                 return Active_;
             }  
             else{
                 if(action_goal.getState().toString()=="ABORTED"){
-                    // action_goal.cancelAllGoals();
-                    // action_goal.waitForResult();
-                    msg.target_pose.pose.position.x=position_robot[0];
-                    msg.target_pose.pose.position.y=position_robot[1];
-                    msg.target_pose.pose.orientation.z=position_robot[2];
-                    msg.target_pose.pose.orientation.w=position_robot[3];
-                    action_goal.sendGoal(msg);
+                    action_goal.cancelGoal();
                     action_goal.waitForResult();
                     return Finish_;
-                }else{
-                    action_goal.cancelAllGoals();
-                    return Finish_;
-                }
+                }else return Finish_;
             }
         }
         else if(mode==1) {
@@ -348,13 +336,12 @@ int action_goal(int mode){
             msg.target_pose.pose.position.y=position_goal[1];
             msg.target_pose.pose.orientation.z=position_goal[2];
             msg.target_pose.pose.orientation.w=position_goal[3];
-            msg.target_pose.header.stamp=ros::Time::now();
             if(action_goal.getState().toString()!="ACTIVE"){
                 action_goal.sendGoal(msg);
                 return Finish_;
             }
             else{
-                action_goal.cancelAllGoals();
+                action_goal.cancelGoal();
                 action_goal.waitForResult();
                 return Active_;
             }
@@ -368,15 +355,7 @@ int action_goal(int mode){
             else return Error_;
         }
         else if(mode==3){
-            // add from 1/2/2024
-            msg.target_pose.pose.position.x=position_robot[0];
-            msg.target_pose.pose.position.y=position_robot[1];
-            msg.target_pose.pose.orientation.z=position_robot[2];
-            msg.target_pose.pose.orientation.w=position_robot[3];
-            msg.target_pose.header.stamp=ros::Time::now();
-            action_goal.sendGoal(msg);
-            action_goal.waitForResult();
-            return Finish_;
+            
         }
     }
     return 0;
@@ -458,20 +437,16 @@ int action_exepath(int mode){
         return 0;
     }else{
         if(mode==0){
-            msg.path.header.stamp=ros::Time::now();
             if(action_exepath.getState().toString()=="ACTIVE"){
-                action_exepath.cancelAllGoals();
+                action_exepath.cancelGoal();
                 action_exepath.waitForResult();
                 return Active_;
             }else{
                 if(action_exepath.getState().toString()=="ABORTED"){
-                    action_exepath.cancelAllGoals();
+                    action_exepath.cancelGoal();
                     action_exepath.waitForResult();
                     return Finish_;
-                }else{
-                    action_exepath.cancelAllGoals();
-                    return Finish_;
-                }
+                }else return Finish_;
             }
         }
         else if(mode==1){
@@ -481,7 +456,7 @@ int action_exepath(int mode){
                 action_exepath.sendGoal(msg);
                 return Finish_;
             }else{
-                action_exepath.cancelAllGoals();
+                action_exepath.cancelGoal();
                 action_exepath.waitForResult();
                 return Active_;
             }
@@ -551,7 +526,7 @@ int position_::action(int action){
         //
         if(dis<=0.35){
             complete_position=1;
-            if(fabs(sin(angle2)-sin(angle1))<=0.05 & fabs(cos(angle2)-cos(angle1))<=0.05) { //0.1 //0.08 only sin //0.05
+            if(fabs(sin(angle2)-sin(angle1))<=0.05 & fabs(cos(angle2)-cos(angle1))<=0.05) { //0.1 //0.08 only sin
                 complete_position=2;
             }
         }else complete_position=0;
@@ -598,7 +573,7 @@ int position_::action(int action){
                 cout<<"Step"<<status<<endl;
                 if(complete_position==1){
                     if(is_error){
-                        position_goal[0]=position_robot[0];//+0.35;
+                        position_goal[0]=position_robot[0]+0.35;
                         position_goal[1]=position_robot[1];
                         position_goal[2]=z;
                         position_goal[3]=w;
@@ -622,20 +597,10 @@ int position_::action(int action){
                     position_goal[2]=z;
                     position_goal[3]=w;
                 }
-                // because robot is in goal so finish
-                if(complete_position==2){
-                    for(int j=0;j<num_tab;j++) cout<<"\t";
-                    cout<<"finish goal"<<endl;
-                    // reset variable
-                    status=0;
-                    my_path.poses.resize(0);
-                    return Finish_;
-                }
-                else{
-                    if(action_goal(1)==Finish_){
-                        status=4;
-                        sleep=0;
-                    }
+                //
+                if(action_goal(1)==Finish_){
+                    status=4;
+                    sleep=0;
                 }
                 return Active_;
             }
@@ -669,7 +634,6 @@ int position_::action(int action){
                 cout<<"Step"<<status<<endl;
                 static int get_action_goal_status;
                 get_action_goal_status=action_goal(2);
-                //
                 if(get_action_goal_status==Finish_){
                     for(int j=0;j<num_tab;j++) cout<<"\t";
                     cout<<"finish goal"<<endl;
@@ -690,14 +654,12 @@ int position_::action(int action){
                         // reset variable
                         status=0;
                         my_path.poses.resize(0);
-                        action_goal(3);
                         return Finish_;
                     }else{
                         for(int j=0;j<num_tab;j++) cout<<"\t";
                         cout<<"mbf error!"<<endl;
                         status=0;
                         is_error=1;
-                        action_goal(3);
                         return Active_;
                     }
                 }
@@ -740,7 +702,7 @@ int position_::action(int action){
                 return Active_;
             }
             else if(status==3){
-                //check goal
+                //send goal
                 if(complete_position==1){
                     if(is_error){
                         position_goal[0]=position_robot[0]+0.35;
@@ -772,75 +734,50 @@ int position_::action(int action){
                 status_getpath=action_getpath(0);
                 if(status_getpath!=Finish_)
                 {
+                    //my_path=goal_path;
                     status=0;
                     return Error_;
+                }
+                //
+                static int count_ob=0;
+                //count_ob=0;
+                if(non_avoid==1){
+                    if(free_space_robot==1 | dis<=1.5){
+                        if(action_exepath(1)==Finish_){
+                            status=4;
+                            sleep=0;
+                        }
+                    }else{
+                        count_ob++;
+                        if(count_ob>=100){
+                            count_ob=0;
+                            status=0;
+                        }
+                    }
                 }else{
-                    sleep=0;
-                    status=4;
+                    if(action_exepath(1)==Finish_){
+                        status=4;
+                        sleep=0;
+                    }
                 }
                 return Active_;
             }
             else if(status==4){
-                if(complete_position==2){
-                    for(int j=0;j<num_tab;j++) cout<<"\t";
-                    cout<<"finish path"<<endl;
-                    // reset variable
-                    status=0;
-                    my_path.poses.resize(0);
-                    goal_path.poses.resize(0);
-                    check_free_space_robot=0;
-                    count_non_ob=0;
-                    count_ob=0;
-                    return Finish_;
-                }
-                else{
-                    // send goal
-                    if(non_avoid==1){
-                        sleep+=ts_mission_step_scan;
-                        if(sleep<=4){
-                            if(free_space_robot==1) count_non_ob++;
-                            else count_non_ob=0;
-                            //
-                            if(count_non_ob>=60 | dis <= 1.5){
-                                count_non_ob=0;
-                                if(action_exepath(1)==Finish_){
-                                    status=5;
-                                    sleep=0;
-                                }
-                            }
-                        }else{
-                            // return step 0
-                            sleep=0;
-                            count_non_ob=0;
-                            status=0;
-                        }
-                    }else{
-                        if(action_exepath(1)==Finish_){
-                            status=5;
-                            sleep=0;
-                        }
-                    }
-                    //
-                }
-                //
-                return Active_;
-            }
-            else if(status==5){
                 // sleep 1s wait for move base get action goal
                 sleep+=ts_mission_step_scan;
                 if(sleep>=1.0){
                     sleep=0;
-                    status=6;
+                    status=5;
                 }
                 return Active_;               
             }
-            else if(status==6){
+            else if(status==5){
                 // check exepath_id 
                 if(exepath_goal_id>target_goal_id){
                     //
                     for(int j=0;j<num_tab;j++) cout<<"\t";
                     cout<<"Exe path receive goal"<<endl;
-                    status=7;
+                    status=6;
                 }else{
                     //
                     for(int j=0;j<num_tab;j++) cout<<"\t";
@@ -849,7 +786,7 @@ int position_::action(int action){
                 }
                 return Active_;
             }
-            else if(status==7){
+            else if(status==6){
                 static int get_action_goal_status;
                 get_action_goal_status=action_exepath(2);
                 if(get_action_goal_status==Finish_){
@@ -860,8 +797,6 @@ int position_::action(int action){
                     my_path.poses.resize(0);
                     goal_path.poses.resize(0);
                     check_free_space_robot=0;
-                    count_non_ob=0;
-                    count_ob=0;
                     return Finish_;
                 }
                 else if(get_action_goal_status==Active_){
@@ -869,8 +804,8 @@ int position_::action(int action){
                     cout<<"Exepath Active path"<<endl;
                     //
                     if(non_avoid==1){
-                        if(free_space_robot==0 & dis>=1.5)
-                        {
+                        static int count_ob=0;
+                        if(free_space_robot==0 & dis>=1.5){
                             stop_non_avoid=1;
                             action_exepath(0);
                             pub_cmd_vel(0.0,0.0);
@@ -909,8 +844,6 @@ int position_::action(int action){
         is_error=0;
         //
         check_free_space_robot=0;
-        count_ob=0;
-        count_non_ob=0;
         if(mode=="normal") action_goal(0);
         if(mode=="line_follow") action_exepath(0);
         //
@@ -924,6 +857,4 @@ int position_::action(int action){
 void position_::reset(){
     status=0;
     stop_non_avoid=0;
-    count_ob=0;
-    count_non_ob=0;
 }

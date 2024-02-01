@@ -18,6 +18,7 @@
 #include "src/mvibot_core/hook/hook.h"
 #include "src/mvibot_core/process_data_uart/process_data_uart.h"
 #include "src/mvibot_core/mvibot_core_init.h"
+#include "src/mvibot_core/re_connect/re_connect.h"
 //
 using namespace std;
 // socket var
@@ -247,6 +248,11 @@ void robot_update_softwaref(const std_msgs::String & msg){
          //if(msg.data=="1") software_update=1;
     unlock();
 }
+void master_checkf(const std_msgs::String & msg){
+    lock();
+         master_check_status=1;
+    unlock();
+}
 int main(int argc, char** argv){
     // update time to memorry
     ts_scan_sensor=1.0;
@@ -335,6 +341,7 @@ int main(int argc, char** argv){
     // robot update config
     ros::Subscriber sub20 = n20.subscribe("/"+mvibot_seri+"/robot_load_config",1,robot_load_configf);
     ros::Subscriber sub22 = n22.subscribe("/"+mvibot_seri+"/robot_update_software",1,robot_update_softwaref);
+    ros::Subscriber sub23 = n23.subscribe("/master_check",1,master_checkf);
     ros::spin();
     //
     thread1.join();
@@ -479,6 +486,7 @@ void function1(){
         pub_robot_config();
         music_control();
         check_sensor();
+        re_connect();
     unlock();
         action_sensor();
 }

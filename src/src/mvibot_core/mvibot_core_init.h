@@ -97,5 +97,8 @@ using namespace std;
     string robot_config_string;
     // rqt data
     std_msgs::Float32MultiArray rqt_data;
+    // re_connect
+    int master_check_status=0;
+    int n_re_connect=0;
     #define mvibot_core_init 1
 #endif

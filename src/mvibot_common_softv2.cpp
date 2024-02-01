@@ -489,6 +489,13 @@ void planf(const nav_msgs::Path & msg){
         my_path=msg;
     unlock();
 }
+void cmd_vel_movebasef(const geometry_msgs::Twist & msg){
+    lock();
+        // if(repub_cmd_vel==1){
+        //     pub_cmd_vel((float)msg.linear.x,(float)msg.angular.z);
+        // }
+    unlock();
+}
 //
 void pub_mission_action_infor(){
     static ros::NodeHandle n;
@@ -730,7 +737,7 @@ int  main(int argc, char** argv){
     res=pthread_create(&p_process2,NULL,process2,NULL); 
     res=pthread_create(&p_process3,NULL,process3,NULL);
     //
-    ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n14,n15,n16,n17,n18,n19,n20,n21;
+    ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n14,n15,n16,n17,n18,n19,n20,n21,n22;
     //ros::Subscriber sub1 = n1.subscribe("/"+mvibot_seri+"/msg", 1, msgf);   
     ros::Subscriber sub2 = n2.subscribe("/"+mvibot_seri+"/mission_normal", 1, mission_normalf); 
     ros::Subscriber sub3 = n3.subscribe("/"+mvibot_seri+"/mission_action", 1, mission_actionf); 
@@ -755,6 +762,7 @@ int  main(int argc, char** argv){
     ros::Subscriber sub19 = n19.subscribe("/"+mvibot_seri+"/move_base_flex/move_base/status", 1, move_base_statusf);
     ros::Subscriber sub20 = n20.subscribe("/"+mvibot_seri+"/move_base_flex/exe_path/status", 1, exe_path_statusf);
     ros::Subscriber sub21 = n21.subscribe("/"+mvibot_seri+"/move_base_flex/NavfnROS/plan", 1, planf);
+    ros::Subscriber sub22 = n22.subscribe("/"+mvibot_seri+"/cmd_vel_movebase", 1, cmd_vel_movebasef);
     ros::spin(); 
     return 0; 
 }
@@ -794,12 +802,12 @@ void function1(){
         pub_footprint_infor();
         pub_path_infor();
         //
-        static ros::Time t;
-        t=ros::Time::now();
-        pub_consolog("A|"+to_string((long double)t.sec+(long double)t.nsec*1e-9));
+        //static ros::Time t;
+        //t=ros::Time::now();
+        //pub_consolog("A|"+to_string((long double)t.sec+(long double)t.nsec*1e-9));
         check_cost_path_v1();
-        t=ros::Time::now();
-        pub_consolog("B|"+to_string((long double)t.sec+(long double)t.nsec*1e-9));
+        //t=ros::Time::now();
+        //pub_consolog("B|"+to_string((long double)t.sec+(long double)t.nsec*1e-9));
         // save the mission
     unlock();
 }

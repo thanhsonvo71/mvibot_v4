@@ -81,7 +81,7 @@ int marker::check_send_transforms_tf_frame(){
     t_get.nsec=(uint32_t)robot_position_get[5];
     //
     value_return=0;
-    if(t_get>t_send+ros::Duration(0.2)) //0.1->0.2
+    if(t_get>t_send+ros::Duration(0.1))
     {
         if(compare_pose(x_set,y_set,z_set,w_set,robot_position_get[0],robot_position_get[1],robot_position_get[2],robot_position_get[3],0.05000,0.05000)) 
         value_return=1;

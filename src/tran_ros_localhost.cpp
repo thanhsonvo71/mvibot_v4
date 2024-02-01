@@ -33,6 +33,7 @@ static char end_char='?';
 static vector<string> msg_to_socket;
 static vector<string> msg_to_action;
 static int enable_get_laser_data=0;
+static int enable_get_camera_data=0;
 static int enable_output_user_set_string=0;
 string date;
 //
@@ -820,6 +821,26 @@ void historyf(const std_msgs::String& msg){
         //}
     unlock();
 }
+void camera_scanf(const sensor_msgs::LaserScan& msg){
+    lock();
+        if(enable_get_camera_data==1 & n_client > 0){
+            static string string_process;
+            //
+            string_process="";
+            string_process=start_char;
+            string_process=string_process+"{[(name_seri/="+mvibot_seri+")]}";
+            string_process=string_process+"{[(name_topic/=camera_scan)]}";
+            string_process=string_process+"{[(data/=";
+            for(int i=0;i<msg.ranges.size();i++){
+                string_process=string_process+to_string(msg.ranges[i])+";";
+            }
+            string_process=string_process+")]}"+end_char;
+            msg_to_socket.resize(msg_to_socket.size()+1);
+            msg_to_socket[msg_to_socket.size()-1]=string_process;
+            enable_get_camera_data=0;
+        }
+    unlock();
+}
 int main(int argc, char** argv) 
 { 
     //
@@ -857,7 +878,7 @@ int main(int argc, char** argv)
     res=pthread_create(&p_process6,NULL,process6,NULL);
     //res=pthread_create(&p_process7,NULL,process7,NULL);
     //
-    ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n13,n14,n15,n16,n17,n18,n19,n20,n21,n22,n23;
+    ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n13,n14,n15,n16,n17,n18,n19,n20,n21,n22,n23,n24;
     ros::Subscriber sub1 = n1.subscribe("/IAM"+server_topic, 1, IAMf);
     ros::Subscriber sub2 = n2.subscribe("/request_map"+server_topic, 1, request_mapf);
     ros::Subscriber sub3 = n3.subscribe("/sensor_status_string"+server_topic, 1, sensor_status_stringf);
@@ -885,6 +906,7 @@ int main(int argc, char** argv)
     ros::Subscriber sub21 = n21.subscribe("/"+mvibot_seri+"/footprint", 1, footprintf);
     ros::Subscriber sub22 = n22.subscribe("/"+mvibot_seri+"/path", 1, pathf);
     ros::Subscriber sub23 = n23.subscribe("/"+mvibot_seri+"/history", 100, historyf);
+    ros::Subscriber sub24 = n24.subscribe("/"+mvibot_seri+"/camera/scan", 1, camera_scanf);
     ros::spin();
     return 0; 
 } 
@@ -1172,6 +1194,7 @@ void function6(){
         }
         lock();
             enable_get_laser_data=1;
+            enable_get_camera_data=1;
             enable_output_user_set_string=1;
         unlock();
     }      
