@@ -3,5 +3,5 @@ echo start
 echo run kernel....
 source /opt/ros/noetic/setup.bash
 source /home/mvibot/catkin_ws/devel/setup.bash
-/home/mvibot/catkin_ws/devel/lib/mvibot/mvibot_kernel
+/home/mvibot/catkin_ws/devel/lib/mvibot_v4/mvibot_kernel
 exit 0

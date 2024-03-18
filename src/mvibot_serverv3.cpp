@@ -354,7 +354,7 @@ void request_actionf(const std_msgs::String & msg){
                 if(name_map!=""){
                     static string cmd;
                     cmd="";
-                    cmd=cmd+"echo "+name_map+" > "+"/home/mvibot/catkin_ws/src/mvibot/config/map";
+                    cmd=cmd+"echo "+name_map+" > "+"/home/mvibot/catkin_ws/src/mvibot_v4/config/map";
                     system(cmd.c_str());
                 }
             }
@@ -410,7 +410,7 @@ int main(int argc, char** argv){
     ts_my_robots=(float)ts_process1;
     try
     {
-	    std::ifstream file("/home/mvibot/catkin_ws/src/mvibot/config/map");
+	    std::ifstream file("/home/mvibot/catkin_ws/src/mvibot_v4/config/map");
 	    std::string str; 
 	    std::string data;
 	    data="";

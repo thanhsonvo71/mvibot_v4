@@ -5,11 +5,11 @@ echo start
 source /opt/ros/noetic/setup.bash
 source /home/mvibot/catkin_ws/devel/setup.bash
 # name and mode for robot
-name_seri="$(</home/mvibot/catkin_ws/src/mvibot/config/name_seri)"
-mode="$(</home/mvibot/catkin_ws/src/mvibot/config/mode)"
+name_seri="$(</home/mvibot/catkin_ws/src/mvibot_v4/config/name_seri)"
+mode="$(</home/mvibot/catkin_ws/src/mvibot_v4/config/mode)"
 # serial for camera
-serial_camera1="$(</home/mvibot/catkin_ws/src/mvibot/config/serial_camera1)"
-serial_camera2="$(</home/mvibot/catkin_ws/src/mvibot/config/serial_camera2)"
+serial_camera1="$(</home/mvibot/catkin_ws/src/mvibot_v4/config/serial_camera1)"
+serial_camera2="$(</home/mvibot/catkin_ws/src/mvibot_v4/config/serial_camera2)"
 #
 ip_node=127.0.0.1
 ip_master=127.0.0.1
@@ -22,7 +22,7 @@ export ROS_MASTER_URI="http://$ip_master:11312"
 export ROS_HOSTNAME=$ip_node
 echo "This robot is master"
 roscore -p 11312 &
-roslaunch mvibot mvibot_firmware.launch mode:="$mode" serial_camera1:="$serial_camera1" serial_camera2:="$serial_camera2" name_seri:="$name_seri" --wait &
+roslaunch mvibot_v4 mvibot_firmware.launch mode:="$mode" serial_camera1:="$serial_camera1" serial_camera2:="$serial_camera2" name_seri:="$name_seri" --wait &
 while :
 do
   echo "An Infinite loop"
