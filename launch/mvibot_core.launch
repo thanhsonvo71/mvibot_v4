@@ -3,13 +3,13 @@
 	  <arg name="axa" default="1.0"/>
 	  <arg name="awa" default="1.0"/>
 	  <arg name="mode" default=""/>
-	  <node name="mvibot_core"  pkg="mvibot"  type="mvibot_corev2"  respawn="true">
+	  <node name="mvibot_core"  pkg="mvibot_v4"  type="mvibot_corev3"  respawn="true">
 	  		<param name="mvibot_seri" value="$(arg mvibot_seri)"/>  
 			<param name="mode" value="$(arg mode)"/>
 			<param name="ax" value="$(arg axa)"/>
 			<param name="aw" value="$(arg awa)"/>
 	  </node>
-	  <node name="mvibot_config"  pkg="mvibot"  type="mvibot_config"  respawn="true">
+	  <node name="mvibot_configv2"  pkg="mvibot_v4"  type="mvibot_configv2"  respawn="true">
                         <param name="mvibot_seri" value="$(arg mvibot_seri)"/>
           </node>
 </launch>

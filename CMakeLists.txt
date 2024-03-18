@@ -7,7 +7,7 @@ project(mvibot_v4)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-set(OpenCV_DIR /usr/local/lib/cmake/opencv4)
+#set(OpenCV_DIR /usr/local/lib/cmake/opencv4)
 #set(OpenCV_DIR /home/hitech/catkin_ws/opencv/build)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
@@ -20,7 +20,6 @@ find_package(catkin REQUIRED COMPONENTS
   urdf
   nav_msgs
   mbf_msgs
-  cv_bridge
 )
 
 ## System dependencies are found with CMake's conventions
@@ -254,9 +253,9 @@ add_executable(mvibot_marker src/mvibot_marker.cpp)
 target_link_libraries(mvibot_marker ${catkin_LIBRARIES} -lpthread )
 add_dependencies(mvibot_marker ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-add_executable(mvibot_opencv env_test/mvibot_opencv.cpp)
-target_link_libraries(mvibot_opencv ${catkin_LIBRARIES} zbar -lpthread )
-add_dependencies(mvibot_opencv ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_executable(mvibot_configv2 src/mvibot_configv2.cpp)
+target_link_libraries(mvibot_configv2 ${catkin_LIBRARIES} -lpthread )
+add_dependencies(mvibot_configv2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(mvibot_test env_test/mvibot_test.cpp)
 target_link_libraries(mvibot_test ${catkin_LIBRARIES} -lpthread )

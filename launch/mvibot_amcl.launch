@@ -2,8 +2,8 @@
           <arg name="mvibot_seri" default=""/>
           <node name="mvibot_amcl"  pkg="amcl"  type="amcl" output="screen"  respawn="true">
                         <param name="mvibot_seri" value="$(arg mvibot_seri)"/>
-                        <rosparam subst_value="True" command="load" file="$(find mvibot)/param/amcl.yaml"/>
-			<rosparam subst_value="True" command="load" file="$(find mvibot)/param/position.yaml"/>
+                        <rosparam subst_value="True" command="load" file="$(find mvibot_v4)/param/amcl.yaml"/>
+			<rosparam subst_value="True" command="load" file="$(find mvibot_v4)/param/position.yaml"/>
 			<remap from="scan" to="/$(arg mvibot_seri)/laser/scan"/>
 			<remap from="map"  to="/map" />
 			<remap from="initialpose"  to="initialpose" />	

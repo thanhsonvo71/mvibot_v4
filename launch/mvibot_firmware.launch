@@ -7,16 +7,16 @@
    <group ns="$(arg name_seri)" clear_params="false">   
    
 	<!-- view rviz mvibot-->    
-		<node if="$(arg viewrviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find mvibot)/launch/config.rviz"/>	
+		<node if="$(arg viewrviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find mvibot_v4)/launch/config.rviz"/>	
         <!---->    
-	<node name="mvibot_transport" pkg="new_mission" type="tran_ros_localhost" respawn="true">
-		    <param name="mvibot_seri" value="$(arg name_seri)"/>  
-		    <param name="mode" value="$(arg mode)"/>
-	</node>
+		<node name="mvibot_transport" pkg="mvibot_v4" type="tran_ros_localhostv2" respawn="true">
+				<param name="mvibot_seri" value="$(arg name_seri)"/>  
+				<param name="mode" value="$(arg mode)"/>
+		</node>
 	
 	<!-- robot tf frame for mvibot-->
-		<param name="robot_description" command="xacro --inorder '$(find mvibot)/urdf/mvibot3.urdf' mvibot_seri:=$(arg name_seri)"/>    
-		<param name="robot_description_web" command="xacro --inorder '$(find mvibot)/urdf/mvibot_web.urdf' mvibot_seri:=$(arg name_seri)"/>
+		<param name="robot_description" command="xacro --inorder '$(find mvibot_v4)/urdf/mvibot3.urdf' mvibot_seri:=$(arg name_seri)"/>    
+		<param name="robot_description_web" command="xacro --inorder '$(find mvibot_v4)/urdf/mvibot_web.urdf' mvibot_seri:=$(arg name_seri)"/>
 		<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true">
 		    <param name="use_tf_static" value="true"/>
 		    <param name="ignore_timestamp" value="true"/>
@@ -24,52 +24,44 @@
         <!----> 
 		 
         <!-- radar sensor for mvibot-->
-		<include file="$(find mvibot)/launch/mvibot_radar1.launch">
+		<include file="$(find mvibot_v4)/launch/mvibot_radar1.launch">
 			<arg name="mvibot_seri" value="$(arg name_seri)"/>
 		</include>
-		<include file="$(find mvibot)/launch/mvibot_radar2.launch">
+		<include file="$(find mvibot_v4)/launch/mvibot_radar2.launch">
 			<arg name="mvibot_seri" value="$(arg name_seri)"/>
 		</include>
-		<include file="$(find mvibot)/launch/mvibot_laserscan_multi_merger.launch">
+		<include file="$(find mvibot_v4)/launch/mvibot_laserscan_multi_merger.launch">
 			<arg name="mvibot_seri" value="$(arg name_seri)"/>
 		</include> 
         <!---->
         
         <!-- camera sensor for mvibot-->
-		<include file="$(find mvibot)/launch/mvibot_camera1.launch">
+		<include file="$(find mvibot_v4)/launch/mvibot_camera1.launch">
 			<arg name="mvibot_seri" value="$(arg name_seri)"/>
 			<arg name="serial_no1" value="$(arg serial_camera1)"/>
 		</include>
 
-		<include file="$(find mvibot)/launch/mvibot_camera2.launch">
+		<include file="$(find mvibot_v4)/launch/mvibot_camera2.launch">
 			<arg name="mvibot_seri" value="$(arg name_seri)"/>
 			<arg name="serial_no2" value="$(arg serial_camera2)"/>
 		</include>
 
 		<!---->
 		<!-- camera to laser scan for mvibot-->
-		<include file="$(find mvibot)/launch/mvibot_pointcloud_to_scan.launch">
+		<include file="$(find mvibot_v4)/launch/mvibot_pointcloud_to_scan.launch">
 			<arg name="mvibot_seri" value="$(arg name_seri)"/>
 		</include>
         <!---->
-
-		<!-- imu tranfroms-->
-		<!--<include file="$(find mvibot)/launch/mvibot_imu_transformer.launch">
-			<arg name="mvibot_seri" value="$(arg name_seri)"/>
-		</include>-->
-	<!---->
 
         <!-- mvibot core-->
-		<include file="$(find mvibot)/launch/mvibot_core.launch">
+		<include file="$(find mvibot_v4)/launch/mvibot_core.launch">
 			<arg name="mvibot_seri" value="$(arg name_seri)"/>
 			<arg name="mode" value="$(arg mode)"/>
-			<arg name="axa" value="0.1"/>
-			<arg name="awa" value="0.1"/>
 		</include>
 
         <!---->
 
-		<node if="$(eval arg('mode') == 'slam')" name="tran_ros_localhost_mapping" pkg="new_mission" type="tran_ros_localhost_mapping">
+		<node if="$(eval arg('mode') == 'slam')" name="tran_ros_localhost_mapping" pkg="mvibot_v4" type="tran_ros_localhost_mappingv2">
 			<param name="mvibot_seri" value="$(arg name_seri)"/>
 		</node>
 

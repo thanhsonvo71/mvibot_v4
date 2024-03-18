@@ -3,16 +3,16 @@
    <arg name="mode" default=""/>
    <group ns="$(arg name_seri)" clear_params="false">   
      
-	<node name="mvibot_master" pkg="new_mission" type="tran_ros_ipmaster" respawn="true">
+	<node name="mvibot_master" pkg="mvibot_v4" type="tran_ros_ipmasterv2" respawn="true">
 		    <param name="mvibot_seri" value="$(arg name_seri)"/>  
 		    <param name="mode" value="$(arg mode)"/>
 	</node>
 	
 	<!-- robot tf frame for mvibot-->
-		<param name="robot_description_web" command="xacro --inorder '$(find mvibot)/urdf/mvibot_web.urdf' mvibot_seri:=$(arg name_seri)"/>
+		<param name="robot_description_web" command="xacro --inorder '$(find mvibot_v4)/urdf/mvibot_web.urdf' mvibot_seri:=$(arg name_seri)"/>
         <!----> 
         
-        <node if="$(eval arg('mode') == 'slam')" name="tran_ros_master_mapping" pkg="new_mission" type="tran_ros_master_mapping">
+        <node if="$(eval arg('mode') == 'slam')" name="tran_ros_master_mappingv2" pkg="mvibot_v4" type="tran_ros_master_mappingv2">
 			<param name="mvibot_seri" value="$(arg name_seri)"/>
 	</node>
     </group>
