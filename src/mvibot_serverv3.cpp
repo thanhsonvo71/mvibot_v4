@@ -156,6 +156,7 @@ void IAMf(const std_msgs::String& msg){
                 my_robots.resize(my_robots.size()+1);
                 my_robots[my_robots.size()-1].name_seri=data.data1[0];
                 my_robots[my_robots.size()-1].type=data.data1[1];
+                my_robots[my_robots.size()-1].id=my_robots.size()-1;
                 my_robots[my_robots.size()-1].update_database=0;
                 my_robots[my_robots.size()-1].node=new node_v2_3;
                 my_robots[my_robots.size()-1].node->name_seri=my_robots[my_robots.size()-1].name_seri;   

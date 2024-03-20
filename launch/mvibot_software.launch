@@ -2,19 +2,12 @@
 	<arg name="name_seri" default=""/>
 	<arg name="mode" default=""/>
 	<!-- -->
-
-	
-	<!--<node name="mvibot_software"  pkg="mvibot_v4"  type="mvibot_software" output="screen" respawn="true">
-	 	<param name="mvibot_seri" value="$(arg name_seri)"/>  
-	</node>-->
 	
 	<node name="mvibot_common_softv2"  pkg="mvibot_v4"  type="mvibot_common_softv2" output="screen" respawn="true">
                 <param name="mvibot_seri" value="$(arg name_seri)"/>
 		<param name="mode" value="$(arg mode)"/>
         </node>
 
-
-	
 	<node name="mvibot_marker"  pkg="mvibot_v4"  type="mvibot_marker" output="screen" respawn="true">
 		<param name="mvibot_seri" value="$(arg name_seri)"/>
 	</node>  
@@ -26,42 +19,25 @@
                 </include>
 	
 
-        <!---->
-
-                <!-- match laser scan-->
-                <!--<include file="$(find mvibot_v4)/launch/mvibot_match_scan.launch">
-                        <arg name="mvibot_seri" value="$(arg name_seri)"/>
-                </include>-->
-        <!---->
-
-                <!-- filter scan-->
-                <include file="$(find mvibot_v4)/launch/mvibot_scan_filter.launch">
-                        <arg name="mvibot_seri" value="$(arg name_seri)"/>
-                </include>
-        <!---->
-	  
+        <!-- filter scan-->
+        <include file="$(find mvibot_v4)/launch/mvibot_scan_filter.launch">
+                <arg name="mvibot_seri" value="$(arg name_seri)"/>
+        </include>
+  
 
 	<!-- mvibot slam-->
-                <include file="$(find mvibot_v4)/launch/mvibot_slam_toolbox.launch" if="$(eval arg('mode') == 'slam')">
-                        <arg name="mvibot_seri" value="$(arg name_seri)"/>
-                </include>
-        <!---->
-
-        <!-- mvibot hector-->
-                <include file="$(find mvibot_v4)/launch/mvibot_hector.launch" if="$(eval arg('mode') == 'hector')">
-                        <arg name="mvibot_seri" value="$(arg name_seri)"/>
-                </include>
-        <!---->
+        <include file="$(find mvibot_v4)/launch/mvibot_slam_toolbox.launch" if="$(eval arg('mode') == 'slam')">
+                <arg name="mvibot_seri" value="$(arg name_seri)"/>
+        </include>
 
         <!-- mvibot navigation-->
-                <include file="$(find mvibot_v4)/launch/mvibot_amcl.launch" if="$(eval arg('mode') == 'navigation')">
-                        <arg name="mvibot_seri" value="$(arg name_seri)"/>
-                </include>
+        <include file="$(find mvibot_v4)/launch/mvibot_amcl.launch" if="$(eval arg('mode') == 'navigation')">
+                <arg name="mvibot_seri" value="$(arg name_seri)"/>
+        </include>
 
-                <include file="$(find mvibot_v4)/launch/mvibot_movebase.launch" if="$(eval arg('mode') == 'navigation')">
-                        <arg name="mvibot_seri" value="$(arg name_seri)"/>
-                </include>
+        <include file="$(find mvibot_v4)/launch/mvibot_movebase.launch" if="$(eval arg('mode') == 'navigation')">
+                <arg name="mvibot_seri" value="$(arg name_seri)"/>
+        </include>
 
-        <!---->
 
 </launch>

@@ -150,10 +150,10 @@ void read_data_socket_server(){
 }
 int main(int argc, char** argv){
     // check match hardware
-    if(check_security()==0){
-        cout<<"Don 't match hardware!"<<endl;
-        security_code();
-    }
+    //if(check_security()==0){
+    //    cout<<"Don 't match hardware!"<<endl;
+    //    security_code();
+    //}
     get_list_monitor();
     // history startup
     system_command="echo ";
@@ -314,10 +314,10 @@ void function5(){
             }
         }
         //
-        if(check_monitor_connect()){
-            cout<<"Some one is connect to output display..."<<endl;
-            send_mail("mvpkouki@gmail.com",name_seri_fix+" Alarm Security",name_seri_fix+" : someone is plugined display port At `date`","");
-            security_code();
-        }
+        //if(check_monitor_connect()){
+        //    cout<<"Some one is connect to output display..."<<endl;
+        //    send_mail("mvpkouki@gmail.com",name_seri_fix+" Alarm Security",name_seri_fix+" : someone is plugined display port At `date`","");
+        //    security_code();
+        //}
     unlock();
 }

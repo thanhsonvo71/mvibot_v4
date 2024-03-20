@@ -1,6 +1,6 @@
 <launch>
 	  <arg name="mvibot_seri" default=""/>
 	  <node pkg="robot_localization" type="ukf_localization_node" name="ukf_se" clear_params="true" respawn="true">
-    		<rosparam subst_value="True" command="load" file="$(find mvibot)/param/ukf_template.yaml" />
+    		<rosparam subst_value="True" command="load" file="$(find mvibot_v4)/param/ukf_template.yaml" />
   	  </node>
 </launch>

@@ -222,7 +222,7 @@ void table_::init_table(){
                     stmt->getResultSet();
                 }catch(sql::SQLException &e){
                     cout<<"add colume:"<<table_colume[i].colume_name<<endl;
-                    stmt->execute("ALTER TABLE `"+table_name+"` ADD COLUMN `"+table_colume[i].colume_name+"` "+table_colume[i].colume_type+" NOT NULL");
+                    stmt->execute("ALTER TABLE `"+table_name+"` ADD COLUMN `"+table_colume[i].colume_name+"` "+table_colume[i].colume_type);//+" NOT NULL");
                 }
             }
             //

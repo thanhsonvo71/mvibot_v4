@@ -1,6 +1,6 @@
 <launch>
 	  <arg name="mvibot_seri" default=""/>
-	    <node pkg="laser_filters" type="scan_to_scan_filter_chain" name="laser_filter1" respawn="true">
+	       <node pkg="laser_filters" type="scan_to_scan_filter_chain" name="laser_filter1" respawn="true">
 			<rosparam subst_value="True" command="load" file="$(find mvibot_v4)/param/my_laser_config.yaml" />
 			<remap from="scan" to="/$(arg mvibot_seri)/laser/scanf" />
 			<remap from="scan_filtered" to="/$(arg mvibot_seri)/laser/scan"/> 

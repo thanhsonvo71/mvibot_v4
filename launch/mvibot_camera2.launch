@@ -1,6 +1,6 @@
 <launch>
     <arg name="mvibot_seri" default=""/>
-    <arg name="serial_no2"             default="148522074025"/>
+    <arg name="serial_no2"             default="148522073327"/>  
     <arg name="json_file_path"         default=""/>        
     <arg name="camera2"                default="camera2"/>
     <group ns="$(arg camera2)">

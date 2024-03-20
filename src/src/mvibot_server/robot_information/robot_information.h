@@ -110,18 +110,18 @@ std::vector<string>  robot_information::cmd_insert_database(){
     static vector<string> string_return;
     //
     string_return.resize(12);
-    string_return[0]="INSERT INTO my_robot (name_seri,type)  VALUES('"+name_seri+"','"+type+"')";
-    string_return[1]="INSERT INTO robot_status (name_seri)  VALUES('"+name_seri+"')";
-    string_return[2]="INSERT INTO sensor_status (name_seri)  VALUES('"+name_seri+"')";
-    string_return[3]="INSERT INTO battery_status (name_seri)  VALUES('"+name_seri+"')";
-    string_return[4]="INSERT INTO battery_cell_status (name_seri)  VALUES('"+name_seri+"')";
-    string_return[5]="INSERT INTO motor_left_status (name_seri)  VALUES('"+name_seri+"')";
-    string_return[6]="INSERT INTO motor_right_status (name_seri)  VALUES('"+name_seri+"')";
-    string_return[7]="INSERT INTO input_user_status (name_seri)  VALUES('"+name_seri+"')";
-    string_return[8]="INSERT INTO output_user_status (name_seri)  VALUES('"+name_seri+"')";
-    string_return[9]="INSERT INTO robot_config_status (name_seri)  VALUES('"+name_seri+"')";
-    string_return[10]="INSERT INTO my_robot_backup_mission (name_seri)  VALUES('"+name_seri+"')";
-    string_return[11]="INSERT INTO battery_small_status (name_seri)  VALUES('"+name_seri+"')";  
+    string_return[0]="INSERT INTO my_robot (name_seri,type,history,id)  VALUES('"+name_seri+"','"+type+"',"+"'',"+"'"+to_string(id)+"'"+")";
+    string_return[1]="INSERT INTO robot_status (name_seri,id)  VALUES('"+name_seri+"',"+"'"+to_string(id)+"'"+")";
+    string_return[2]="INSERT INTO sensor_status (name_seri,id)  VALUES('"+name_seri+"',"+"'"+to_string(id)+"'"+")";
+    string_return[3]="INSERT INTO battery_status (name_seri,id)  VALUES('"+name_seri+"',"+"'"+to_string(id)+"'"+")";
+    string_return[4]="INSERT INTO battery_cell_status (name_seri,id)  VALUES('"+name_seri+"',"+"'"+to_string(id)+"'"+")";
+    string_return[5]="INSERT INTO motor_left_status (name_seri,id)  VALUES('"+name_seri+"',"+"'"+to_string(id)+"'"+")";
+    string_return[6]="INSERT INTO motor_right_status (name_seri,id)  VALUES('"+name_seri+"',"+"'"+to_string(id)+"'"+")";
+    string_return[7]="INSERT INTO input_user_status (name_seri,id)  VALUES('"+name_seri+"',"+"'"+to_string(id)+"'"+")";
+    string_return[8]="INSERT INTO output_user_status (name_seri,id)  VALUES('"+name_seri+"',"+"'"+to_string(id)+"'"+")";
+    string_return[9]="INSERT INTO robot_config_status (name_seri,id)  VALUES('"+name_seri+"',"+"'"+to_string(id)+"'"+")";
+    string_return[10]="INSERT INTO my_robot_backup_mission (name_seri,id)  VALUES('"+name_seri+"',"+"'"+to_string(id)+"'"+")";
+    string_return[11]="INSERT INTO battery_small_status (name_seri,id)  VALUES('"+name_seri+"',"+"'"+to_string(id)+"'"+")";  
     return string_return;
 }
 void get_robots_frist(){
@@ -138,6 +138,7 @@ void get_robots_frist(){
             my_robots[my_robots.size()-1].name_seri=res->getString("name_seri");
             my_robots[my_robots.size()-1].type=res->getString("type");
             my_robots[my_robots.size()-1].update_database=1;
+            my_robots[my_robots.size()-1].id=my_robots.size()-1;
             //
             my_robots[my_robots.size()-1].node= new node_v2_3;
             my_robots[my_robots.size()-1].node->name_seri=my_robots[my_robots.size()-1].name_seri;   

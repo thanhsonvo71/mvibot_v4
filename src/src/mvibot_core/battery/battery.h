@@ -55,12 +55,12 @@ void pub_battery_status(){
                 //
                 static string cmd;
                 cmd="echo $(date +'%d/%m/%Y %H:%M:%S') robot:"+to_string(distance_robot/1000)+" wheel_left:"+to_string(distance_wheel_left/1000)+" wheel_right:"+to_string(distance_wheel_right/1000);
-                cmd=cmd+" \""+msg.data+"\" >> /home/mvibot/catkin_ws/src/mvibot/history/battery.log";
+                cmd=cmd+" \""+msg.data+"\" >> /home/mvibot/catkin_ws/src/mvibot_v4/history/battery.log";
                 system(cmd.c_str());
                 //
         }else {
             static string cmd;
-            cmd="echo $(date +'%d/%m/%Y %H:%M:%S') start log > /home/mvibot/catkin_ws/src/mvibot/history/battery.log";
+            cmd="echo $(date +'%d/%m/%Y %H:%M:%S') start log > /home/mvibot/catkin_ws/src/mvibot_v4/history/battery.log";
             system(cmd.c_str());
             creat_fun=1;
         }

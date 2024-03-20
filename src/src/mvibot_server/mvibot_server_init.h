@@ -89,6 +89,7 @@ using namespace sql;
         public:
             //
             int update_database;
+            int id;
             float time_out=0;
             //
             string name_seri;

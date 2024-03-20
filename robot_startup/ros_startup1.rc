@@ -111,14 +111,14 @@ export ROS_HOSTNAME=$ip_node
 if [[ "$is_master" = "yes" ]]
 then
   # run web interface
-  cd /home/mvibot/interface_mvibot_v2/ && php artisan serve --host $ip_node:8000 &
+  #cd /home/mvibot/interface_mvibot_v2/ && php artisan serve --host $ip_node:8000 &
   # run ros
   roscore -p 11311 &
   # run ros web socket
-  roslaunch mvibot_v4 websock.launch --wait  &
+  roslaunch mvibot_v4 websock2.launch --wait  &
   # run map_server
   map_name="$(</home/mvibot/catkin_ws/src/mvibot_v4/config/map)"
-  map_path="/home/mvibot/interface_mvibot_v2/maps/$map_name.yaml"
+  map_path="/var/www/html/interface_mvibot_v2/maps/$map_name.yaml"
   roslaunch mvibot_v4 mvibot_mapserver.launch map_file:="$map_path" --wait & 
   #
   roslaunch mvibot_v4 mvibot_tran_ipmaster.launch mode:="$mode" name_seri:="$name_seri" --wait &

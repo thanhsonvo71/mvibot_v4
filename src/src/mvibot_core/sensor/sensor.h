@@ -224,7 +224,7 @@ void check_sensor(){
             static string command;
             start_software_launch=1;
             command="";
-            command=command+"roslaunch mvibot mvibot_software.launch name_seri:="+mvibot_seri+" mode:="+mode+" &";
+            command=command+"roslaunch mvibot_v4 mvibot_software.launch name_seri:="+mvibot_seri+" mode:="+mode+" &";
             system(command.c_str());
         }
         // battery check
@@ -290,7 +290,7 @@ void action_sensor(){
             visual=-1; exposure=-1; enable_auto_exposure=-1;
             //
             visual=stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","visual_preset","int","3"));
-            exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","exposure","int","500"));
+            exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","exposure","int","9500"));
             enable_auto_exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","enable_auto_exposure","bool","0"));
             dym_set_camera1=0;
             //
@@ -314,7 +314,7 @@ void action_sensor(){
             visual=-1; exposure=-1; enable_auto_exposure=-1;
             //
             visual=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","visual_preset","int","3"));
-            exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","exposure","int","500"));
+            exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","exposure","int","9500"));
             enable_auto_exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","enable_auto_exposure","bool","0"));
             dym_set_camera2=0;
             //
