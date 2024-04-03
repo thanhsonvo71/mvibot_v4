@@ -9,6 +9,7 @@ name_seri="$(</home/mvibot/catkin_ws/src/mvibot_v4/config/name_seri)"
 mode="$(</home/mvibot/catkin_ws/src/mvibot_v4/config/mode)"
 ip_master="$(</home/mvibot/catkin_ws/src/mvibot_v4/config/ip_master)"
 is_master="$(</home/mvibot/catkin_ws/src/mvibot_v4/config/is_master)"
+is_master="yes"
 robot_type_connect="$(</home/mvibot/catkin_ws/src/mvibot_v4/config/robot_type_connect)"
 # lan port control
 lan_port="$(</home/mvibot/catkin_ws/src/mvibot_v4/config/lan_port)"
@@ -59,7 +60,7 @@ else
    	sudo nmcli connection up mvibot_cardwifi
    else
         sudo nmcli connection modify mvibot_cardwifi ipv4.method manual ipv4.addresses $wifi_ipv4/24 
-        sudo nmcli connection modify mvibot_cardwifi ipv4.gateway $wifi_ipv4_gateway ipv4.dns "$wifi_ipv4_dns"
+        sudo nmcli connection modify mvibot_cardwifi ipv4.gateway $wifi_ipv4_gateway ipv4.dns $wifi_ipv4_dns
         sudo nmcli connection up mvibot_cardwifi
    fi
 fi
@@ -114,15 +115,15 @@ then
   #cd /home/mvibot/interface_mvibot_v2/ && php artisan serve --host $ip_node:8000 &
   # run ros
   roscore -p 11311 &
-  # run ros web socket
   roslaunch rosserial_server socket.launch --wait &
+  # run ros web socket
   roslaunch mvibot_v4 websock2.launch --wait  &
   # run map_server
   map_name="$(</home/mvibot/catkin_ws/src/mvibot_v4/config/map)"
   map_path="/var/www/html/interface_mvibot_v2/maps/$map_name.yaml"
   roslaunch mvibot_v4 mvibot_mapserver.launch map_file:="$map_path" --wait & 
   #
-  roslaunch mvibot_v4 mvibot_tran_ipmaster.launch mode:="$mode" name_seri:="$name_seri" --wait &
+  #roslaunch mvibot_v4 mvibot_tran_ipmaster.launch mode:="$mode" name_seri:="$name_seri" --wait &
 else
   roslaunch mvibot_v4 mvibot_tran_ipmaster.launch mode:="$mode" name_seri:="$name_seri" --wait &
 fi

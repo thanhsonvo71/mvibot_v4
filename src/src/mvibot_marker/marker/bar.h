@@ -6,7 +6,7 @@ int marker::detect_bar(float bar_distance){
     static vector<line> my_lines_memory;
     //
     value_return=-1;
-    bar_distance=0.785;
+    //bar_distance=0.785;
     //
     my_lines_group_memory.resize(0);
     for(int i=0;i<my_data.my_lines2.size();i++){

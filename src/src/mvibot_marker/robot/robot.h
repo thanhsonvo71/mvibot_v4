@@ -25,6 +25,7 @@ void process_data(string data){
         if(data_I.data1[i]=="sx2") safe_x2=stof_f(data_I.data2[i]);
         if(data_I.data1[i]=="sy1") safe_y1=stof_f(data_I.data2[i]);
         if(data_I.data1[i]=="sy2") safe_y2=stof_f(data_I.data2[i]);
+        if(data_I.data1[i]=="bar_distance") my_marker.bar_distance=stof_f(data_I.data2[i]);
     }
     my_marker.marker_data=data;
 }

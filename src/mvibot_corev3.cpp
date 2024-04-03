@@ -5,6 +5,7 @@
 #include "src/common/string_Iv2/string_Iv2.h"
 #include "src/common/thread_v2/thread_v2.h"
 #include "src/common/history/history.h"
+#include "src/common/send_mail/send_mail.h"
 // lib function
 #include "src/mvibot_core/led/led.h"
 #include "src/mvibot_core/battery/battery.h"
@@ -245,7 +246,7 @@ void robot_load_configf(const std_msgs::String & msg){
 }
 void robot_update_softwaref(const std_msgs::String & msg){
     lock();
-         //if(msg.data=="1") software_update=1;
+         if(msg.data=="1") software_update=1;
     unlock();
 }
 void master_checkf(const std_msgs::String & msg){
@@ -305,9 +306,11 @@ int main(int argc, char** argv){
     my_thread my_thread1("Thread 1",1.0,function1,false,-1);
 	my_thread my_thread2("Thread 2",0.05,function2,false,-1);
     my_thread my_thread3("Thread 3",0.05,function3,false,-1);
+    my_thread my_thread4("Thread 4",1.0,function4,false,-1);
     my_thread1.start(thread1);
     my_thread2.start(thread2);
     my_thread3.start(thread3);
+    my_thread4.start(thread4);
     //msg ros
     ros::NodeHandle n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n13,n14,n15,n16,n17,n18,n19,n20,n21,n22,n23;
     // sensor check topic
@@ -347,6 +350,7 @@ int main(int argc, char** argv){
     thread1.join();
     thread2.join();
     thread3.join();
+    thread4.join();
     close(sock);
     return 0;
 }
@@ -507,4 +511,25 @@ void function3(){
 void function4(){
     lock();
     unlock();
+    if(software_update==1){
+            // check internet connection
+            static int check;
+            check=1;//check_internet_connection();
+            if(check==1){
+                //
+                exec("gdown --folder "+link_update+" -O /home/mvibot/catkin_ws/devel/lib/mvibot_v4/");
+                //exec("unzip -o -P mvibot_"+board_serial+name_seri_fix+" /home/mvibot/catkin_ws/devel/lib/mvibot/mvibot_update_software/mvibot_update_software.zip -d /home/mvibot/catkin_ws/devel/lib/mvibot/");
+                exec("sudo chmod -R 777 /home/mvibot/catkin_ws/devel/lib/mvibot_v4/mvibot_update_software/");
+                exec("cd /home/mvibot/catkin_ws/devel/lib/mvibot_v4/mvibot_update_software/ && sudo ./update.rc");
+                exec("sudo rm -r /home/mvibot/catkin_ws/devel/lib/mvibot_v4/mvibot_update_software/");
+                //
+                send_mail(mail_master,name_seri_fix+"Update Software",name_seri_fix+" : is updated softwrae At `date`","");
+                cout<<"Fisish_update"<<endl;
+                software_update_status=0;
+            }else{
+                cout<<"No internet Connection"<<endl;
+                software_update_status=1;
+            }
+            software_update=0;
+    }
 }

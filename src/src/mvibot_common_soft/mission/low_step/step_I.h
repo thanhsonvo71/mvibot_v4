@@ -19,6 +19,7 @@ class step_I{
 		sleep_ 			sleep_step;
 		footprint_		footprint_step;
         // follow_path_    follow_path_step;
+        telegram_       telegram_step;
         break_          break_step;
         variable_       variable_step;
         config_         config_step;
@@ -35,7 +36,7 @@ void step_I::process_data(){
     for(int i=0;i<data_return.data1.size();i++){
         static string_Iv2 data_return2;
         data_return2.detect(data_return.data1[i],"",":","");
-        if(data_return2.data1.size()==2){
+        if(data_return2.data1.size()>=2){
             if(data_return2.data1[0]=="name")       name_step=data_return2.data1[1];
             if(data_return2.data1[0]=="time_out")   time_out_step=stof(data_return2.data1[1]);
             if(data_return2.data1[0]=="mode")       mode_step=data_return2.data1[1];
@@ -83,6 +84,12 @@ void step_I::process_data(){
                     config_step.data=data_return2.data1[1];
                     config_step.process_data();
                 }
+                if(mode_step=="telegram"){
+                    if(data_return2.data1.size()>=3)
+                    telegram_step.data=data_return2.data1[1]+":"+data_return2.data1[2];
+                    else telegram_step.data="";
+                    telegram_step.process_data();
+                }
             }
         }
     }
@@ -117,6 +124,7 @@ void step_I::print(int n){
     if(mode_step=="break") break_step.print(n+1);
     if(mode_step=="variable") variable_step.print(n+1);
     if(mode_step=="config") config_step.print(n+1);
+    if(mode_step=="telegram") telegram_step.print(n+1);
     //
     for(int j=0;j<n;j++) cout<<"\t";
     cout<<"------------------------------------------------------"<<endl;
@@ -140,6 +148,7 @@ int step_I::action(int action){
         if(mode_step=="break")          value_return=break_step.action(action);
         if(mode_step=="variable")       value_return=variable_step.action(action);
         if(mode_step=="config")         value_return=config_step.action(action);
+        if(mode_step=="telegram")       value_return=telegram_step.action(action);
         //
         value_return=Error_;
     }else{
@@ -168,6 +177,7 @@ int step_I::action(int action){
         if(mode_step=="break")          value_return=break_step.action(action);
         if(mode_step=="variable")       value_return=variable_step.action(action);
         if(mode_step=="config")         value_return=config_step.action(action);
+        if(mode_step=="telegram")       value_return=telegram_step.action(action);
         //
         if(value_return==Finish_ | value_return==Error_ | value_return==True_ | value_return== False_) time_action_step=0;
     }
@@ -205,6 +215,7 @@ void step_I::reset(){
     if(mode_step=="marker")         marker_step.reset();
     if(mode_step=="position")       position_goal_step.reset();
     if(mode_step=="config")         config_step.reset();
+    if(mode_step=="telegram")       telegram_step.reset();
 }
 int step_I::set_id(int n){
     id=n;

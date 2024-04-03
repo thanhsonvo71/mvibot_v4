@@ -170,6 +170,7 @@
             // detect
             int detect_vl();
             int detect_bar(float bar_distance);
+            float bar_distance;
             int detect_l();
             // offset transfrom
             double off_set_x=0.0;

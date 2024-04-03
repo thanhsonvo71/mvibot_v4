@@ -334,8 +334,9 @@ int action_goal(int mode){
                     msg.target_pose.pose.position.y=position_robot[1];
                     msg.target_pose.pose.orientation.z=position_robot[2];
                     msg.target_pose.pose.orientation.w=position_robot[3];
-                    action_goal.sendGoal(msg);
-                    action_goal.waitForResult();
+                    //action_goal.sendGoal(msg);
+                    //action_goal.waitForResult();
+                    action_goal.cancelAllGoals();
                     return Finish_;
                 }else{
                     action_goal.cancelAllGoals();

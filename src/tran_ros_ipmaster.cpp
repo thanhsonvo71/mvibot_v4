@@ -724,6 +724,20 @@ void output_user_status_stringf(const std_msgs::String& msg){
     }
     unlock();
 }
+void robot_update_softwaref(const std_msgs::String& msg){
+    lock();
+        static string string_process;
+        string_process="";
+        string_process=start_char;
+        string_process=string_process+"{[(name_seri/="+mvibot_seri+")]}";
+        string_process=string_process+"{[(name_topic/=robot_update_software)]}";
+        string_process=string_process+"{[(data/="+msg.data+")]}";
+        string_process=string_process+end_char;
+        //
+        msg_to_socket.resize(msg_to_socket.size()+1);
+        msg_to_socket[msg_to_socket.size()-1]=string_process;    
+    unlock();
+}
 // main
 int main(int argc, char** argv) 
 { 
@@ -787,6 +801,7 @@ int main(int argc, char** argv)
     ros::Subscriber sub15 = n15.subscribe("/input_user_status_string", 100, input_user_status_stringf);
     ros::Subscriber sub16 = n16.subscribe("/output_user_status_string", 100, output_user_status_stringf);
     ros::Subscriber sub17 = n17.subscribe("/master_check", 1, master_checkf);   
+    ros::Subscriber sub18 = n18.subscribe("/"+mvibot_seri+"/robot_update_software", 1, robot_update_softwaref);   
     ros::spin();
     return 0; 
 } 

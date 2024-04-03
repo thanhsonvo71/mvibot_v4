@@ -11,6 +11,7 @@
 #include "src/mvibot_server/module_gpio_v2/module_gpio_v2.h"
 //
 using namespace std;
+string web_path_define="/var/www/html/interface_mvibot_v2/";
 // settime process
 long double ts_process1=0.5; //time set for process1
 long double ts_process2=1.0; //time set for process2
@@ -323,7 +324,10 @@ void request_actionf(const std_msgs::String & msg){
                 if(name_map!="" & name_robot!=""){
                     static string cmd;
                     cmd="";
-                    cmd=cmd+"rosrun map_server map_saver map:="+name_robot+"/map"+" -f /home/mvibot/interface_mvibot_v2/maps/"+name_map+"&";
+                    //cmd=cmd+"rosrun map_server map_saver map:="+name_robot+"/map"+" -f "+web_path_define+"maps/"+name_map+" &";
+                    //cout<<cmd<<endl;
+                    cmd="cd "+web_path_define+"maps/ && rosrun map_server map_saver map:="+name_robot+"/map"+" -f "+name_map;
+                    //cout<<cmd<<endl;
                     system(cmd.c_str());
                 }
             }
@@ -339,7 +343,7 @@ void request_actionf(const std_msgs::String & msg){
                 if(name_map!=""){
                     static string cmd;
                     cmd="";
-                    cmd=cmd+"rm /home/mvibot/interface_mvibot_v2/maps/"+name_map+".*";
+                    cmd=cmd+"rm "+web_path_define+"maps/"+name_map+".*";
                     system(cmd.c_str());
                 }
             }
@@ -372,7 +376,7 @@ void pub_map_select(){
 	} else creat_fun=1;
 }
 void map_selectf(const std_msgs::String & msg){
-    map_selector=get_map_select("/home/mvibot/interface_mvibot_v2/maps/"+msg.data);
+    map_selector=get_map_select(web_path_define+"maps/"+msg.data);
     pub_map_select(); 
 }
 void output_user_set_stringf(const std_msgs::String & msg){

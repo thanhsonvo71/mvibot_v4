@@ -103,6 +103,7 @@ vector<int> process_data2(string data){
     return value_return;
 }
 // creat low class
+class telegram_;
 class sleep_;
 class sound_;
 class position_;

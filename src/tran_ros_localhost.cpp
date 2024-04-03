@@ -390,7 +390,19 @@ void pub_output_user_set_string(string data){
         creat_fun=1;
     }
 }
-
+void pub_robot_update_software(string data){
+    static ros::NodeHandle n;
+    static ros::Publisher  pub = n.advertise<std_msgs::String>("/"+mvibot_seri+"/robot_update_software", 1);
+    static float creat_fun=0;
+    static std_msgs::String msg;
+    if(creat_fun==1)
+    {
+           msg.data=data;
+           pub.publish(msg);
+    } else {
+        creat_fun=1;
+    }
+}
 //
 void IAMf(const std_msgs::String& msg){
     lock();
@@ -867,6 +879,7 @@ int main(int argc, char** argv)
     pub_input_user_status_string("");
     pub_output_user_status_string("");
     pub_output_user_set_string("");
+    pub_robot_update_software("");
     //modify_socket();
     //
     int res;
@@ -1123,6 +1136,7 @@ void process_data(string data){
                 if(name_topic=="input_user_status_string")     pub_input_user_status_string(data2);
                 if(name_topic=="output_user_status_string")    pub_output_user_status_string(data2);
                 if(name_topic=="output_user_set_string")       pub_output_user_set_string(data2);
+                if(name_topic=="robot_update_software")        pub_robot_update_software(data2);
             }
         }
     }

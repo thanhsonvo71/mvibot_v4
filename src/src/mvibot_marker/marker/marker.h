@@ -320,7 +320,7 @@ int marker::action(){
             // detect maker
             res=1;
             if(marker_type=="vl_marker")    res=detect_vl();
-            if(marker_type=="bar_marker")   res=detect_bar(0.785);
+            if(marker_type=="bar_marker")   res=detect_bar(bar_distance);
             if(marker_type=="l_marker")     res=detect_l();
             //
             if(res==1) {

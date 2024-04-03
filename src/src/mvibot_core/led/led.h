@@ -19,7 +19,7 @@ void set_color_led(float cred, float cgreen, float cblue){
 }
 void led_control(){
     if(mode=="slam"){
-        set_color_led(100,0,25);
+        set_color_led(100,0,25); //100 0 25
         led_r=3;
         led_l=3;
         led_b=3;

@@ -14,10 +14,11 @@ void backup_file(string name_file,string value){
 int backup(){
     //
     cout<<"Backup program robot"<<endl;
-    exec("cd /home/mvibot/catkin_ws/devel/lib/mvibot/ && sudo unzip -o -P mvibot_"+board_serial+name_seri_fix+" mvibot_backup.zip");
-    cout<<"cd /home/mvibot/catkin_ws/devel/lib/mvibot/ && unzip -o -P mvibot_"+board_serial+name_seri_fix+" mvibot_backup.zip"<<endl;
+    exec("cd /home/mvibot/catkin_ws/devel/lib/mvibot_v4/ && sudo unzip -o mvibot_backup.zip");
+    //cout<<"cd /home/mvibot/catkin_ws/devel/lib/mvibot/ && unzip -o -P mvibot_"+board_serial+name_seri_fix+" mvibot_backup.zip"<<endl;
     //
     cout<<"Backup web interface"<<endl;
+
     //
     cout<<"reconfig robot......"<<endl;
     backup_file("config/name_seri",name_seri_fix);
@@ -29,9 +30,9 @@ int backup(){
     backup_file("config/robot_wmax","0.314");
     backup_file("config/robot_ax","1.0");
     backup_file("config/robot_aw","3.0");
-    backup_file("config/robot_volume","100");
+    backup_file("config/robot_volume","150");
     backup_file("config/robot_low_battery","-1");
-    backup_file("config/robot_type_connect","lan");
+    backup_file("config/robot_type_connect","wifi");
     // lan config
     backup_file("config/lan_port","enp0s31f6");
     backup_file("config/lan_type","auto");
@@ -49,7 +50,7 @@ int backup(){
     // operating config
     backup_file("config/is_master","yes");
     backup_file("config/ip_master","192.168.0.200");
-    backup_file("config/ip_node","192.168.0.200");
+    //backup_file("config/ip_node","192.168.0.200");
     backup_file("config/mode","slam");
     // reset mission
     backup_file("param/mission.yaml","");

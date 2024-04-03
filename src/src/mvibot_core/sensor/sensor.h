@@ -290,7 +290,7 @@ void action_sensor(){
             visual=-1; exposure=-1; enable_auto_exposure=-1;
             //
             visual=stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","visual_preset","int","3"));
-            exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","exposure","int","9500"));
+            exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","exposure","int","500"));
             enable_auto_exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera1/camera/stereo_module/set_parameters","enable_auto_exposure","bool","0"));
             dym_set_camera1=0;
             //
@@ -314,7 +314,7 @@ void action_sensor(){
             visual=-1; exposure=-1; enable_auto_exposure=-1;
             //
             visual=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","visual_preset","int","3"));
-            exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","exposure","int","9500"));
+            exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","exposure","int","500"));
             enable_auto_exposure=stoi_f(set_get_param("/"+mvibot_seri+"/camera2/camera/stereo_module/set_parameters","enable_auto_exposure","bool","0"));
             dym_set_camera2=0;
             //
